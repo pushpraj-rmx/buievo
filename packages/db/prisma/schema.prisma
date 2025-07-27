@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String   @id @default(uuid())
+  name                   String
+  email                  String   @unique
+  password               String
+  role                   String   @default("agent") // agent | admin
+  isEmailVerified        Boolean  @default(false)
+  emailVerificationToken String?  @unique
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  refreshToken           String?  @unique
+
+  @@map("users")
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?  @unique // Email can be optional if only phone is used
+  phone     String   @unique
+  status    String   @default("active") // active | inactive | pending
+  comment   String? // Optional comment field
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  segments      Segment[] // Many-to-many relationship with Segment
+  conversations Conversation[]
+
+  @@map("contacts")
+}
+
+model Campaign {
+  id             String    @id @default(uuid())
+  name           String
+  status         String    @default("draft") // draft | scheduled | sending | completed | failed
+  scheduledAt    DateTime? // Optional, for scheduled campaigns
+  sentCount      Int       @default(0)
+  deliveredCount Int       @default(0)
+  failedCount    Int       @default(0)
+  readCount      Int       @default(0) // Added for CampaignReport
+  clickedCount   Int       @default(0) // Added for RecentCampaign
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  targetSegments Segment[] // Many-to-many relationship with Segment
+  template       Template  @relation(fields: [templateId], references: [id])
+  templateId     String
+
+  @@map("campaigns")
+}
+
+model Segment {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contacts  Contact[] // Many-to-many relationship with Contact
+  campaigns Campaign[] // Many-to-many relationship with Campaign
+
+  @@map("segments")
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  whatsappId String?  @unique // WhatsApp's message ID
+  from       String
+  to         String
+  body       String?  @db.Text // Message content, can be long
+  type       String   @default("text") // e.g., "text", "template", "image", "video"
+  timestamp  DateTime // When the message was sent/received
+  status     String   @default("queued") // e.g., "queued", "sent", "delivered", "read", "failed"
+  direction  String // "inbound" or "outbound"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String
+
+  @@index([from])
+  @@index([to])
+  @@index([conversationId])
+  @@index([timestamp])
+  @@map("messages")
+}
+
+model Conversation {
+  id            String   @id @default(uuid())
+  contact       Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactId     String
+  lastMessageAt DateTime @default(now())
+  unreadCount   Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  messages Message[]
+
+  @@index([contactId])
+  @@map("conversations")
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  content   Json // The full template structure from WhatsApp
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  campaigns Campaign[]
+
+  @@map("templates")
+}
+
+model Webhook {
+  id        String   @id @default(uuid())
+  event     String
+  payload   Json
+  processed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("webhooks")
+}
