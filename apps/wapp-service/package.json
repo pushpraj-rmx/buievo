@@ -1,6 +1,6 @@
 {
-  "name": "@whatssuite/api",
-  "version": "0.1.0",
+  "name": "@whatssuite/wapp-service",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,12 +15,15 @@
   "dependencies": {
     "@whatssuite/db": "workspace:*",
     "@whatssuite/redis": "workspace:*",
-    "express": "^5.1.0"
+    "@whatssuite/wapp-client": "workspace:*",
+    "axios": "^1.11.0",
+    "redis-client": "^0.3.5"
   },
   "devDependencies": {
-    "@types/express": "^5.0.3",
     "@types/node": "^22.15.3",
-    "tsx": "^4.20.3",
+    "eslint": "^8.57.1",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.3"
   }
 }
