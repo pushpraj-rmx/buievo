@@ -19,17 +19,14 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            # Navigate to your project directory (or clone if it doesn't exist)
             cd ~/Code/whatssuite || git clone git@github.com:pushpraj-rmx/whatssuite.git ~/Code/whatssuite && cd ~/Code/whatssuite
 
-            # Pull the latest changes from the main branch
             git pull origin main
 
-            # Create the .env file from the GitHub secret
+            cat <<'EOF' > .env
+
             echo "${{ secrets.ENV_FILE_PRODUCTION }}" > .env
 
-            # Build and run the new containers
             docker-compose up --build -d
 
-            # Clean up old, unused Docker images
             docker image prune -f
