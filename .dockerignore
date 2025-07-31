@@ -1,0 +1,20 @@
+# Git
+.git
+.github
+
+# Node
+node_modules
+apps/*/node_modules
+packages/*/node_modules
+
+# Turbo
+.turbo
+
+# Build output
+dist
+apps/*/dist
+packages/*/dist
+
+# Other
+.env
+*.log

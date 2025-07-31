@@ -7,7 +7,7 @@ RUN npm install -g pnpm
 
 # Installer
 FROM base AS installer
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/wapp-service/package.json ./apps/wapp-service/
 COPY packages/db/package.json ./packages/db/
 COPY packages/redis/package.json ./packages/redis/
