@@ -1,0 +1,35 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            # Navigate to your project directory (or clone if it doesn't exist)
+            cd ~/whatssuite || git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git ~/whatssuite && cd ~/whatssuite
+
+            # Pull the latest changes from the main branch
+            git pull origin main
+
+            # Create the .env file from the GitHub secret
+            echo "${{ secrets.ENV_FILE_PRODUCTION }}" > .env
+
+            # Build and run the new containers
+            docker-compose up --build -d
+
+            # Clean up old, unused Docker images
+            docker image prune -f
