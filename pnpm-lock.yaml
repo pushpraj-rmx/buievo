@@ -29,6 +29,9 @@ importers:
       '@whatssuite/redis':
         specifier: workspace:*
         version: link:../../packages/redis
+      dotenv:
+        specifier: ^17.2.1
+        version: 17.2.1
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -60,6 +63,9 @@ importers:
       axios:
         specifier: ^1.11.0
         version: 1.11.0
+      dotenv:
+        specifier: ^17.2.1
+        version: 17.2.1
       redis-client:
         specifier: ^0.3.5
         version: 0.3.5
@@ -1483,6 +1489,10 @@ packages:
 
   dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+
+  dotenv@17.2.1:
+    resolution: {integrity: sha512-kQhDYKZecqnM0fCnzI5eIv5L4cAe/iRI+HqMbO/hbRdTAeXDG+M9FjipUxNfbARuEg4iHIbhnhs78BCHNbSxEQ==}
     engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
@@ -4030,6 +4040,8 @@ snapshots:
       esutils: 2.0.3
 
   dotenv@16.0.3: {}
+
+  dotenv@17.2.1: {}
 
   dunder-proto@1.0.1:
     dependencies:
