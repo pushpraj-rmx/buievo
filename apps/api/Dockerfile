@@ -1,50 +1,32 @@
-# 1. Base image with Node.js and pnpm
-FROM node:20-alpine AS base
+# 1. Builder Stage: Install, build, and prune all in one place
+FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
 RUN npm install -g pnpm
 
-# ---
+# Copy all source code
+COPY . .
 
-# 2. Installer stage: Install ALL dependencies
-FROM base AS installer
-WORKDIR /usr/src/app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/api/package.json ./apps/api/
-COPY apps/wapp-service/package.json ./apps/wapp-service/
-COPY packages/db/package.json ./packages/db/
-COPY packages/redis/package.json ./packages/redis/
-COPY packages/wapp-client/package.json ./packages/wapp-client/
-# Install all dependencies, including devDependencies needed for the build
+# Install ALL dependencies, including devDependencies for the build
 RUN pnpm install --frozen-lockfile --prod=false
 
-# ---
-
-# 3. Builder stage: Compile TypeScript to JavaScript
-FROM base AS builder
-WORKDIR /usr/src/app
-COPY . .
-COPY --from=installer /usr/src/app/node_modules ./node_modules
 # Build the 'api' app and all of its internal dependencies
 RUN pnpm build --filter @whatssuite/api...
 
+# Remove devDependencies, leaving only a clean production node_modules
+RUN pnpm prune --prod
+
 # ---
 
-# 4. Runner stage: Final production image
+# 2. Runner Stage: Final production image
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
-# Copy compiled code from the builder stage
-COPY --from=builder /usr/src/app/apps/api/dist ./dist
+# Copy the pruned node_modules and all the built code from the builder stage
+COPY --from=builder /usr/src/app .
 
-# Copy dependencies from the installer stage
-COPY --from=installer /usr/src/app/node_modules ./node_modules
+# Set the final working directory to the app we want to run
+WORKDIR /usr/src/app/apps/api
 
-# Remove devDependencies to keep the image lean
-RUN pnpm prune --prod
-
-# Expose the port for the API
 EXPOSE 3001
-
-# Run the app
 CMD ["node", "dist/src/index.js"]
