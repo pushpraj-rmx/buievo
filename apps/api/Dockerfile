@@ -4,7 +4,6 @@ WORKDIR /usr/src/app
 
 # Install pnpm
 RUN npm install -g pnpm
-
 # ---
 # Installer image for dependencies
 FROM base AS installer
@@ -14,12 +13,13 @@ COPY apps/api/package.json ./apps/api/
 COPY apps/wapp-service/package.json ./apps/wapp-service/
 COPY packages/db/package.json ./packages/db/
 COPY packages/redis/package.json ./packages/redis/
-COPY packages-wapp-client/package.json ./packages/wapp-client/
+# --- CORRECTED LINE BELOW ---
+COPY packages/wapp-client/package.json ./packages/wapp-client/
 
 # Install ALL dependencies for the entire workspace
 RUN pnpm install --frozen-lockfile
 # ---
-    
+
 # Builder image for compiling TypeScript
 FROM base AS builder
 COPY . .
