@@ -8,7 +8,7 @@ RUN pnpm install --frozen-lockfile --prod=false
 # Generate the Prisma client based on your schema
 RUN pnpm --filter @whatssuite/db exec prisma generate
 
-# Build the 'wapp-service' app and all of its internal dependencies
+# Build the 'wapp-service' app and all of its internal dependencies // ok 
 RUN pnpm build --filter @whatssuite/wapp-service...
 RUN pnpm prune --prod
 
