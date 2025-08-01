@@ -24,8 +24,8 @@ RUN pnpm install --frozen-lockfile --filter @whatssuite/api...
 FROM base AS builder
 COPY . .
 COPY --from=installer /usr/src/app/node_modules ./node_modules
-RUN pnpm --filter @whatssuite/api build
-
+# RUN pnpm --filter @whatssuite/api build
+RUN pnpm build --filter @whatssuite/api...
 # ---
 
 # Final production image

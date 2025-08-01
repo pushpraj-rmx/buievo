@@ -20,7 +20,8 @@ RUN pnpm install --frozen-lockfile --filter @whatssuite/wapp-service...
 FROM base AS builder
 COPY . .
 COPY --from=installer /usr/src/app/node_modules ./node_modules
-RUN pnpm --filter @whatssuite/wapp-service build
+# RUN pnpm --filter @whatssuite/wapp-service build
+RUN pnpm build --filter @whatssuite/wapp-service...
 
 # ---
 
