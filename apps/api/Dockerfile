@@ -9,7 +9,7 @@ RUN npm install -g pnpm
 
 # Installer image for dependencies
 FROM base AS installer
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/redis/package.json ./packages/redis/
