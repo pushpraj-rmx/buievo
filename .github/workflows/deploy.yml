@@ -1,4 +1,20 @@
-- name: Deploy to VPS
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: SSH and deploy
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -7,17 +23,17 @@
           script: |
             # Navigate to project directory or clone if it doesn't exist
             cd ~/whatssuite || git clone git@github.com:pushpraj-rmx/whatssuite.git ~/whatssuite && cd ~/whatssuite
-            
+
             # Pull the latest code
             git pull origin main
-            
+
             # Safely write the secret to the .env file
             cat <<'EOF' > .env
             ${{ secrets.ENV_FILE_PRODUCTION }}
             EOF
-            
+
             # Build and run the containers
             docker-compose up --build -d
-            
+
             # Clean up old docker images
             docker image prune -f
