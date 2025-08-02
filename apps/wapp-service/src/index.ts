@@ -10,33 +10,44 @@ const MESSAGE_QUEUE_CHANNEL = "message-queue";
 
 // This job payload can be simplified if the 'to' field is always fetched from the DB
 interface JobPayload {
-  // userId: number;
-  contactId: string;
+  contactId?: string;
+  phoneNumber?: string;
   templateName: string;
   params?: string[];
 }
 
 async function processJob(jobData: string): Promise<void> {
   try {
-    const { contactId, templateName, params }: JobPayload = JSON.parse(jobData);
-    console.log(`Processing job for userId: ${contactId}`);
+    const { contactId, phoneNumber, templateName, params }: JobPayload =
+      JSON.parse(jobData);
 
-    // Fetch user from the database using Prisma
-    const contact = await prisma.contact.findUnique({
-      where: { id: contactId },
-      select: { phone: true },
-    });
+    let to: string | undefined;
 
-    if (!contact || !contact.phone) {
-      throw new Error(`Contact or phone not found for contactId: ${contactId}`);
+    if (contactId) {
+      console.log(`Processing job for contactId: ${contactId}`);
+      const contact = await prisma.contact.findUnique({
+        where: { id: contactId },
+        select: { phone: true },
+      });
+      if (!contact || !contact.phone) {
+        throw new Error(
+          `Contact or phone not found for contactId: ${contactId}`
+        );
+      }
+      to = contact.phone;
+    } else if (phoneNumber) {
+      console.log(`Processing job for phoneNumber: ${phoneNumber}`);
+      to = phoneNumber;
+    } else {
+      throw new Error("No contactId or phoneNumber provided in job");
     }
 
-    // Use the wappClient to send the message
     await wappClient.sendTemplateMessage({
-      to: contact.phone,
+      to,
       templateName,
       bodyParams: params,
     });
+    console.log(`✅ Message sent successfully to ${to}`);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Failed to process job:", error.message);

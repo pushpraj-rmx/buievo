@@ -34,3 +34,29 @@ export const sendMessageToContact = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const sendMessageToNumber = async (req: Request, res: Response) => {
+  const { phoneNumber, templateName = "hello_world", params = [] } = req.body;
+  if (!phoneNumber) {
+    return res.status(400).json({ message: "phoneNumber is required" });
+  }
+
+  try {
+    // The job payload for the wapp-service
+    const jobPayload = {
+      phoneNumber,
+      templateName,
+      params,
+    };
+
+    // Publish the job to the Redis queue
+    await redis.publish("message-queue", JSON.stringify(jobPayload));
+    console.log(`✅ Queued message job for phoneNumber: ${phoneNumber}`);
+
+    // Respond with 202 (Accepted) to indicate the job was queued successfully
+    res.status(202).json({ message: "Message queued successfully" });
+  } catch (error) {
+    console.error("Error queueing message:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
