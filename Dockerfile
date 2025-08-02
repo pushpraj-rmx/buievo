@@ -6,13 +6,15 @@ RUN npm install -g pnpm
 # Copy only files needed for dependency installation
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Install all dependencies (including devDependencies for building)
-RUN pnpm install --frozen-lockfile --prod=false
-
-# Copy the rest of the source code
+# --- FIX IS HERE ---
+# Correct Order: Copy all source code BEFORE installing dependencies
 COPY . .
 
-# Generate Prisma client (only runs ONCE)
+# Now, pnpm install can see all the package.json files and will install prisma correctly
+RUN pnpm install --frozen-lockfile --prod=false
+# --- END FIX ---
+
+# Generate Prisma client
 RUN ["pnpm", "--filter", "@whatssuite/db", "exec", "prisma", "generate"]
 
 # Build all apps and packages in the monorepo
