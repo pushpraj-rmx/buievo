@@ -18,13 +18,12 @@ services:
   api:
     build:
       context: .
-      dockerfile: apps/api/Dockerfile
+      dockerfile: Dockerfile # Corrected: Points to the single root Dockerfile
+      target: api # Added: Builds only the 'api' stage
     ports:
       - "3001:3001"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - REDIS_URL=redis://redis:6379
-      - PORT=3001
+    env_file:
+      - .env # Changed: Loads variables from the .env file
     depends_on:
       - postgres
       - redis
@@ -33,12 +32,10 @@ services:
   wapp-service:
     build:
       context: .
-      dockerfile: apps/wapp-service/Dockerfile
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - REDIS_URL=redis://redis:6379
-      - PHONE_NUMBER_ID=${PHONE_NUMBER_ID}
-      - ACCESS_TOKEN=${ACCESS_TOKEN}
+      dockerfile: Dockerfile # Corrected: Points to the single root Dockerfile
+      target: wapp-service # Added: Builds only the 'wapp-service' stage
+    env_file:
+      - .env # Changed: Loads variables from the .env file
     depends_on:
       - postgres
       - redis
