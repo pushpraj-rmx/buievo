@@ -14,6 +14,7 @@ interface JobPayload {
   phoneNumber?: string;
   templateName: string;
   params?: string[];
+  buttonParams?: string[];
 }
 
 async function processJob(jobData: string): Promise<void> {
@@ -46,6 +47,7 @@ async function processJob(jobData: string): Promise<void> {
       to,
       templateName,
       bodyParams: params,
+      buttonParams: [],
     });
     console.log(`✅ Message sent successfully to ${to}`);
   } catch (error: unknown) {
