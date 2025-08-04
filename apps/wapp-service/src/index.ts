@@ -54,7 +54,13 @@ async function processJob(jobData: string): Promise<void> {
       bodyParams: params,
       buttonParams,
     });
-    console.log(`✅ Message sent successfully to ${to}`);
+    console.log(
+      "Parsed job data:",
+      JSON.stringify({ to, templateName, params, buttonParams }, null, 2)
+    );
+    console.log(
+      `✅ Message sent successfully to ${to} using template ${templateName}`
+    );
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Failed to process job:", error.message);
