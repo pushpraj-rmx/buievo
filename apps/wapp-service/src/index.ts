@@ -19,8 +19,13 @@ interface JobPayload {
 
 async function processJob(jobData: string): Promise<void> {
   try {
-    const { contactId, phoneNumber, templateName, params }: JobPayload =
-      JSON.parse(jobData);
+    const {
+      contactId,
+      phoneNumber,
+      templateName,
+      params,
+      buttonParams,
+    }: JobPayload = JSON.parse(jobData);
 
     let to: string | undefined;
 
@@ -47,7 +52,7 @@ async function processJob(jobData: string): Promise<void> {
       to,
       templateName,
       bodyParams: params,
-      buttonParams: [],
+      buttonParams,
     });
     console.log(`✅ Message sent successfully to ${to}`);
   } catch (error: unknown) {
