@@ -4,6 +4,7 @@ export interface SendTemplateMessageArgs {
   to: string;
   templateName: string;
   bodyParams?: string[];
+  buttonParams?: string[];
 }
 
 export interface WhatsAppSuccessResponse {
@@ -16,31 +17,51 @@ export const wappClient = {
   async sendTemplateMessage(
     args: SendTemplateMessageArgs
   ): Promise<WhatsAppSuccessResponse> {
-    const { to, templateName, bodyParams = [] } = args;
+    const { to, templateName, bodyParams = [], buttonParams = [] } = args;
     const { PHONE_NUMBER_ID, ACCESS_TOKEN } = process.env;
-    const apiVersion = process.env.META_API_VERSION || "v20.0"; // Using v20 as a fallback
+    const apiVersion = process.env.META_API_VERSION || "v20.0";
     const url = `https://graph.facebook.com/${apiVersion}/${PHONE_NUMBER_ID}/messages`;
 
     if (!PHONE_NUMBER_ID || !ACCESS_TOKEN) {
       throw new Error("WhatsApp environment variables are not set!");
     }
 
+    const components: any[] = [];
+
+    // Add body parameters
+    if (bodyParams.length > 0) {
+      components.push({
+        type: "body",
+        parameters: bodyParams.map((param) => ({
+          type: "text",
+          text: param,
+        })),
+      });
+    }
+
+    // Add button parameters (for dynamic URLs)
+    buttonParams.forEach((param, index) => {
+      components.push({
+        type: "button",
+        sub_type: "url",
+        index, // index must match button index in the template
+        parameters: [
+          {
+            type: "text",
+            text: param,
+          },
+        ],
+      });
+    });
+
     const payload = {
       messaging_product: "whatsapp" as const,
-      to: to,
+      to,
       type: "template" as const,
       template: {
         name: templateName,
         language: { code: "en_US" },
-        components: [
-          {
-            type: "body" as const,
-            parameters: bodyParams.map((param) => ({
-              type: "text" as const,
-              text: param,
-            })),
-          },
-        ],
+        components,
       },
     };
 
@@ -71,3 +92,4 @@ export const wappClient = {
     }
   },
 };
+
