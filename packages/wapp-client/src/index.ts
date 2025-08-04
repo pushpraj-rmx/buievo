@@ -85,6 +85,8 @@ export const wappClient = {
           `❌ Failed to send message to ${to} (Status: ${error.response?.status}):`,
           errorMessage
         );
+        // log the full payload for debugging
+        console.error("Payload:", JSON.stringify(payload, null, 2));
       } else {
         console.error(`❌ An unexpected error occurred:`, error);
       }
@@ -92,4 +94,3 @@ export const wappClient = {
     }
   },
 };
-
