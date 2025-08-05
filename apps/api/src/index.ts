@@ -21,8 +21,6 @@ async function startServer() {
   });
 }
 
-startServer();
-
 app.get("/", (req, res) => {
   res.send("Hello from the API!");
 });
@@ -31,7 +29,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/contacts", contactRoutes);
 
-// 3. Start the server directly. The redis client connects on its own.
-app.listen(port, () => {
-  console.log(`API server listening at http://localhost:${port}`);
+startServer().catch((error) => {
+  console.error("Error starting server:", error);
+  process.exit(1);
 });

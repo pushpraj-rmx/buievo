@@ -66,6 +66,7 @@ async function processJob(jobData: string): Promise<void> {
       console.error("Failed to process job:", error.message);
     } else {
       console.error("An unknown error occurred during job processing.");
+      console.log("Job data:", jobData);
     }
   }
 }

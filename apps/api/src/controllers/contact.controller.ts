@@ -36,7 +36,12 @@ export const sendMessageToContact = async (req: Request, res: Response) => {
 };
 
 export const sendMessageToNumber = async (req: Request, res: Response) => {
-  const { phoneNumber, templateName = "hello_world", params = [] } = req.body;
+  const {
+    phoneNumber,
+    templateName = "hello_world",
+    params = [],
+    buttonParams = [],
+  } = req.body;
   if (!phoneNumber) {
     return res.status(400).json({ message: "phoneNumber is required" });
   }
@@ -47,6 +52,7 @@ export const sendMessageToNumber = async (req: Request, res: Response) => {
       phoneNumber,
       templateName,
       params,
+      buttonParams,
     };
 
     // Publish the job to the Redis queue

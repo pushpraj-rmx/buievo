@@ -17,6 +17,12 @@ export const wappClient = {
   async sendTemplateMessage(
     args: SendTemplateMessageArgs
   ): Promise<WhatsAppSuccessResponse> {
+    // --- Log the raw arguments received by the function ---
+    console.log(
+      "wappClient.sendTemplateMessage received args:",
+      JSON.stringify(args, null, 2)
+    );
+
     const { to, templateName, bodyParams = [], buttonParams = [] } = args;
     const { PHONE_NUMBER_ID, ACCESS_TOKEN } = process.env;
     const apiVersion = process.env.META_API_VERSION || "v20.0";
@@ -65,6 +71,9 @@ export const wappClient = {
       },
     };
 
+    // --- Log the payload for debugging ---
+    console.log("Constructed Payload:", JSON.stringify(payload, null, 2));
+
     try {
       const response = await axios.post<WhatsAppSuccessResponse>(url, payload, {
         headers: {
@@ -88,6 +97,8 @@ export const wappClient = {
         // log the full payload for debugging
         console.error("Payload:", JSON.stringify(payload, null, 2));
       } else {
+        // log the full payload for debugging
+        console.error("Payload:", JSON.stringify(payload, null, 2));
         console.error(`❌ An unexpected error occurred:`, error);
       }
       throw error;
