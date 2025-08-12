@@ -1,25 +1,9 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-
 import { AppSidebar } from "@/components/app-sidebar";
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-// import data from "./data.json";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -33,9 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`antialiased bg-yellow-900`}>
         <SidebarProvider
           style={
             {
@@ -47,18 +29,13 @@ export default function RootLayout({
           <AppSidebar variant="inset" />
           <SidebarInset>
             <SiteHeader />
-            {children}
-            {/* <div className="flex flex-1 flex-col"> */}
-            {/* <div className="@container/main flex flex-1 flex-col gap-2"> */}
-            {/* <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6"> */}
-            {/* <SectionCards /> */}
-            {/* <div className="px-4 lg:px-6"> */}
-            {/* <ChartAreaInteractive /> */}
-            {/* </div> */}
-            {/* <DataTable data={data} /> */}
-            {/* </div> */}
-            {/* </div> */}
-            {/* </div> */}
+            <div className="flex flex-1 flex-col">
+              <div className="@container/main flex flex-1 flex-col gap-2">
+                {/* <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6"> */}
+                {children}
+                {/* </div> */}
+              </div>
+            </div>
           </SidebarInset>
         </SidebarProvider>
       </body>
