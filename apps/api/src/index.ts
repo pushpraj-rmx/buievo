@@ -1,14 +1,23 @@
 import "dotenv/config"; // 1. This MUST be the very first line
 import express from "express";
+import cors from "cors";
 import authRoutes from "./routes/auth.routes";
 import healthRoutes from "./routes/health.routes";
 import contactRoutes from "./routes/contact.routes";
+import mediaRoutes from "./routes/media.routes";
+import templateRoutes from "./routes/template.routes";
 import { redis } from "@whatssuite/redis"; // Import redis here
 
 const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()) || "*",
+    credentials: true,
+  })
+);
 
 async function startServer() {
   // --- ADD THIS LINE ---
@@ -28,6 +37,8 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/contacts", contactRoutes);
+app.use("/api/v1/media", mediaRoutes);
+app.use("/api/v1/templates", templateRoutes);
 
 startServer().catch((error) => {
   console.error("Error starting server:", error);

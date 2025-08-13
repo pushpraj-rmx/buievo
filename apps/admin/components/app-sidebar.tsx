@@ -56,9 +56,14 @@ const data = {
       icon: IconChartBar,
     },
     {
-      title: "Projects",
-      url: "#",
+      title: "Media",
+      url: "/media",
       icon: IconFolder,
+    },
+    {
+      title: "Templates",
+      url: "/templates",
+      icon: IconFileDescription,
     },
     {
       title: "Team",

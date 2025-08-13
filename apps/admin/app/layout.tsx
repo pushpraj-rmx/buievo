@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
+import { Toaster } from "@/components/ui/sonner";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 import type { Metadata } from "next";
@@ -37,6 +38,7 @@ export default function RootLayout({
               </div>
             </div>
           </SidebarInset>
+          <Toaster richColors position="top-right" />
         </SidebarProvider>
       </body>
     </html>

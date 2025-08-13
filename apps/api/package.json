@@ -15,11 +15,18 @@
   "dependencies": {
     "@whatssuite/db": "workspace:*",
     "@whatssuite/redis": "workspace:*",
+    "@whatssuite/media-manager": "workspace:*",
+    "@whatssuite/template-manager": "workspace:*",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "multer": "^1.4.5-lts.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
+    "@types/cors": "^2.8.17",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.15.3",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"

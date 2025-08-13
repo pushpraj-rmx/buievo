@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sterling Sentinel - Discreet Digital Protection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Charcoal, Off-White, Muted Gold -->
+    <!-- Application Structure Plan: A single-page vertical scrolling layout was chosen to guide the user through a compelling narrative, starting with the problem ("The Modern Vulnerability"), presenting the solution ("Our Engagements"), and building trust through clear value propositions ("The Sterling Sentinel Difference") and a transparent process ("Our Method"). This linear flow is ideal for a high-trust service, as it systematically builds a case before the call to action. Key interactions include an interactive toggle for the two service tiers, which makes the content more engaging and digestible than a static list, and subtle on-scroll animations to create a premium, polished feel. -->
+    <!-- Visualization & Content Choices: Report Info: Service Tiers -> Goal: Compare/Explain -> Viz/Presentation: Interactive Toggle -> Interaction: Click to switch content -> Justification: Prevents a long, monotonous list and encourages user engagement. Report Info: 4-Step Process -> Goal: Organize/Inform -> Viz/Presentation: CSS-based Numbered Diagram -> Interaction: Hover effects -> Justification: Visually breaks down the process, making it easy to understand at a glance while avoiding images/SVG to maintain a clean, fast-loading design. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+      :root {
+        --bg-charcoal: #121212;
+        --text-off-white: #eaeaea;
+        --accent-gold: #b89b72;
+        --border-gray: #333333;
+      }
+      body {
+        background-color: var(--bg-charcoal);
+        color: var(--text-off-white);
+        font-family: "Inter", sans-serif;
+      }
+      .gold-accent {
+        color: var(--accent-gold);
+      }
+      .gold-border {
+        border-color: var(--accent-gold);
+      }
+      .gray-border {
+        border-color: var(--border-gray);
+      }
+      .gold-bg {
+        background-color: var(--accent-gold);
+      }
+      .charcoal-bg {
+        background-color: var(--bg-charcoal);
+      }
+
+      .nav-link::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 1px;
+        background: var(--accent-gold);
+        transition: width 0.3s;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      .fade-in-section {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.6s ease-out,
+          transform 0.6s ease-out;
+      }
+      .fade-in-section.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .service-toggle {
+        transition:
+          background-color 0.3s,
+          color 0.3s;
+      }
+      .service-toggle.active {
+        background-color: var(--accent-gold);
+        color: var(--bg-charcoal);
+      }
+      .service-content {
+        transition:
+          opacity 0.5s ease-in-out,
+          max-height 0.5s ease-in-out;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+      .service-content.visible {
+        max-height: 1000px; /* Adjust as needed */
+        opacity: 1;
+      }
+      .method-step {
+        transition:
+          border-color 0.3s,
+          color 0.3s;
+      }
+      .method-step:hover {
+        border-color: var(--accent-gold);
+        color: var(--accent-gold);
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="antialiased">
+    <header
+      class="fixed top-0 left-0 right-0 z-50 bg-opacity-80 backdrop-blur-sm charcoal-bg"
+    >
+      <div
+        class="container mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <a
+          href="#hero"
+          class="text-xl font-bold tracking-wider"
+          style="font-family: &quot;Playfair Display&quot;, serif"
+          >Sterling Sentinel</a
+        >
+        <nav class="hidden md:flex space-x-8">
+          <a
+            href="#engagements"
+            class="nav-link text-sm uppercase tracking-widest"
+            >Engagements</a
+          >
+          <a
+            href="#difference"
+            class="nav-link text-sm uppercase tracking-widest"
+            >Difference</a
+          >
+          <a href="#method" class="nav-link text-sm uppercase tracking-widest"
+            >Method</a
+          >
+          <a href="#contact" class="nav-link text-sm uppercase tracking-widest"
+            >Contact</a
+          >
+        </nav>
+        <div class="md:hidden">
+          <!-- Mobile menu can be added here -->
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section
+        id="hero"
+        class="h-screen flex items-center justify-center text-center fade-in-section is-visible"
+      >
+        <div class="max-w-4xl mx-auto px-6">
+          <h1
+            class="text-4xl md:text-6xl font-bold leading-tight"
+            style="font-family: &quot;Playfair Display&quot;, serif"
+          >
+            In a connected world, your greatest asset is your privacy.
+          </h1>
+          <p class="mt-6 text-lg md:text-xl text-off-white/80">
+            Sterling Sentinel provides discreet, bespoke cybersecurity
+            partnerships for prominent individuals and families. We protect your
+            privacy, your assets, and your peace of mind.
+          </p>
+        </div>
+      </section>
+
+      <section id="mandate" class="py-20 md:py-32">
+        <div class="container mx-auto px-6">
+          <div class="grid md:grid-cols-5 gap-12 items-center">
+            <div class="md:col-span-2 fade-in-section">
+              <h2
+                class="text-3xl font-bold gold-accent"
+                style="font-family: &quot;Playfair Display&quot;, serif"
+              >
+                Our Mandate
+              </h2>
+              <p class="mt-4 text-lg text-off-white/80">
+                Our mandate is simple: to act as the single, trusted guardian of
+                your personal digital world. We operate with the discretion of a
+                private counsel and the precision of a security specialist,
+                ensuring technology serves you, not exposes you.
+              </p>
+            </div>
+            <div class="md:col-span-3 fade-in-section">
+              <div class="border-l-2 gold-border pl-8">
+                <h3
+                  class="text-2xl font-bold"
+                  style="font-family: &quot;Playfair Display&quot;, serif"
+                >
+                  The Modern Vulnerability
+                </h3>
+                <p class="mt-4 text-off-white/80">
+                  You have forged a formidable chain of security around your
+                  life, with corporate-grade protection for your business and
+                  physical security for your home. But this chain has a
+                  vulnerability.
+                </p>
+                <blockquote class="mt-4 italic text-off-white/70">
+                  The 18th-century philosopher Thomas Reid observed that "a
+                  chain is only as strong as its weakest link." Today, that weak
+                  link is your personal digital life. It is the often-overlooked
+                  area that has become the primary target for sophisticated
+                  threats—a gap attackers exploit by targeting your family,
+                  personal devices, and public profile, leaving your entire
+                  structure exposed.
+                </blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="engagements" class="py-20 md:py-32 charcoal-bg">
+        <div class="container mx-auto px-6 text-center fade-in-section">
+          <h2
+            class="text-3xl font-bold"
+            style="font-family: &quot;Playfair Display&quot;, serif"
+          >
+            Our Engagements
+          </h2>
+          <p class="mt-4 max-w-3xl mx-auto text-off-white/80">
+            Our partnerships are structured to provide comprehensive, end-to-end
+            security through a clear, two-tiered partnership model.
+          </p>
+
+          <div
+            class="mt-12 max-w-md mx-auto border-2 gray-border rounded-full p-1 flex"
+          >
+            <button
+              id="auditBtn"
+              class="service-toggle w-1/2 py-2 rounded-full font-semibold active"
+            >
+              Sentinel Audit
+            </button>
+            <button
+              id="retainerBtn"
+              class="service-toggle w-1/2 py-2 rounded-full font-semibold"
+            >
+              Guardian Retainer
+            </button>
+          </div>
+
+          <div class="mt-8 text-left max-w-4xl mx-auto">
+            <div id="auditContent" class="service-content visible">
+              <div class="border gray-border rounded-lg p-8">
+                <h3
+                  class="text-2xl font-bold gold-accent"
+                  style="font-family: &quot;Playfair Display&quot;, serif"
+                >
+                  1. The Sentinel Audit (Foundation)
+                </h3>
+                <p class="mt-2 text-off-white/80">
+                  A comprehensive, one-time assessment and fortification of your
+                  entire personal digital ecosystem.
+                </p>
+                <ul class="mt-6 space-y-4">
+                  <li class="flex items-start">
+                    <span class="gold-accent mr-3 mt-1">◆</span
+                    ><span
+                      ><strong>Fortifying Your Sanctum:</strong> On-site audit
+                      and reinforcement of your home, yacht, and personal office
+                      networks.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="gold-accent mr-3 mt-1">◆</span
+                    ><span
+                      ><strong>Hardening Your Devices:</strong> Securing the
+                      personal technology used by you and your immediate
+                      family.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="gold-accent mr-3 mt-1">◆</span
+                    ><span
+                      ><strong>Erasing Your Digital Shadow:</strong> Reducing
+                      your public data footprint to mitigate the risk of social
+                      engineering and identity theft.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="gold-accent mr-3 mt-1">◆</span
+                    ><span
+                      ><strong>Your Confidential Security Briefing:</strong> A
+                      clear, strategic report and roadmap for enduring
+                      protection.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div id="retainerContent" class="service-content">
+              <div class="border gray-border rounded-lg p-8">
+                <h3
+                  class="text-2xl font-bold gold-accent"
+                  style="font-family: &quot;Playfair Display&quot;, serif"
+                >
+                  2. The Guardian Retainer (Partnership)
+                </h3>
+                <p class="mt-2 text-off-white/80">
+                  An ongoing subscription for continuous, proactive protection
+                  and on-call support.
+                </p>
+                <ul class="mt-6 space-y-4">
+                  <li class="flex items-start">
+                    <span class="gold-accent mr-3 mt-1">◆</span
+                    ><span
+                      ><strong>Proactive Threat Intelligence:</strong>
+                      Continuous monitoring for emerging threats and data
+                      breaches that could impact your family or assets.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="gold-accent mr-3 mt-1">◆</span
+                    ><span
+                      ><strong>Direct Principal Access:</strong> Immediate,
+                      on-call access to your dedicated security principal for
+                      any questions or concerns.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="gold-accent mr-3 mt-1">◆</span
+                    ><span
+                      ><strong>Quarterly Strategy Reviews:</strong> Regular
+                      adjustments to your security posture to adapt to new
+                      technologies and evolving risks.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <span class="gold-accent mr-3 mt-1">◆</span
+                    ><span
+                      ><strong>A Unified Shield:</strong> We work seamlessly
+                      alongside your existing team—your wealth manager, legal
+                      counsel, and physical security—to ensure complete
+                      protection.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="difference" class="py-20 md:py-32">
+        <div class="container mx-auto px-6 text-center fade-in-section">
+          <h2
+            class="text-3xl font-bold"
+            style="font-family: &quot;Playfair Display&quot;, serif"
+          >
+            The Sterling Sentinel Difference
+          </h2>
+          <div class="mt-16 grid md:grid-cols-3 gap-12 text-left">
+            <div class="border-t-2 gold-border pt-6">
+              <h3 class="text-xl font-bold">A Singular Focus</h3>
+              <p class="mt-2 text-off-white/80">
+                Corporate solutions protect your business. We protect *you*. Our
+                entire practice is dedicated to the unique security challenges
+                of your personal life.
+              </p>
+            </div>
+            <div class="border-t-2 gold-border pt-6">
+              <h3 class="text-xl font-bold">A Personal Principal</h3>
+              <p class="mt-2 text-off-white/80">
+                Your security is never delegated. You have a direct, one-to-one
+                relationship with a dedicated principal who understands your
+                world.
+              </p>
+            </div>
+            <div class="border-t-2 gold-border pt-6">
+              <h3 class="text-xl font-bold">A Seamless Integration</h3>
+              <p class="mt-2 text-off-white/80">
+                We are the vital link that connects your existing teams,
+                creating a unified and impenetrable layer of security around
+                you.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="method" class="py-20 md:py-32 charcoal-bg">
+        <div class="container mx-auto px-6 text-center fade-in-section">
+          <h2
+            class="text-3xl font-bold"
+            style="font-family: &quot;Playfair Display&quot;, serif"
+          >
+            Our Method
+          </h2>
+          <p class="mt-4 max-w-3xl mx-auto text-off-white/80">
+            Our engagement process is built on discretion, clarity, and
+            effectiveness.
+          </p>
+          <div class="mt-16 grid md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+            <div class="method-step border-b-2 gray-border p-6 text-left">
+              <div class="text-3xl font-bold gold-accent">01</div>
+              <h3 class="mt-4 font-bold">Discovery & Discretion</h3>
+              <p class="mt-2 text-sm text-off-white/70">
+                A confidential meeting to understand your unique context and
+                concerns.
+              </p>
+            </div>
+            <div class="method-step border-b-2 gray-border p-6 text-left">
+              <div class="text-3xl font-bold gold-accent">02</div>
+              <h3 class="mt-4 font-bold">Assessment & Analysis</h3>
+              <p class="mt-2 text-sm text-off-white/70">
+                The on-site and digital execution of the Sentinel Audit.
+              </p>
+            </div>
+            <div class="method-step border-b-2 gray-border p-6 text-left">
+              <div class="text-3xl font-bold gold-accent">03</div>
+              <h3 class="mt-4 font-bold">Fortification & Implementation</h3>
+              <p class="mt-2 text-sm text-off-white/70">
+                The collaborative rollout of your bespoke security strategy.
+              </p>
+            </div>
+            <div class="method-step border-b-2 gray-border p-6 text-left">
+              <div class="text-3xl font-bold gold-accent">04</div>
+              <h3 class="mt-4 font-bold">Vigilance & Partnership</h3>
+              <p class="mt-2 text-sm text-off-white/70">
+                The seamless transition to our ongoing Guardian Retainer.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="py-20 md:py-32">
+        <div class="container mx-auto px-6 text-center fade-in-section">
+          <h2
+            class="text-3xl font-bold"
+            style="font-family: &quot;Playfair Display&quot;, serif"
+          >
+            Initiate Contact
+          </h2>
+          <p class="mt-4 max-w-2xl mx-auto text-off-white/80">
+            Access to our services is typically granted through referral from a
+            trusted advisor. For a direct, confidential inquiry, you may use the
+            secure channel below.
+          </p>
+          <div class="mt-12 max-w-xl mx-auto">
+            <form>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  class="w-full p-3 rounded-md charcoal-bg border gray-border focus:gold-border focus:outline-none"
+                />
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  class="w-full p-3 rounded-md charcoal-bg border gray-border focus:gold-border focus:outline-none"
+                />
+              </div>
+              <textarea
+                placeholder="Brief, non-confidential message..."
+                rows="4"
+                class="w-full mt-6 p-3 rounded-md charcoal-bg border gray-border focus:gold-border focus:outline-none"
+              ></textarea>
+              <button
+                type="submit"
+                class="mt-6 px-12 py-3 rounded-md gold-bg text-charcoal font-bold hover:opacity-90 transition-opacity"
+              >
+                Submit Secure Inquiry
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="py-8 border-t gray-border">
+      <div class="container mx-auto px-6 text-center text-sm text-off-white/60">
+        <p>&copy; 2025 Sterling Sentinel. All Rights Reserved.</p>
+        <p class="mt-2">Discreet Digital Protection for Private Clients.</p>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const sections = document.querySelectorAll(".fade-in-section");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        sections.forEach((section) => {
+          observer.observe(section);
+        });
+
+        const auditBtn = document.getElementById("auditBtn");
+        const retainerBtn = document.getElementById("retainerBtn");
+        const auditContent = document.getElementById("auditContent");
+        const retainerContent = document.getElementById("retainerContent");
+
+        function toggleServices(
+          activeBtn,
+          inactiveBtn,
+          visibleContent,
+          hiddenContent
+        ) {
+          activeBtn.classList.add("active");
+          inactiveBtn.classList.remove("active");
+          visibleContent.classList.add("visible");
+          hiddenContent.classList.remove("visible");
+        }
+
+        auditBtn.addEventListener("click", () => {
+          toggleServices(auditBtn, retainerBtn, auditContent, retainerContent);
+        });
+
+        retainerBtn.addEventListener("click", () => {
+          toggleServices(retainerBtn, auditBtn, retainerContent, auditContent);
+        });
+      });
+    </script>
+  </body>
+</html>

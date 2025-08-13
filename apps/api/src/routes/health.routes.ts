@@ -3,7 +3,7 @@ import { Router, Request, Response } from 'express';
 
 const router = Router();
 
-router.get('/health', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     await redis.ping();
     res.status(200).json({ 

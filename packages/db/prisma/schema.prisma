@@ -133,3 +133,21 @@ model Webhook {
 
   @@map("webhooks")
 }
+
+model MediaAsset {
+  id         String   @id @default(uuid())
+  waMediaId  String   @unique
+  type       String
+  mimeType   String
+  fileName   String?
+  size       Int?
+  sha256     String?
+  url        String?
+  status     String   @default("UPLOADED")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("media_assets")
+  @@index([type])
+  @@index([createdAt])
+}
