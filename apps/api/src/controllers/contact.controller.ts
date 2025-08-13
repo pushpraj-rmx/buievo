@@ -41,6 +41,9 @@ export const sendMessageToNumber = async (req: Request, res: Response) => {
     templateName = "hello_world",
     params = [],
     buttonParams = [],
+    imageUrl, // Add support for image URL
+    documentUrl, // Add support for document URL
+    filename, // Add support for filename
   } = req.body;
   if (!phoneNumber) {
     return res.status(400).json({ message: "phoneNumber is required" });
@@ -53,6 +56,9 @@ export const sendMessageToNumber = async (req: Request, res: Response) => {
       templateName,
       params,
       buttonParams,
+      imageUrl, // Include imageUrl in the job payload
+      documentUrl, // Include documentUrl in the job payload
+      filename, // Include filename in the job payload
     };
 
     // Publish the job to the Redis queue

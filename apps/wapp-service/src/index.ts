@@ -15,6 +15,9 @@ interface JobPayload {
   templateName: string;
   params?: string[];
   buttonParams?: string[];
+  imageUrl?: string; // Add support for image URL
+  documentUrl?: string; // Add support for document URL
+  filename?: string; // Add support for filename
 }
 
 async function processJob(jobData: string): Promise<void> {
@@ -25,6 +28,9 @@ async function processJob(jobData: string): Promise<void> {
       templateName,
       params,
       buttonParams,
+      imageUrl,
+      documentUrl,
+      filename,
     }: JobPayload = JSON.parse(jobData);
 
     let to: string | undefined;
@@ -48,16 +54,23 @@ async function processJob(jobData: string): Promise<void> {
       throw new Error("No contactId or phoneNumber provided in job");
     }
 
+    console.log(
+      "Parsed job data:",
+      JSON.stringify({ to, templateName, params, buttonParams, imageUrl, documentUrl, filename }, null, 2)
+    );
+
+    console.log("🚀 Calling wappClient.sendTemplateMessage...");
+    
     await wappClient.sendTemplateMessage({
       to,
       templateName,
       bodyParams: params,
       buttonParams,
+      imageUrl,
+      documentUrl,
+      filename,
     });
-    console.log(
-      "Parsed job data:",
-      JSON.stringify({ to, templateName, params, buttonParams }, null, 2)
-    );
+    
     console.log(
       `✅ Message sent successfully to ${to} using template ${templateName}`
     );
