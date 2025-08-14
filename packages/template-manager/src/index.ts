@@ -8,7 +8,7 @@ export interface TemplateDefinition {
     type: "HEADER" | "BODY" | "FOOTER" | "BUTTONS";
     format?: "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT";
     text?: string;
-    example?: any;
+    example?: unknown;
     buttons?: Array<{
       type: "QUICK_REPLY" | "URL" | "PHONE_NUMBER" | "COPY_CODE";
       text?: string;
@@ -79,7 +79,9 @@ export class TemplateManager {
 
   async status(templateName: string) {
     const data = await this.get(templateName);
-    const item = data?.data?.find((t: any) => t.name === templateName);
+    const item = (data?.data as Array<{ name: string; status?: TemplateStatus }> | undefined)?.find(
+      (t) => t.name === templateName
+    );
     return item?.status as TemplateStatus | undefined;
   }
 }

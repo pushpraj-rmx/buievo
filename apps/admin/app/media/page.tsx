@@ -162,17 +162,22 @@ export default function MediaPage() {
                   <TableCell>{r.size}</TableCell>
                   <TableCell>{r.type}</TableCell>
                   <TableCell>
-                    {r.url ? (
-                      r.mimeType?.startsWith("image/") ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={r.url} alt={r.fileName || r.waMediaId} className="h-10 w-10 object-cover rounded" />
-                      ) : (
-                        <a href={r.url} target="_blank" rel="noreferrer" className="underline text-blue-500">
-                          Open
-                        </a>
-                      )
+                    {r.mimeType?.startsWith("image/") ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`/api/v1/media/${encodeURIComponent(r.id)}/file`}
+                        alt={r.fileName || r.waMediaId}
+                        className="h-10 w-10 object-cover rounded"
+                      />
                     ) : (
-                      <span className="text-xs text-muted-foreground">No URL</span>
+                      <a
+                        href={`/api/v1/media/${encodeURIComponent(r.id)}/file`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline text-blue-500"
+                      >
+                        Open
+                      </a>
                     )}
                   </TableCell>
                   <TableCell>

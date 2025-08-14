@@ -39,7 +39,7 @@ export class MediaManager {
 
   async upload(params: UploadMediaParams): Promise<MediaInfo> {
     const form = new FormData();
-    form.append("file", params.data as any, params.fileName);
+    form.append("file", params.data as unknown as Blob, params.fileName);
     form.append("type", params.mimeType);
     form.append("messaging_product", "whatsapp");
 
