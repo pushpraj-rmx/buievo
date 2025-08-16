@@ -43,9 +43,14 @@ router.get("/:id/file", async (req, res) => {
     }
 
     const mm = new MediaManager({
-      baseUrl: `https://graph.facebook.com/${apiVersion}`,
-      accessToken,
-      phoneNumberId,
+      storage: {
+        provider: "whatsapp",
+        whatsapp: {
+          baseUrl: `https://graph.facebook.com/${apiVersion}`,
+          accessToken,
+          phoneNumberId,
+        }
+      }
     });
     const info = await mm.get(mediaId);
     if (!info.url) {
