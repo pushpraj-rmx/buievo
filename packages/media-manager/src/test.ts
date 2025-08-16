@@ -1,4 +1,4 @@
-import { MediaManager, LegacyMediaManager } from "./index";
+import { MediaManager, LegacyMediaManager } from "./index.js";
 
 // Test the new MediaManager
 async function testNewMediaManager() {
@@ -122,7 +122,8 @@ async function runTests() {
 }
 
 // Run tests if this file is executed directly
-if (require.main === module) {
+// Note: This check is simplified for compatibility with both CJS and ESM
+if (typeof process !== 'undefined' && process.argv[1] && process.argv[1].includes('test.ts')) {
   runTests().catch(console.error);
 }
 

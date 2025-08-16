@@ -1,5 +1,5 @@
-import { MediaManager, LegacyMediaManager } from "./index";
-import { getStorageConfig, getFallbackStorageConfig, validateStorageConfig } from "./config";
+import { MediaManager, LegacyMediaManager } from "./index.js";
+import { getStorageConfig, getFallbackStorageConfig, validateStorageConfig } from "./config.js";
 
 // Example 1: Using the new configurable MediaManager
 export async function exampleNewMediaManager() {

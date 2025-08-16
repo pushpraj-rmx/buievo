@@ -334,5 +334,5 @@ export class LegacyMediaManager extends MediaManager {
 }
 
 // Export configuration utilities
-export * from "./config";
-export * from "./examples";
+export * from "./config.js";
+export * from "./examples.js";

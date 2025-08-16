@@ -35,7 +35,6 @@ type TemplateRow = {
   name: string;
   status?: string;
   category?: string;
-  language?: string;
 };
 
 type TemplateComponent = {
@@ -63,9 +62,8 @@ type TemplateDbData = {
   content?: TemplateContent;
 };
 
-export default function TemplatesPage() {
+export default function WhatsAppTemplatesPage() {
   const [name, setName] = useState("");
-  const [language, setLanguage] = useState("en_US");
   const [category, setCategory] = useState<
     "MARKETING" | "UTILITY" | "AUTHENTICATION"
   >("UTILITY");
@@ -81,6 +79,9 @@ export default function TemplatesPage() {
   const [loadMoreLoading, setLoadMoreLoading] = useState(false);
 
   const [selected, setSelected] = useState<TemplateDbData | null>(null);
+
+  // WhatsApp templates are always in English (en_US)
+  const LANGUAGE = "en_US";
 
   async function createTemplate() {
     if (!name.trim()) {
@@ -112,7 +113,7 @@ export default function TemplatesPage() {
 
       const body = {
         name: name.trim(),
-        language,
+        language: LANGUAGE,
         category,
         components,
       };
@@ -129,7 +130,6 @@ export default function TemplatesPage() {
             name: body.name,
             status: "PENDING",
             category,
-            language,
           },
           ...r,
         ]);
@@ -179,7 +179,6 @@ export default function TemplatesPage() {
           name: x.name,
           status: x.status,
           category: x.content?.category,
-          language: x.content?.language,
         }))
       );
     } finally {
@@ -199,7 +198,7 @@ export default function TemplatesPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="template-name">Template Name *</Label>
               <Input
@@ -211,19 +210,6 @@ export default function TemplatesPage() {
               />
               <p className="text-xs text-muted-foreground mt-1">
                 Use lowercase with underscores (e.g., welcome_message)
-              </p>
-            </div>
-            <div>
-              <Label htmlFor="template-language">Language</Label>
-              <Input
-                id="template-language"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                placeholder="en_US"
-                className="mt-1"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Language code (e.g., en_US, es_ES)
               </p>
             </div>
             <div>
@@ -270,13 +256,11 @@ export default function TemplatesPage() {
                 id="template-body"
                 value={bodyText}
                 onChange={(e) => setBodyText(e.target.value)}
-                placeholder="Hello {{1}}, welcome to our platform! We're excited to have you on board."
+                placeholder="Hello {`{{1}}`}, welcome to our platform! We're excited to have you on board."
                 className="mt-1 min-h-[100px]"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                <p>
-                  {"Main message content. Use {{1}}, {{2}}, etc. for variables"}
-                </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                Main message content. Use &#123;&#123;1&#125;&#125;, &#123;&#123;2&#125;&#125;, etc. for variables
               </p>
             </div>
 
@@ -317,7 +301,7 @@ export default function TemplatesPage() {
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Templates</CardTitle>
+          <CardTitle>WhatsApp Templates</CardTitle>
         </CardHeader>
         <CardContent>
           {listLoading ? (
@@ -332,7 +316,6 @@ export default function TemplatesPage() {
                 <TableRow>
                   <TableHead>Template Name</TableHead>
                   <TableHead>Category</TableHead>
-                  <TableHead>Language</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -351,9 +334,6 @@ export default function TemplatesPage() {
                       >
                         {r.category || "Unknown"}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {r.language || "en_US"}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -528,7 +508,6 @@ export default function TemplatesPage() {
                     name: x.name,
                     status: x.status,
                     category: x.content?.category,
-                    language: x.content?.language,
                   })),
                 ]);
               } finally {

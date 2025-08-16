@@ -1,4 +1,4 @@
-import { StorageConfig } from "./index";
+import { StorageConfig } from "./index.js";
 
 // Environment-based configuration
 export function getStorageConfig(): StorageConfig {

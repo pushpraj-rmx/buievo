@@ -231,6 +231,9 @@ importers:
       '@whatssuite/template-manager':
         specifier: workspace:*
         version: link:../../packages/template-manager
+      '@whatssuite/wapp-client':
+        specifier: workspace:*
+        version: link:../../packages/wapp-client
       axios:
         specifier: ^1.11.0
         version: 1.11.0
