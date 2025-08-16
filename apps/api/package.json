@@ -17,6 +17,7 @@
     "@whatssuite/media-manager": "workspace:*",
     "@whatssuite/redis": "workspace:*",
     "@whatssuite/template-manager": "workspace:*",
+    "@whatssuite/wapp-client": "workspace:*",
     "axios": "^1.11.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

@@ -10,6 +10,11 @@ export interface SendTemplateMessageArgs {
   filename?: string; // Optional filename for documents
 }
 
+export interface SendTextMessageArgs {
+  to: string;
+  text: string;
+}
+
 export interface WhatsAppSuccessResponse {
   messaging_product: "whatsapp";
   contacts: { input: string; wa_id: string }[];
@@ -17,6 +22,73 @@ export interface WhatsAppSuccessResponse {
 }
 
 export const wappClient = {
+  async sendTextMessage(
+    args: SendTextMessageArgs
+  ): Promise<WhatsAppSuccessResponse> {
+    console.log(
+      "wappClient.sendTextMessage received args:",
+      JSON.stringify(args, null, 2)
+    );
+
+    const { to, text } = args;
+    const { PHONE_NUMBER_ID, ACCESS_TOKEN } = process.env;
+    const apiVersion = process.env.META_API_VERSION || "v20.0";
+    const url = `https://graph.facebook.com/${apiVersion}/${PHONE_NUMBER_ID}/messages`;
+
+    if (!PHONE_NUMBER_ID || !ACCESS_TOKEN) {
+      throw new Error("WhatsApp environment variables are not set!");
+    }
+
+    console.log("🔧 Configuration:");
+    console.log("  - API Version:", apiVersion);
+    console.log("  - Phone Number ID:", PHONE_NUMBER_ID ? `${PHONE_NUMBER_ID.substring(0, 4)}...` : "NOT SET");
+    console.log("  - Access Token:", ACCESS_TOKEN ? `${ACCESS_TOKEN.substring(0, 10)}...` : "NOT SET");
+    console.log("  - API URL:", url);
+
+    const payload = {
+      messaging_product: "whatsapp" as const,
+      to,
+      type: "text" as const,
+      text: {
+        body: text,
+      },
+    };
+
+    console.log("Constructed Payload:", JSON.stringify(payload, null, 2));
+
+    try {
+      const response = await axios.post<WhatsAppSuccessResponse>(url, payload, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(
+        `✅ Text message sent successfully to ${to} (Status: ${response.status})`
+      );
+      return response.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.error?.message || error.message;
+        console.error(
+          `❌ Failed to send text message to ${to} (Status: ${error.response?.status}):`,
+          errorMessage
+        );
+        
+        console.error("🔍 Full Meta API Error Response:", JSON.stringify(error.response?.data, null, 2));
+        console.error("🔍 HTTP Status:", error.response?.status);
+        console.error("🔍 Error Headers:", error.response?.headers);
+        console.error("📤 Sent Payload:", JSON.stringify(payload, null, 2));
+      } else {
+        console.error("📤 Sent Payload:", JSON.stringify(payload, null, 2));
+        console.error(`❌ An unexpected error occurred:`, error);
+      }
+      throw error;
+    }
+  },
+
   async sendTemplateMessage(
     args: SendTemplateMessageArgs
   ): Promise<WhatsAppSuccessResponse> {

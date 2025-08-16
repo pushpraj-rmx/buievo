@@ -11,9 +11,14 @@ function getMediaManager(): MediaManager {
     throw new Error("Missing WhatsApp env vars: ACCESS_TOKEN/PHONE_NUMBER_ID");
   }
   return new MediaManager({
-    baseUrl: `https://graph.facebook.com/${apiVersion}`,
-    accessToken,
-    phoneNumberId,
+    storage: {
+      provider: "whatsapp",
+      whatsapp: {
+        baseUrl: `https://graph.facebook.com/${apiVersion}`,
+        accessToken,
+        phoneNumberId,
+      }
+    }
   });
 }
 
@@ -30,6 +35,24 @@ export async function uploadMedia(req: Request, res: Response) {
 
     if (!file) {
       return res.status(400).json({ message: "file is required (multipart/form-data)" });
+    }
+
+    // WhatsApp media size limits (in bytes)
+    const WHATSAPP_MEDIA_LIMITS = {
+      image: 5 * 1024 * 1024,      // 5MB
+      video: 16 * 1024 * 1024,     // 16MB
+      audio: 16 * 1024 * 1024,     // 16MB
+      document: 100 * 1024 * 1024, // 100MB
+    };
+
+    // Validate file size
+    const maxSize = WHATSAPP_MEDIA_LIMITS[type as keyof typeof WHATSAPP_MEDIA_LIMITS];
+    if (file.size > maxSize) {
+      const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(1);
+      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      return res.status(400).json({ 
+        message: `${type.charAt(0).toUpperCase() + type.slice(1)} files cannot exceed ${maxSizeMB}MB. Your file is ${fileSizeMB}MB.` 
+      });
     }
 
     const mediaManager = getMediaManager();
