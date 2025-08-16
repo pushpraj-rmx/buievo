@@ -49,6 +49,13 @@ export default function MediaPage() {
   type MediaDetail = { db?: unknown; remote?: unknown };
   const [selected, setSelected] = useState<MediaDetail | null>(null);
 
+  // Loading states for different actions
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [viewLoading, setViewLoading] = useState<string | null>(null); // tracks which row is loading
+  const [refreshLoading, setRefreshLoading] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [loadMoreLoading, setLoadMoreLoading] = useState(false);
+
   const { uploadFile } = useUpload();
 
   async function fetchList() {
@@ -82,6 +89,7 @@ export default function MediaPage() {
   async function handleUpload() {
     if (!file) return;
 
+    setUploadLoading(true);
     uploadFile({
       file,
       type,
@@ -99,9 +107,11 @@ export default function MediaPage() {
           ...r,
         ]);
         setFile(null);
+        setUploadLoading(false);
       },
       onError: (error) => {
         toast.error(error);
+        setUploadLoading(false);
       },
     });
   }
@@ -208,8 +218,15 @@ export default function MediaPage() {
               )}
             </div>
             <div>
-              <Button disabled={!file} onClick={handleUpload}>
-                Upload
+              <Button disabled={!file || uploadLoading} onClick={handleUpload}>
+                {uploadLoading ? (
+                  <>
+                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Uploading...
+                  </>
+                ) : (
+                  "Upload"
+                )}
               </Button>
             </div>
           </div>
@@ -278,79 +295,174 @@ export default function MediaPage() {
                             size="sm"
                             variant="outline"
                             className="mr-2"
+                            disabled={viewLoading === r.id}
                             onClick={async () => {
-                              const res = await fetch(`/api/v1/media/${r.id}`);
-                              if (res.ok) {
-                                const json = await res.json();
-                                setSelected(json);
-                              } else {
-                                toast.error("Failed to load details");
+                              setViewLoading(r.id);
+                              try {
+                                const res = await fetch(
+                                  `/api/v1/media/${r.id}`
+                                );
+                                if (res.ok) {
+                                  const json = await res.json();
+                                  setSelected(json);
+                                } else {
+                                  toast.error("Failed to load details");
+                                }
+                              } finally {
+                                setViewLoading(null);
                               }
                             }}
                           >
-                            View
+                            {viewLoading === r.id ? (
+                              <>
+                                <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                Loading...
+                              </>
+                            ) : (
+                              "View"
+                            )}
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
+                        <DialogContent className="max-w-4xl">
                           <DialogHeader>
                             <DialogTitle>
                               Media: {r.fileName || r.waMediaId}
                             </DialogTitle>
                           </DialogHeader>
-                          <pre className="max-h-[60vh] overflow-auto text-xs bg-muted rounded p-3">
-                            {selected
-                              ? JSON.stringify(selected, null, 2)
-                              : "Loading..."}
-                          </pre>
+                          {selected ? (
+                            r.mimeType?.startsWith("image/") ? (
+                              <div className="space-y-4">
+                                <div className="flex justify-center">
+                                  <img
+                                    src={`/api/v1/media/${encodeURIComponent(r.id)}/file`}
+                                    alt={r.fileName || r.waMediaId}
+                                    className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-lg"
+                                  />
+                                </div>
+                                <div className="bg-muted rounded p-3">
+                                  {/* <h4 className="font-semibold mb-2">
+                                    Media Details:
+                                  </h4>
+                                  <pre className="text-xs overflow-auto max-h-[200px]">
+                                    {JSON.stringify(selected, null, 2)}
+                                  </pre> */}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-4">
+                                <div className="flex justify-center">
+                                  <div className="text-center p-8 bg-muted rounded-lg">
+                                    <p className="text-lg font-medium mb-2">
+                                      {r.mimeType?.startsWith("video/")
+                                        ? "🎥 Video File"
+                                        : r.mimeType?.startsWith("audio/")
+                                          ? "🎵 Audio File"
+                                          : "📄 Document"}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                      {r.fileName || r.waMediaId}
+                                    </p>
+                                    <Button asChild>
+                                      <a
+                                        href={`/api/v1/media/${encodeURIComponent(r.id)}/file`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                      >
+                                        Open File
+                                      </a>
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="bg-muted rounded p-3">
+                                  <h4 className="font-semibold mb-2">
+                                    Media Details:
+                                  </h4>
+                                  <pre className="text-xs overflow-auto max-h-[200px]">
+                                    {JSON.stringify(selected, null, 2)}
+                                  </pre>
+                                </div>
+                              </div>
+                            )
+                          ) : (
+                            <div className="flex justify-center p-8">
+                              <p>Loading...</p>
+                            </div>
+                          )}
                         </DialogContent>
                       </Dialog>
                       <Button
                         size="sm"
                         variant="outline"
                         className="mr-2"
+                        disabled={refreshLoading === r.id}
                         onClick={async () => {
-                          const res = await fetch(`/api/v1/media/${r.id}`);
-                          if (res.ok) {
-                            const json = (await res.json()) as {
-                              remote?: { url?: string; sha256?: string };
-                            };
-                            const remoteUrl = json?.remote?.url;
-                            if (remoteUrl) {
-                              setRows((prev) =>
-                                prev.map((x) =>
-                                  x.id === r.id ? { ...x, url: remoteUrl } : x
-                                )
-                              );
-                              toast.success("Info refreshed");
+                          setRefreshLoading(r.id);
+                          try {
+                            const res = await fetch(`/api/v1/media/${r.id}`);
+                            if (res.ok) {
+                              const json = (await res.json()) as {
+                                remote?: { url?: string; sha256?: string };
+                              };
+                              const remoteUrl = json?.remote?.url;
+                              if (remoteUrl) {
+                                setRows((prev) =>
+                                  prev.map((x) =>
+                                    x.id === r.id ? { ...x, url: remoteUrl } : x
+                                  )
+                                );
+                                toast.success("Info refreshed");
+                              } else {
+                                toast.message("No URL available yet");
+                              }
                             } else {
-                              toast.message("No URL available yet");
+                              toast.error("Failed to refresh info");
                             }
-                          } else {
-                            toast.error("Failed to refresh info");
+                          } finally {
+                            setRefreshLoading(null);
                           }
                         }}
                       >
-                        Refresh
+                        {refreshLoading === r.id ? (
+                          <>
+                            <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            Refreshing...
+                          </>
+                        ) : (
+                          "Refresh"
+                        )}
                       </Button>
                       <Button
                         size="sm"
                         variant="destructive"
+                        disabled={deleteLoading === r.id}
                         onClick={async () => {
-                          const res = await fetch(`/api/v1/media/${r.id}`, {
-                            method: "DELETE",
-                          });
-                          if (res.ok) {
-                            toast.success("Deleted");
-                            setRows((prev) =>
-                              prev.filter((x) => x.id !== r.id)
-                            );
-                          } else {
-                            const j = await res.json().catch(() => ({}));
-                            toast.error(j.message || "Delete failed");
+                          setDeleteLoading(r.id);
+                          try {
+                            const res = await fetch(`/api/v1/media/${r.id}`, {
+                              method: "DELETE",
+                            });
+                            if (res.ok) {
+                              toast.success("Deleted");
+                              setRows((prev) =>
+                                prev.filter((x) => x.id !== r.id)
+                              );
+                            } else {
+                              const j = await res.json().catch(() => ({}));
+                              toast.error(j.message || "Delete failed");
+                            }
+                          } finally {
+                            setDeleteLoading(null);
                           }
                         }}
                       >
-                        Delete
+                        {deleteLoading === r.id ? (
+                          <>
+                            <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            Deleting...
+                          </>
+                        ) : (
+                          "Delete"
+                        )}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -364,39 +476,52 @@ export default function MediaPage() {
         <div className="mt-3">
           <Button
             variant="outline"
+            disabled={loadMoreLoading}
             onClick={async () => {
-              const res = await fetch(
-                `/api/v1/media?take=50&skip=${rows.length}`
-              );
-              if (!res.ok) return;
-              const json: Array<{
-                id: string;
-                waMediaId: string;
-                type: string;
-                mimeType: string;
-                fileName?: string | null;
-                size?: number | null;
-                url?: string | null;
-                createdAt: string;
-              }> = await res.json();
-              if (json.length === 0) {
-                toast.message("No more records");
-                return;
+              setLoadMoreLoading(true);
+              try {
+                const res = await fetch(
+                  `/api/v1/media?take=50&skip=${rows.length}`
+                );
+                if (!res.ok) return;
+                const json: Array<{
+                  id: string;
+                  waMediaId: string;
+                  type: string;
+                  mimeType: string;
+                  fileName?: string | null;
+                  size?: number | null;
+                  url?: string | null;
+                  createdAt: string;
+                }> = await res.json();
+                if (json.length === 0) {
+                  toast.message("No more records");
+                  return;
+                }
+                const mapped: MediaRow[] = json.map((x) => ({
+                  id: x.id,
+                  waMediaId: x.waMediaId,
+                  type: x.type,
+                  mimeType: x.mimeType,
+                  fileName: x.fileName ?? undefined,
+                  size: x.size ?? undefined,
+                  url: x.url ?? undefined,
+                  createdAt: x.createdAt,
+                }));
+                setRows((prev) => [...prev, ...mapped]);
+              } finally {
+                setLoadMoreLoading(false);
               }
-              const mapped: MediaRow[] = json.map((x) => ({
-                id: x.id,
-                waMediaId: x.waMediaId,
-                type: x.type,
-                mimeType: x.mimeType,
-                fileName: x.fileName ?? undefined,
-                size: x.size ?? undefined,
-                url: x.url ?? undefined,
-                createdAt: x.createdAt,
-              }));
-              setRows((prev) => [...prev, ...mapped]);
             }}
           >
-            Load more
+            {loadMoreLoading ? (
+              <>
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Loading...
+              </>
+            ) : (
+              "Load more"
+            )}
           </Button>
         </div>
       )}
