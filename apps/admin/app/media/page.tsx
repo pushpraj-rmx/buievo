@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import {
   Table,
   TableBody,
@@ -271,8 +272,7 @@ export default function MediaPage() {
                     <TableCell>{r.type}</TableCell>
                     <TableCell>
                       {r.mimeType?.startsWith("image/") ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={`/api/v1/media/${encodeURIComponent(r.id)}/file`}
                           alt={r.fileName || r.waMediaId}
                           className="h-10 w-10 object-cover rounded"
@@ -333,10 +333,12 @@ export default function MediaPage() {
                             r.mimeType?.startsWith("image/") ? (
                               <div className="space-y-4">
                                 <div className="flex justify-center">
-                                  <img
+                                  <Image
                                     src={`/api/v1/media/${encodeURIComponent(r.id)}/file`}
                                     alt={r.fileName || r.waMediaId}
                                     className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-lg"
+                                    width={1000}
+                                    height={1000}
                                   />
                                 </div>
                                 <div className="bg-muted rounded p-3">

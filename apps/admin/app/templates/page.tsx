@@ -5,37 +5,118 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 type TemplateRow = {
   name: string;
   status?: string;
+  category?: string;
+  language?: string;
+};
+
+type TemplateComponent = {
+  type: "HEADER" | "BODY" | "FOOTER" | "BUTTONS";
+  format?: "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT";
+  text?: string;
+  example?: unknown;
+  buttons?: Array<{
+    type: "QUICK_REPLY" | "URL" | "PHONE_NUMBER" | "COPY_CODE";
+    text?: string;
+    url?: string;
+    phone_number?: string;
+  }>;
+};
+
+type TemplateContent = {
+  category?: string;
+  language?: string;
+  components?: TemplateComponent[];
+};
+
+type TemplateDbData = {
+  name: string;
+  status: string;
+  content?: TemplateContent;
 };
 
 export default function TemplatesPage() {
   const [name, setName] = useState("");
   const [language, setLanguage] = useState("en_US");
+  const [category, setCategory] = useState<
+    "MARKETING" | "UTILITY" | "AUTHENTICATION"
+  >("UTILITY");
+  const [headerText, setHeaderText] = useState("");
+  const [bodyText, setBodyText] = useState("");
+  const [footerText, setFooterText] = useState("");
   const [rows, setRows] = useState<TemplateRow[]>([]);
   const [creating, setCreating] = useState(false);
   const [listLoading, setListLoading] = useState(true);
-  type TemplateDb = { name: string; status: string; content?: unknown };
-  const [selected, setSelected] = useState<TemplateDb | null>(null);
-  // track loaded count if needed later for UI
+  const [viewLoading, setViewLoading] = useState<string | null>(null);
+  const [refreshLoading, setRefreshLoading] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [loadMoreLoading, setLoadMoreLoading] = useState(false);
 
-  async function createHelloWorld() {
+  const [selected, setSelected] = useState<TemplateDbData | null>(null);
+
+  async function createTemplate() {
+    if (!name.trim()) {
+      toast.error("Template name is required");
+      return;
+    }
+
+    if (!bodyText.trim()) {
+      toast.error("Template body is required");
+      return;
+    }
+
     setCreating(true);
     try {
+      const components: TemplateComponent[] = [];
+
+      // Add header if provided
+      if (headerText.trim()) {
+        components.push({ type: "HEADER", text: headerText.trim() });
+      }
+
+      // Add body (required)
+      components.push({ type: "BODY", text: bodyText.trim() });
+
+      // Add footer if provided
+      if (footerText.trim()) {
+        components.push({ type: "FOOTER", text: footerText.trim() });
+      }
+
       const body = {
-        name: name || "hello_world",
+        name: name.trim(),
         language,
-        category: "UTILITY",
-        components: [
-          { type: "BODY", text: "Hello {{1}}" },
-          { type: "FOOTER", text: "Powered by Whatssuite" },
-        ],
+        category,
+        components,
       };
+
       const res = await fetch("/api/v1/templates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -43,8 +124,22 @@ export default function TemplatesPage() {
       });
       const json = await res.json();
       if (res.ok) {
-        setRows((r) => [{ name: body.name, status: "PENDING" }, ...r]);
+        setRows((r) => [
+          {
+            name: body.name,
+            status: "PENDING",
+            category,
+            language,
+          },
+          ...r,
+        ]);
         toast.success("Template submitted for approval");
+
+        // Clear form
+        setName("");
+        setHeaderText("");
+        setBodyText("");
+        setFooterText("");
       } else {
         toast.error(json.message || "Failed to create template");
       }
@@ -54,18 +149,42 @@ export default function TemplatesPage() {
   }
 
   async function refresh(name: string) {
-    const res = await fetch(`/api/v1/templates/${encodeURIComponent(name)}/status`);
-    const json = await res.json();
-    setRows((r) => r.map((t) => (t.name === name ? { ...t, status: json.status } : t)));
+    setRefreshLoading(name);
+    try {
+      const res = await fetch(
+        `/api/v1/templates/${encodeURIComponent(name)}/status`
+      );
+      const json = await res.json();
+      if (res.ok) {
+        setRows((r) =>
+          r.map((t) => (t.name === name ? { ...t, status: json.status } : t))
+        );
+        toast.success("Template status updated");
+      } else {
+        toast.error("Failed to refresh template status");
+      }
+    } finally {
+      setRefreshLoading(null);
+    }
   }
 
   async function fetchList() {
     setListLoading(true);
-    const res = await fetch("/api/v1/templates/db");
-    if (!res.ok) return;
-    const json: Array<{ name: string; status: string }>= await res.json();
-    setRows(json.map((x) => ({ name: x.name, status: x.status })));
-    setListLoading(false);
+    try {
+      const res = await fetch("/api/v1/templates/db");
+      if (!res.ok) return;
+      const json: TemplateDbData[] = await res.json();
+      setRows(
+        json.map((x) => ({
+          name: x.name,
+          status: x.status,
+          category: x.content?.category,
+          language: x.content?.language,
+        }))
+      );
+    } finally {
+      setListLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -76,23 +195,122 @@ export default function TemplatesPage() {
     <div className="p-4">
       <Card>
         <CardHeader>
-          <CardTitle>Create Template</CardTitle>
+          <CardTitle>Create WhatsApp Template</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <CardContent className="space-y-6">
+          {/* Basic Information */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label>Name</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="hello_world" />
+              <Label htmlFor="template-name">Template Name *</Label>
+              <Input
+                id="template-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="welcome_message"
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Use lowercase with underscores (e.g., welcome_message)
+              </p>
             </div>
             <div>
-              <Label>Language</Label>
-              <Input value={language} onChange={(e) => setLanguage(e.target.value)} placeholder="en_US" />
+              <Label htmlFor="template-language">Language</Label>
+              <Input
+                id="template-language"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                placeholder="en_US"
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Language code (e.g., en_US, es_ES)
+              </p>
             </div>
-            <div className="md:col-span-2">
-              <Button onClick={createHelloWorld} disabled={creating}>
-                {creating ? "Creating..." : "Create sample template"}
-              </Button>
+            <div>
+              <Label htmlFor="template-category">Category</Label>
+              <Select
+                value={category}
+                onValueChange={(
+                  value: "MARKETING" | "UTILITY" | "AUTHENTICATION"
+                ) => setCategory(value)}
+              >
+                <SelectTrigger id="template-category" className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="UTILITY">Utility</SelectItem>
+                  <SelectItem value="MARKETING">Marketing</SelectItem>
+                  <SelectItem value="AUTHENTICATION">Authentication</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+          </div>
+
+          {/* Template Components */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Template Components</h3>
+
+            <div>
+              <Label htmlFor="template-header">Header (Optional)</Label>
+              <Input
+                id="template-header"
+                value={headerText}
+                onChange={(e) => setHeaderText(e.target.value)}
+                placeholder="Welcome to our service!"
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Short header text (max 60 characters)
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="template-body">Body *</Label>
+              <Textarea
+                id="template-body"
+                value={bodyText}
+                onChange={(e) => setBodyText(e.target.value)}
+                placeholder="Hello {{1}}, welcome to our platform! We're excited to have you on board."
+                className="mt-1 min-h-[100px]"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                <p>
+                  {"Main message content. Use {{1}}, {{2}}, etc. for variables"}
+                </p>
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="template-footer">Footer (Optional)</Label>
+              <Input
+                id="template-footer"
+                value={footerText}
+                onChange={(e) => setFooterText(e.target.value)}
+                placeholder="Reply STOP to unsubscribe"
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Footer text (max 60 characters)
+              </p>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-end">
+            <Button
+              onClick={createTemplate}
+              disabled={creating || !name.trim() || !bodyText.trim()}
+              className="min-w-[200px]"
+            >
+              {creating ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Creating Template...
+                </>
+              ) : (
+                "Create Template"
+              )}
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -105,12 +323,16 @@ export default function TemplatesPage() {
           {listLoading ? (
             <div className="text-sm text-muted-foreground">Loading...</div>
           ) : rows.length === 0 ? (
-            <div className="text-sm text-muted-foreground">No templates yet.</div>
+            <div className="text-sm text-muted-foreground">
+              No templates yet.
+            </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
+                  <TableHead>Template Name</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Language</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -118,54 +340,162 @@ export default function TemplatesPage() {
               <TableBody>
                 {rows.map((r) => (
                   <TableRow key={r.name}>
-                    <TableCell>{r.name}</TableCell>
-                    <TableCell>{r.status}</TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {r.name}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          r.category === "MARKETING" ? "default" : "secondary"
+                        }
+                      >
+                        {r.category || "Unknown"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {r.language || "en_US"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          r.status === "APPROVED"
+                            ? "default"
+                            : r.status === "PENDING"
+                              ? "secondary"
+                              : r.status === "REJECTED"
+                                ? "destructive"
+                                : "outline"
+                        }
+                      >
+                        {r.status || "Unknown"}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="space-x-2">
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
                             variant="outline"
                             size="sm"
+                            disabled={viewLoading === r.name}
                             onClick={async () => {
-                              const res = await fetch(`/api/v1/templates/${encodeURIComponent(r.name)}/db`);
-                              if (res.ok) {
-                                const json = await res.json();
-                                setSelected(json);
-                              } else {
-                                toast.error("Failed to load details");
+                              setViewLoading(r.name);
+                              try {
+                                const res = await fetch(
+                                  `/api/v1/templates/${encodeURIComponent(r.name)}/db`
+                                );
+                                if (res.ok) {
+                                  const json = await res.json();
+                                  setSelected(json);
+                                } else {
+                                  toast.error("Failed to load details");
+                                }
+                              } finally {
+                                setViewLoading(null);
                               }
                             }}
                           >
-                            View
+                            {viewLoading === r.name ? (
+                              <>
+                                <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                Loading...
+                              </>
+                            ) : (
+                              "View"
+                            )}
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
+                        <DialogContent className="max-w-4xl">
                           <DialogHeader>
                             <DialogTitle>Template: {r.name}</DialogTitle>
                           </DialogHeader>
-                          <pre className="max-h-[60vh] overflow-auto text-xs bg-muted rounded p-3">
-{selected ? JSON.stringify(selected, null, 2) : "Loading..."}
-                          </pre>
+                          {selected ? (
+                            <div className="space-y-4">
+                              <div className="bg-muted rounded p-4">
+                                <h4 className="font-semibold mb-2">
+                                  Template Preview:
+                                </h4>
+                                <div className="space-y-2 text-sm">
+                                  {selected.content?.components?.map(
+                                    (comp: TemplateComponent, idx: number) => (
+                                      <div
+                                        key={idx}
+                                        className="border-l-2 border-blue-500 pl-3"
+                                      >
+                                        <div className="font-medium text-blue-600">
+                                          {comp.type}:
+                                        </div>
+                                        <div className="text-gray-700">
+                                          {comp.text}
+                                        </div>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                              <div className="bg-muted rounded p-3">
+                                <h4 className="font-semibold mb-2">
+                                  Raw Data:
+                                </h4>
+                                <pre className="text-xs overflow-auto max-h-[200px]">
+                                  {JSON.stringify(selected, null, 2)}
+                                </pre>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex justify-center p-8">
+                              <p>Loading...</p>
+                            </div>
+                          )}
                         </DialogContent>
                       </Dialog>
-                      <Button variant="outline" size="sm" onClick={() => refresh(r.name)}>
-                        Refresh
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={refreshLoading === r.name}
+                        onClick={() => refresh(r.name)}
+                      >
+                        {refreshLoading === r.name ? (
+                          <>
+                            <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            Refreshing...
+                          </>
+                        ) : (
+                          "Refresh"
+                        )}
                       </Button>
                       <Button
                         variant="destructive"
                         size="sm"
+                        disabled={deleteLoading === r.name}
                         onClick={async () => {
-                          const res = await fetch(`/api/v1/templates/${encodeURIComponent(r.name)}`, { method: "DELETE" });
-                          if (res.ok) {
-                            toast.success("Template deleted");
-                            setRows((prev) => prev.filter((x) => x.name !== r.name));
-                          } else {
-                            const j = await res.json().catch(() => ({}));
-                            toast.error(j.message || "Delete failed");
+                          setDeleteLoading(r.name);
+                          try {
+                            const res = await fetch(
+                              `/api/v1/templates/${encodeURIComponent(r.name)}`,
+                              { method: "DELETE" }
+                            );
+                            if (res.ok) {
+                              toast.success("Template deleted");
+                              setRows((prev) =>
+                                prev.filter((x) => x.name !== r.name)
+                              );
+                            } else {
+                              const j = await res.json().catch(() => ({}));
+                              toast.error(j.message || "Delete failed");
+                            }
+                          } finally {
+                            setDeleteLoading(null);
                           }
                         }}
                       >
-                        Delete
+                        {deleteLoading === r.name ? (
+                          <>
+                            <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            Deleting...
+                          </>
+                        ) : (
+                          "Delete"
+                        )}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -179,18 +509,41 @@ export default function TemplatesPage() {
         <div className="mt-3">
           <Button
             variant="outline"
+            disabled={loadMoreLoading}
             onClick={async () => {
-              const res = await fetch(`/api/v1/templates/db?take=50&skip=${rows.length}`);
-              if (!res.ok) return;
-              const json: Array<{ name: string; status: string }>= await res.json();
-              if (json.length === 0) {
-                toast.message("No more records");
-                return;
+              setLoadMoreLoading(true);
+              try {
+                const res = await fetch(
+                  `/api/v1/templates/db?take=50&skip=${rows.length}`
+                );
+                if (!res.ok) return;
+                const json: TemplateDbData[] = await res.json();
+                if (json.length === 0) {
+                  toast.message("No more records");
+                  return;
+                }
+                setRows((prev) => [
+                  ...prev,
+                  ...json.map((x) => ({
+                    name: x.name,
+                    status: x.status,
+                    category: x.content?.category,
+                    language: x.content?.language,
+                  })),
+                ]);
+              } finally {
+                setLoadMoreLoading(false);
               }
-              setRows((prev) => [...prev, ...json.map((x) => ({ name: x.name, status: x.status }))]);
             }}
           >
-            Load more
+            {loadMoreLoading ? (
+              <>
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Loading...
+              </>
+            ) : (
+              "Load more"
+            )}
           </Button>
         </div>
       )}
