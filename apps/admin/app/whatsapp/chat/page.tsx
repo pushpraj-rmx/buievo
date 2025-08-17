@@ -25,6 +25,7 @@ import {
   Smile,
   Paperclip,
   Send,
+  Plus,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -39,7 +40,8 @@ interface Contact {
 
 interface Message {
   id: string;
-  content: string;
+  content?: string;
+  body?: string;
   type: "text" | "image" | "document" | "audio" | "video";
   direction: "inbound" | "outbound";
   status: "sent" | "delivered" | "read" | "failed";
@@ -55,7 +57,8 @@ interface Conversation {
   contact: Contact;
   lastMessage: {
     id: string;
-    content: string;
+    content?: string;
+    body?: string;
     type: "text" | "image" | "document" | "audio" | "video";
     direction: "inbound" | "outbound";
     status: "sent" | "delivered" | "read" | "failed";
@@ -76,6 +79,9 @@ export default function WhatsAppChatPage() {
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
   const [showContactDetails, setShowContactDetails] = useState(false);
+  const [showNewChatDialog, setShowNewChatDialog] = useState(false);
+  const [availableContacts, setAvailableContacts] = useState<Contact[]>([]);
+  const [filteredContacts, setFilteredContacts] = useState<Contact[]>([]);
 
   // Fetch conversations
   const fetchConversations = useCallback(async () => {
@@ -91,10 +97,52 @@ export default function WhatsAppChatPage() {
     }
   }, []);
 
+  // Fetch available contacts for new chat
+  const fetchAvailableContacts = useCallback(async () => {
+    try {
+      const response = await fetch("/api/v1/contacts");
+      if (!response.ok) throw new Error("Failed to fetch contacts");
+
+      const data = await response.json();
+      console.log("Contacts API response:", data);
+
+      // Handle paginated response structure
+      const contacts =
+        data.contacts && Array.isArray(data.contacts) ? data.contacts : [];
+
+      console.log("Processed contacts:", contacts);
+      console.log("Setting contacts:", contacts);
+      setAvailableContacts(contacts);
+      setFilteredContacts(contacts);
+    } catch (error) {
+      toast.error("Failed to fetch contacts");
+      console.error("Error fetching contacts:", error);
+      setAvailableContacts([]);
+      setFilteredContacts([]);
+    }
+  }, []);
+
   useEffect(() => {
     setLoading(true);
-    fetchConversations().finally(() => setLoading(false));
+    fetchConversations().finally(() => {
+      setLoading(false);
+    });
   }, [fetchConversations]);
+
+  // Fetch contacts when new chat dialog opens
+  useEffect(() => {
+    if (showNewChatDialog) {
+      fetchAvailableContacts();
+    }
+  }, [showNewChatDialog, fetchAvailableContacts]);
+
+  // Ensure filteredContacts is always an array
+  useEffect(() => {
+    if (!Array.isArray(filteredContacts)) {
+      console.log("filteredContacts is not an array, resetting to empty array");
+      setFilteredContacts([]);
+    }
+  }, [filteredContacts]);
 
   // Poll for conversation list updates (only if not loading)
   useEffect(() => {
@@ -193,6 +241,64 @@ export default function WhatsAppChatPage() {
     }
   };
 
+  // Start new conversation
+  const startNewConversation = async (contact: Contact) => {
+    try {
+      // Check if conversation already exists
+      const existingConversation = conversations.find(
+        (conv) => conv.contactId === contact.id
+      );
+
+      if (existingConversation) {
+        setSelectedConversation(existingConversation);
+        setSelectedContact(contact);
+        setShowNewChatDialog(false);
+        return;
+      }
+
+      // Create new conversation by sending a message
+      const response = await fetch(
+        `/api/v1/conversations/${contact.id}/messages`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: "Hello! 👋",
+            type: "text",
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to start conversation");
+
+      const newMessage = await response.json();
+
+      // Create new conversation object
+      const newConversation: Conversation = {
+        id: `conv_${contact.id}`,
+        contactId: contact.id,
+        contact: contact,
+        lastMessage: newMessage,
+        unreadCount: 0,
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Add to conversations list
+      setConversations((prev) => [newConversation, ...prev]);
+
+      // Select the new conversation
+      setSelectedConversation(newConversation);
+      setSelectedContact(contact);
+      setSelectedMessages([newMessage]);
+      setShowNewChatDialog(false);
+
+      toast.success(`Started conversation with ${contact.name}`);
+    } catch (error) {
+      toast.error("Failed to start conversation");
+      console.error("Error starting conversation:", error);
+    }
+  };
+
   // Filter conversations based on search
   const filteredConversations = conversations.filter(
     (conversation) =>
@@ -269,7 +375,7 @@ export default function WhatsAppChatPage() {
           >
             {msg.type === "text" && (
               <p className="text-sm whitespace-pre-wrap break-words">
-                {msg.content}
+                {msg.content || msg.body}
               </p>
             )}
             {msg.type === "image" && (
@@ -281,7 +387,9 @@ export default function WhatsAppChatPage() {
                   height={200}
                   className="rounded max-w-full max-h-48 object-cover"
                 />
-                {msg.content && <p className="text-sm">{msg.content}</p>}
+                {(msg.content || msg.body) && (
+                  <p className="text-sm">{msg.content || msg.body}</p>
+                )}
               </div>
             )}
             {msg.type === "document" && (
@@ -334,6 +442,14 @@ export default function WhatsAppChatPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-[#8696a0] hover:text-white"
+              onClick={() => setShowNewChatDialog(true)}
+            >
+              <MessageSquare className="w-5 h-5" />
+            </Button>
             <Button
               variant="ghost"
               size="sm"
@@ -426,7 +542,8 @@ export default function WhatsAppChatPage() {
                       <p className="text-sm text-[#8696a0] truncate">
                         {conversation.lastMessage.direction === "inbound" &&
                           "→ "}
-                        {conversation.lastMessage.content}
+                        {conversation.lastMessage.content ||
+                          conversation.lastMessage.body}
                       </p>
                       {conversation.unreadCount > 0 && (
                         <Badge className="ml-2 bg-[#00a884] text-white text-xs px-2 py-1 rounded-full">
@@ -671,6 +788,96 @@ export default function WhatsAppChatPage() {
                   </div>
                 </div>
               )}
+          </div>
+        </div>
+      )}
+
+      {/* New Chat Dialog */}
+      {showNewChatDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[#202c33] rounded-lg w-96 max-h-[80vh] flex flex-col">
+            <div className="p-4 border-b border-[#374045] flex items-center justify-between">
+              <h3 className="text-white font-semibold text-lg">New Chat</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-[#8696a0] hover:text-white"
+                onClick={() => {
+                  setShowNewChatDialog(false);
+                  setFilteredContacts([]);
+                }}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            <div className="p-4 border-b border-[#374045]">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#8696a0]" />
+                <Input
+                  placeholder="Search contacts..."
+                  className="pl-10 bg-[#2a3942] border-[#374045] text-white placeholder:text-[#8696a0] focus:border-[#00a884] focus:ring-[#00a884]"
+                  onChange={(e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const filtered = (availableContacts || []).filter(
+                      (contact) =>
+                        contact.name.toLowerCase().includes(searchTerm) ||
+                        contact.phone.includes(searchTerm) ||
+                        contact.email?.toLowerCase().includes(searchTerm)
+                    );
+                    setFilteredContacts(filtered);
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4">
+              {filteredContacts.length === 0 ? (
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 text-[#8696a0] mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2 text-white">
+                    No contacts found
+                  </h3>
+                  <p className="text-[#8696a0] mb-4">
+                    Add contacts to start conversations
+                  </p>
+                  <Button
+                    asChild
+                    className="bg-[#00a884] hover:bg-[#008f72] text-white"
+                  >
+                    <Link href="/whatsapp/contacts">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Contacts
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {filteredContacts.map((contact) => (
+                    <div
+                      key={contact.id}
+                      onClick={() => startNewConversation(contact)}
+                      className="flex items-center gap-3 p-3 hover:bg-[#2a3942] rounded-lg cursor-pointer transition-colors"
+                    >
+                      <Avatar className="h-10 w-10 bg-[#00a884]">
+                        <AvatarImage src="" alt={contact.name} />
+                        <AvatarFallback className="bg-[#00a884] text-white font-semibold">
+                          {getInitials(contact.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium truncate text-white">
+                          {contact.name}
+                        </h4>
+                        <p className="text-[#8696a0] text-sm truncate">
+                          {contact.phone}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
