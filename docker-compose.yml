@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -39,6 +39,19 @@ services:
     depends_on:
       - postgres
       - redis
+    restart: unless-stopped
+
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile # Corrected: Points to the single root Dockerfile
+      target: admin # Added: Builds only the 'admin' stage
+    ports:
+      - "3002:3000"
+    env_file:
+      - .env # Changed: Loads variables from the .env file
+    depends_on:
+      - api
     restart: unless-stopped
 
 volumes:

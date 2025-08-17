@@ -52,3 +52,21 @@ COPY --from=builder /usr/src/app/packages ./packages
 
 # Run the app
 CMD ["node", "apps/wapp-service/dist/index.js"]
+
+# ---
+
+# 4. Admin Production Stage
+FROM node:20-alpine AS admin
+WORKDIR /usr/src/app
+ENV NODE_ENV=production
+
+# Copy only the pruned production node_modules and necessary built packages
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/apps/admin ./apps/admin
+COPY --from=builder /usr/src/app/packages ./packages
+
+# Expose port 3000 (Next.js default)
+EXPOSE 3000
+
+# Run the app
+CMD ["node", "apps/admin/dist/index.js"]
