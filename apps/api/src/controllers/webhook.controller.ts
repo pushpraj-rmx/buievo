@@ -199,6 +199,134 @@ export const testReceiveMessage = async (req: Request, res: Response) => {
   }
 };
 
+// Debug endpoint to test webhook processing step by step
+export const debugWebhook = async (req: Request, res: Response) => {
+  const requestId = generateRequestId();
+  const logger = createRequestLogger(requestId, 'DEBUG_WEBHOOK');
+  
+  logger.info('Debug webhook request', {
+    body: req.body,
+    headers: req.headers
+  });
+
+  try {
+    const debugSteps = [];
+    
+    // Step 1: Parse webhook body
+    const body = req.body;
+    debugSteps.push({
+      step: 1,
+      action: 'Parse webhook body',
+      success: true,
+      data: {
+        object: body.object,
+        hasEntry: !!body.entry,
+        entryCount: body.entry?.length || 0
+      }
+    });
+
+    if (body.object !== "whatsapp_business_account") {
+      debugSteps.push({
+        step: 2,
+        action: 'Check object type',
+        success: false,
+        error: 'Invalid object type'
+      });
+      return res.json({ debugSteps });
+    }
+
+    debugSteps.push({
+      step: 2,
+      action: 'Check object type',
+      success: true,
+      data: { object: body.object }
+    });
+
+    // Step 3: Process entries
+    for (const entry of body.entry || []) {
+      debugSteps.push({
+        step: 3,
+        action: 'Process entry',
+        success: true,
+        data: {
+          entryId: entry.id,
+          changesCount: entry.changes?.length || 0
+        }
+      });
+
+      // Step 4: Process changes
+      for (const change of entry.changes || []) {
+        debugSteps.push({
+          step: 4,
+          action: 'Process change',
+          success: true,
+          data: {
+            field: change.field,
+            hasValue: !!change.value,
+            hasMessages: !!change.value?.messages,
+            messagesCount: change.value?.messages?.length || 0
+          }
+        });
+
+        if (change.field === "messages" && change.value?.messages) {
+          // Step 5: Process messages
+          for (const message of change.value.messages) {
+            debugSteps.push({
+              step: 5,
+              action: 'Process message',
+              success: true,
+              data: {
+                messageId: message.id,
+                from: message.from,
+                type: message.type,
+                hasText: !!message.text
+              }
+            });
+
+            // Step 6: Try to process the message
+            try {
+              await handleIncomingMessage(message, logger);
+              debugSteps.push({
+                step: 6,
+                action: 'Handle incoming message',
+                success: true,
+                data: { messageId: message.id }
+              });
+            } catch (error) {
+              debugSteps.push({
+                step: 6,
+                action: 'Handle incoming message',
+                success: false,
+                error: error instanceof Error ? error.message : String(error)
+              });
+            }
+          }
+        }
+      }
+    }
+
+    res.json({ 
+      success: true, 
+      debugSteps,
+      summary: {
+        totalSteps: debugSteps.length,
+        successfulSteps: debugSteps.filter(s => s.success).length,
+        failedSteps: debugSteps.filter(s => !s.success).length
+      }
+    });
+  } catch (error) {
+    logger.error('Debug webhook failed', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    res.status(500).json({ 
+      success: false,
+      error: "Internal server error",
+      debugSteps: []
+    });
+  }
+};
+
 async function handleIncomingMessage(message: any, logger: any) {
   logger.info('Processing incoming message', {
     whatsappId: message.id,

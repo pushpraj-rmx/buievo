@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { handleWebhook, testReceiveMessage } from "../controllers/webhook.controller";
+import { handleWebhook, testReceiveMessage, debugWebhook } from "../controllers/webhook.controller";
 import { webhookLogger, generateRequestId } from "../utils/logger";
 import { logWebhookRequest, validateWebhookSignature } from "../utils/webhook-monitor";
 import { webhookMonitor } from "../utils/webhook-status";
@@ -71,5 +71,6 @@ router.post("/", handleWebhook);
 router.get("/", handleWebhook); // For webhook verification
 router.get("/status", getWebhookStatus); // Webhook status endpoint
 router.post("/test", testReceiveMessage); // Test endpoint for simulating incoming messages
+router.post("/debug", debugWebhook); // Debug endpoint for step-by-step webhook processing
 
 export default router;
