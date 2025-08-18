@@ -9,7 +9,7 @@ async function testNewMediaManager() {
       storage: {
         provider: "whatsapp",
         whatsapp: {
-          baseUrl: "https://graph.facebook.com/v20.0",
+          baseUrl: "https://graph.facebook.com/v21.0",
           accessToken: "test-token",
           phoneNumberId: "test-phone-id"
         }
@@ -38,7 +38,7 @@ async function testLegacyMediaManager() {
   
   try {
     const legacyManager = new LegacyMediaManager({
-      baseUrl: "https://graph.facebook.com/v20.0",
+      baseUrl: "https://graph.facebook.com/v21.0",
       accessToken: "test-token",
       phoneNumberId: "test-phone-id"
     });
@@ -69,7 +69,7 @@ async function testConfiguration() {
       storage: {
         provider: "whatsapp" as const,
         whatsapp: {
-          baseUrl: "https://graph.facebook.com/v20.0",
+          baseUrl: "https://graph.facebook.com/v21.0",
           accessToken: "test-token",
           phoneNumberId: "test-phone-id"
         }

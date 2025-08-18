@@ -108,7 +108,7 @@ const mediaManager = new MediaManager({
   fallbackStorage: {
     provider: "whatsapp",
     whatsapp: {
-      baseUrl: "https://graph.facebook.com/v20.0",
+      baseUrl: "https://graph.facebook.com/v21.0",
       accessToken: "token",
       phoneNumberId: "phone-id",
     },
@@ -125,7 +125,7 @@ import { LegacyMediaManager } from "@whatssuite/media-manager";
 
 // Old way still works
 const mediaManager = new LegacyMediaManager({
-  baseUrl: "https://graph.facebook.com/v20.0",
+  baseUrl: "https://graph.facebook.com/v21.0",
   accessToken: "your-token",
   phoneNumberId: "your-phone-id",
 });

@@ -9,7 +9,7 @@ export function getStorageConfig(): StorageConfig {
       return {
         provider: "whatsapp",
         whatsapp: {
-          baseUrl: process.env.META_API_BASE_URL || "https://graph.facebook.com/v20.0",
+          baseUrl: process.env.META_API_BASE_URL || "https://graph.facebook.com/v21.0",
           accessToken: process.env.ACCESS_TOKEN || "",
           phoneNumberId: process.env.PHONE_NUMBER_ID || "",
         }
@@ -158,7 +158,7 @@ export const exampleConfigs = {
   hybrid: {
     provider: "whatsapp" as const,
     whatsapp: {
-      baseUrl: "https://graph.facebook.com/v20.0",
+      baseUrl: "https://graph.facebook.com/v21.0",
       accessToken: "your-token",
       phoneNumberId: "your-phone-id",
     }

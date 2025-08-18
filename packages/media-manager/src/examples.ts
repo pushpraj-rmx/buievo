@@ -67,7 +67,7 @@ export async function exampleDirectConfiguration() {
     const whatsappFallback = {
       provider: "whatsapp" as const,
       whatsapp: {
-        baseUrl: "https://graph.facebook.com/v20.0",
+        baseUrl: "https://graph.facebook.com/v21.0",
         accessToken: "your-token",
         phoneNumberId: "your-phone-id",
       }
@@ -119,7 +119,7 @@ export async function exampleHybridApproach() {
     const whatsappConfig = {
       provider: "whatsapp" as const,
       whatsapp: {
-        baseUrl: "https://graph.facebook.com/v20.0",
+        baseUrl: "https://graph.facebook.com/v21.0",
         accessToken: "your-token",
         phoneNumberId: "your-phone-id",
       }
@@ -197,7 +197,7 @@ export function exampleEnvironmentSwitching() {
 export function exampleBackwardCompatibility() {
   // Old way still works
   const legacyManager = new LegacyMediaManager({
-    baseUrl: "https://graph.facebook.com/v20.0",
+    baseUrl: "https://graph.facebook.com/v21.0",
     accessToken: "your-token",
     phoneNumberId: "your-phone-id",
   });
@@ -207,7 +207,7 @@ export function exampleBackwardCompatibility() {
     storage: {
       provider: "whatsapp",
       whatsapp: {
-        baseUrl: "https://graph.facebook.com/v20.0",
+        baseUrl: "https://graph.facebook.com/v21.0",
         accessToken: "your-token",
         phoneNumberId: "your-phone-id",
       }

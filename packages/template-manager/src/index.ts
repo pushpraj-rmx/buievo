@@ -26,7 +26,7 @@ export type TemplateStatus =
   | "INAPPEAL";
 
 export interface TemplateManagerOptions {
-  baseUrl: string; // e.g., https://graph.facebook.com/v20.0
+  baseUrl: string; // e.g., https://graph.facebook.com/v21.0
   accessToken: string;
   businessId: string; // WhatsApp Business Account ID (WABA)
 }
