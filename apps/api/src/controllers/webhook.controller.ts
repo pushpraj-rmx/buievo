@@ -280,45 +280,57 @@ async function handleIncomingMessage(message: any, logger: any) {
       logger.debug('Processing unknown message type', { type, content });
     }
 
-    // Store the message
-    const dbMessage = await prisma.message.create({
-      data: {
+    // Check if message already exists to handle duplicate webhooks
+    let dbMessage = await prisma.message.findUnique({
+      where: { whatsappId: id },
+    });
+
+    if (dbMessage) {
+      logger.info('Message already exists, skipping duplicate', {
         whatsappId: id,
-        from,
-        to: "business",
-        body: content,
-        type: messageType,
-        timestamp: new Date(parseInt(timestamp) * 1000),
-        status: "delivered",
-        direction: "inbound",
-        conversationId: conversation.id,
-      },
-    });
-
-    logger.info('Message stored in database', {
-      dbMessageId: dbMessage.id,
-      whatsappId: dbMessage.whatsappId,
-      type: dbMessage.type,
-      direction: dbMessage.direction,
-      status: dbMessage.status
-    });
-
-    // Update conversation's last message timestamp and increment unread count
-    await prisma.conversation.update({
-      where: { id: conversation.id },
-      data: {
-        lastMessageAt: new Date(parseInt(timestamp) * 1000),
-        unreadCount: {
-          increment: 1,
+        dbMessageId: dbMessage.id
+      });
+    } else {
+      // Store the message
+      dbMessage = await prisma.message.create({
+        data: {
+          whatsappId: id,
+          from,
+          to: "business",
+          body: content,
+          type: messageType,
+          timestamp: new Date(parseInt(timestamp) * 1000),
+          status: "delivered",
+          direction: "inbound",
+          conversationId: conversation.id,
         },
-      },
-    });
+      });
 
-    logger.info('Conversation updated', {
-      conversationId: conversation.id,
-      lastMessageAt: new Date(parseInt(timestamp) * 1000),
-      unreadCountIncremented: true
-    });
+      logger.info('Message stored in database', {
+        dbMessageId: dbMessage.id,
+        whatsappId: dbMessage.whatsappId,
+        type: dbMessage.type,
+        direction: dbMessage.direction,
+        status: dbMessage.status
+      });
+
+      // Update conversation's last message timestamp and increment unread count
+      await prisma.conversation.update({
+        where: { id: conversation.id },
+        data: {
+          lastMessageAt: new Date(parseInt(timestamp) * 1000),
+          unreadCount: {
+            increment: 1,
+          },
+        },
+      });
+
+      logger.info('Conversation updated', {
+        conversationId: conversation.id,
+        lastMessageAt: new Date(parseInt(timestamp) * 1000),
+        unreadCountIncremented: true
+      });
+    }
 
     logger.info('Incoming message processing completed', {
       dbMessageId: dbMessage.id,
