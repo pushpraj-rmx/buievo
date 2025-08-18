@@ -37,7 +37,7 @@ router.get("/:id/file", async (req, res) => {
 
     const accessToken = process.env.ACCESS_TOKEN;
     const phoneNumberId = process.env.PHONE_NUMBER_ID;
-    const apiVersion = process.env.META_API_VERSION || "v20.0";
+    const apiVersion = process.env.META_API_VERSION || "v21.0";
     if (!accessToken || !phoneNumberId) {
       return res.status(500).json({ message: "Missing WhatsApp env vars" });
     }

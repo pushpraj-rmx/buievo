@@ -32,7 +32,7 @@ export const wappClient = {
 
     const { to, text } = args;
     const { PHONE_NUMBER_ID, ACCESS_TOKEN } = process.env;
-    const apiVersion = process.env.META_API_VERSION || "v20.0";
+    const apiVersion = process.env.META_API_VERSION || "v21.0";
     const url = `https://graph.facebook.com/${apiVersion}/${PHONE_NUMBER_ID}/messages`;
 
     if (!PHONE_NUMBER_ID || !ACCESS_TOKEN) {
@@ -100,7 +100,7 @@ export const wappClient = {
 
     const { to, templateName, bodyParams = [], buttonParams = [], imageUrl, documentUrl, filename } = args;
     const { PHONE_NUMBER_ID, ACCESS_TOKEN } = process.env;
-    const apiVersion = process.env.META_API_VERSION || "v20.0";
+    const apiVersion = process.env.META_API_VERSION || "v21.0";
     const url = `https://graph.facebook.com/${apiVersion}/${PHONE_NUMBER_ID}/messages`;
 
     if (!PHONE_NUMBER_ID || !ACCESS_TOKEN) {

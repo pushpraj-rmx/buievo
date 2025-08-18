@@ -6,7 +6,7 @@ import { prisma } from "@whatssuite/db";
 function getTemplateManager(): TemplateManager {
   const accessToken = process.env.ACCESS_TOKEN;
   const businessId = process.env.WABA_ID;
-  const apiVersion = process.env.META_API_VERSION || "v20.0";
+  const apiVersion = process.env.META_API_VERSION || "v21.0";
   if (!accessToken || !businessId) {
     throw new Error("Missing WhatsApp env vars: ACCESS_TOKEN/WABA_ID");
   }
