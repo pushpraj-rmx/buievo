@@ -69,7 +69,7 @@ COPY --from=builder /usr/src/app/packages ./packages
 EXPOSE 3000
 
 # Run the app
-CMD ["pnpm", "--filter", "@whatssuite/web", "start"]
+CMD ["node", "apps/web/node_modules/.bin/next", "start", "-p", "3000"]
 
 # ---
 
@@ -87,4 +87,4 @@ COPY --from=builder /usr/src/app/packages ./packages
 EXPOSE 3002
 
 # Run the app
-CMD ["pnpm", "--filter", "@whatssuite/admin", "start"]
+CMD ["node", "apps/admin/node_modules/.bin/next", "start", "-p", "3002"]
