@@ -55,7 +55,25 @@ CMD ["node", "apps/wapp-service/dist/index.js"]
 
 # ---
 
-# 4. Admin Production Stage
+# 4. Web Production Stage
+FROM node:20-alpine AS web
+WORKDIR /usr/src/app
+ENV NODE_ENV=production
+
+# Copy only the pruned production node_modules and necessary built packages
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/apps/web ./apps/web
+COPY --from=builder /usr/src/app/packages ./packages
+
+# Expose port 3000 (Web Next.js default)
+EXPOSE 3000
+
+# Run the app
+CMD ["pnpm", "--filter", "@whatssuite/web", "start"]
+
+# ---
+
+# 5. Admin Production Stage
 FROM node:20-alpine AS admin
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
@@ -65,8 +83,8 @@ COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/apps/admin ./apps/admin
 COPY --from=builder /usr/src/app/packages ./packages
 
-# Expose port 3000 (Next.js default)
-EXPOSE 3000
+# Expose port 3002 (Admin Next.js)
+EXPOSE 3002
 
 # Run the app
-CMD ["node", "apps/admin/dist/index.js"]
+CMD ["pnpm", "--filter", "@whatssuite/admin", "start"]
