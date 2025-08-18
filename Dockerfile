@@ -68,8 +68,9 @@ COPY --from=builder /usr/src/app/packages ./packages
 # Expose port 3000 (Web Next.js default)
 EXPOSE 3000
 
-# Run the app
-CMD ["node", "apps/web/node_modules/.bin/next", "start", "-p", "3000"]
+# Run the app from the web directory
+WORKDIR /usr/src/app/apps/web
+CMD ["npx", "next", "start", "-p", "3000"]
 
 # ---
 
@@ -86,5 +87,6 @@ COPY --from=builder /usr/src/app/packages ./packages
 # Expose port 3002 (Admin Next.js)
 EXPOSE 3002
 
-# Run the app
-CMD ["node", "apps/admin/node_modules/.bin/next", "start", "-p", "3002"]
+# Run the app from the admin directory
+WORKDIR /usr/src/app/apps/admin
+CMD ["npx", "next", "start", "-p", "3002"]
