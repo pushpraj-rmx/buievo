@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 // const API_BASE = process.env.API_BASE_URL || "https://was.nmpinfotech.com";
-const API_BASE = process.env.API_BASE_URL || "http://localhost:3001";
+const API_BASE = process.env.API_BASE_URL || "http://api:3001";
 
 const nextConfig: NextConfig = {
   async rewrites() {
