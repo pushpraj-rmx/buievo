@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "@whatssuite/db";
 import { webhookLogger, generateRequestId, createRequestLogger } from "../utils/logger";
+import { webhookMonitor } from "../utils/webhook-status";
 
 export const handleWebhook = async (req: Request, res: Response) => {
   const requestId = generateRequestId();
@@ -32,6 +33,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
       if (req.query["hub.verify_token"] === verifyToken) {
         logger.info('Webhook verification successful', { challenge });
+        webhookMonitor.setVerificationStatus('verified');
         res.status(200).send(challenge);
         return;
       } else {
@@ -47,6 +49,9 @@ export const handleWebhook = async (req: Request, res: Response) => {
     // Handle incoming messages and status updates (POST request)
     if (req.method === "POST") {
       const { body } = req;
+      
+      // Record webhook received
+      webhookMonitor.recordWebhookReceived();
       
       logger.info('Processing POST webhook', {
         object: body.object,
@@ -103,10 +108,12 @@ export const handleWebhook = async (req: Request, res: Response) => {
     logger.info('Webhook processing completed successfully');
     res.status(200).send("OK");
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     logger.error('Webhook processing failed', {
-      error: error instanceof Error ? error.message : String(error),
+      error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined
     });
+    webhookMonitor.recordWebhookError(errorMessage);
     res.status(500).send("Internal Server Error");
   }
 };
