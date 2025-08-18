@@ -52,6 +52,10 @@ export const handleWebhook = async (req: Request, res: Response) => {
       
       // Record webhook received
       webhookMonitor.recordWebhookReceived();
+      logger.info('Webhook received and recorded', {
+        object: body.object,
+        entryCount: body.entry?.length || 0
+      });
       
       logger.info('Processing POST webhook', {
         object: body.object,
@@ -79,11 +83,23 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
             if (change.value.messages) {
               logger.info('Processing incoming messages', {
-                count: change.value.messages.length
+                count: change.value.messages.length,
+                messages: change.value.messages.map((m: any) => ({
+                  id: m.id,
+                  from: m.from,
+                  type: m.type,
+                  hasText: !!m.text
+                }))
               });
               
               // Handle incoming messages
               for (const message of change.value.messages) {
+                logger.info('Starting to process message', {
+                  messageId: message.id,
+                  from: message.from,
+                  type: message.type,
+                  fullMessage: JSON.stringify(message)
+                });
                 await handleIncomingMessage(message, logger);
               }
             }
@@ -196,6 +212,16 @@ async function handleIncomingMessage(message: any, logger: any) {
 
   try {
     const { from, id, timestamp, type, text, image, document } = message;
+    
+    logger.info('Message data extracted', {
+      from,
+      id,
+      timestamp,
+      type,
+      hasText: !!text,
+      hasImage: !!image,
+      hasDocument: !!document
+    });
 
     // Find or create contact
     let contact = await prisma.contact.findUnique({
@@ -281,6 +307,8 @@ async function handleIncomingMessage(message: any, logger: any) {
     }
 
     // Check if message already exists to handle duplicate webhooks
+    logger.info('Checking for existing message', { whatsappId: id });
+    
     let dbMessage = await prisma.message.findUnique({
       where: { whatsappId: id },
     });
@@ -291,6 +319,14 @@ async function handleIncomingMessage(message: any, logger: any) {
         dbMessageId: dbMessage.id
       });
     } else {
+      logger.info('Creating new message in database', {
+        whatsappId: id,
+        from,
+        content: content.substring(0, 100),
+        type: messageType,
+        conversationId: conversation.id
+      });
+      
       // Store the message
       dbMessage = await prisma.message.create({
         data: {
@@ -306,7 +342,7 @@ async function handleIncomingMessage(message: any, logger: any) {
         },
       });
 
-      logger.info('Message stored in database', {
+      logger.info('Message stored in database successfully', {
         dbMessageId: dbMessage.id,
         whatsappId: dbMessage.whatsappId,
         type: dbMessage.type,
@@ -344,6 +380,16 @@ async function handleIncomingMessage(message: any, logger: any) {
       from: message.from,
       error: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    // Record the error in webhook monitor
+    webhookMonitor.recordWebhookError(`Message processing failed: ${error instanceof Error ? error.message : String(error)}`);
+    
+    // Also log to console for immediate visibility
+    console.error('WEBHOOK ERROR:', {
+      whatsappId: message.id,
+      from: message.from,
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 }
