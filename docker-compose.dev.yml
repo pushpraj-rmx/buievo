@@ -1,0 +1,136 @@
+version: "3.8"
+
+services:
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-whatssuite_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-slc6a5hlstlruFarenow}
+      POSTGRES_DB: ${POSTGRES_DB:-whatssuite}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./packages/db/prisma/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-whatssuite_user} -d ${POSTGRES_DB:-whatssuite}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and queues
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: api-dev
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://${POSTGRES_USER:-whatssuite_user}:${POSTGRES_PASSWORD:-slc6a5hlstlruFarenow}@postgres:5432/${POSTGRES_DB:-whatssuite}?schema=public
+      REDIS_URL: redis://redis:6379
+      PORT: 3001
+      # WhatsApp API credentials (from your existing .env)
+      PHONE_NUMBER_ID: ${PHONE_NUMBER_ID:-688539181002379}
+      ACCESS_TOKEN: ${ACCESS_TOKEN:-EAANy0uTZAlZAABPGVZC8LFYaZAj26nESEETRPD81CtIQmVccd1sUv0ZAW8cHMpZBF2oAg1CZBvIA72ZCBua05Hl3H5L0stfG6gv4YA1LO03j793Gd0hRtpIHpn8yb8sy8yF4YZBZAWSZBYbXOb1uV0FrPo6i1RusixCPM3LC5pvG7YX3NP8uOjkUGx6ti1DEGNFKQZDZD}
+      WABA_ID: ${WABA_ID:-1197846617229225}
+      WEBHOOK_VERIFY_TOKEN: ${WEBHOOK_VERIFY_TOKEN:-dd1818d035591543e99d6b6863d9a8f8abe24f37c737eee56c6c65585408a839}
+      META_API_VERSION: ${META_API_VERSION:-v21.0}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/apps/api/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    command: ["pnpm", "--filter", "@whatssuite/api", "dev"]
+
+  # WhatsApp Service
+  wapp-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: wapp-service-dev
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://${POSTGRES_USER:-whatssuite_user}:${POSTGRES_PASSWORD:-slc6a5hlstlruFarenow}@postgres:5432/${POSTGRES_DB:-whatssuite}?schema=public
+      REDIS_URL: redis://redis:6379
+      # WhatsApp API credentials
+      PHONE_NUMBER_ID: ${PHONE_NUMBER_ID:-688539181002379}
+      ACCESS_TOKEN: ${ACCESS_TOKEN:-EAANy0uTZAlZAABPGVZC8LFYaZAj26nESEETRPD81CtIQmVccd1sUv0ZAW8cHMpZBF2oAg1CZBvIA72ZCBua05Hl3H5L0stfG6gv4YA1LO03j793Gd0hRtpIHpn8yb8sy8yF4YZBZAWSZBYbXOb1uV0FrPo6i1RusixCPM3LC5pvG7YX3NP8uOjkUGx6ti1DEGNFKQZDZD}
+      WABA_ID: ${WABA_ID:-1197846617229225}
+      META_API_VERSION: ${META_API_VERSION:-v21.0}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/apps/wapp-service/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    command: ["pnpm", "--filter", "@whatssuite/wapp-service", "dev"]
+
+  # Admin Dashboard
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: admin-dev
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/apps/admin/node_modules
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+    command: ["pnpm", "--filter", "@whatssuite/admin", "dev", "--port", "3002"]
+
+  # Web Client
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: web-dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/apps/web/node_modules
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+    command: ["pnpm", "--filter", "@whatssuite/web", "dev", "--port", "3000"]
+
+volumes:
+  postgres_data:
