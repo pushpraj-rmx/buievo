@@ -6,14 +6,16 @@ import { prisma } from "@whatssuite/db";
 function getTemplateManager(): TemplateManager {
   const accessToken = process.env.ACCESS_TOKEN;
   const businessId = process.env.WABA_ID;
+  const phoneNumberId = process.env.PHONE_NUMBER_ID;
   const apiVersion = process.env.META_API_VERSION || "v21.0";
-  if (!accessToken || !businessId) {
-    throw new Error("Missing WhatsApp env vars: ACCESS_TOKEN/WABA_ID");
+  if (!accessToken || !businessId || !phoneNumberId) {
+    throw new Error("Missing WhatsApp env vars: ACCESS_TOKEN/WABA_ID/PHONE_NUMBER_ID");
   }
   return new TemplateManager({
     baseUrl: `https://graph.facebook.com/${apiVersion}`,
     accessToken,
     businessId,
+    phoneNumberId,
   });
 }
 
