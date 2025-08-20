@@ -359,9 +359,16 @@ async function handleIncomingMessage(message: any, logger: any) {
       normalizedPhone = normalizedPhone.substring(1);
     }
     
+    // Handle country code - if phone number starts with 91 (India), keep it
+    // If it doesn't start with 91, assume it's missing the country code
+    let phoneWithCountryCode = normalizedPhone;
+    if (!normalizedPhone.startsWith('91') && normalizedPhone.length === 10) {
+      phoneWithCountryCode = `91${normalizedPhone}`;
+    }
+    
     // Add + prefix for consistency with existing contacts
-    const phoneWithPlus = `+${normalizedPhone}`;
-    const phoneWithoutPlus = normalizedPhone;
+    const phoneWithPlus = `+${phoneWithCountryCode}`;
+    const phoneWithoutPlus = phoneWithCountryCode;
     
     logger.info('Phone number normalization', {
       original: from,
