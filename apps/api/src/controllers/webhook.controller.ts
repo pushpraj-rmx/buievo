@@ -351,19 +351,44 @@ async function handleIncomingMessage(message: any, logger: any) {
       hasDocument: !!document
     });
 
-    // Find or create contact
-    let contact = await prisma.contact.findUnique({
-      where: { phone: from },
+    // Normalize phone number for consistent contact lookup
+    let normalizedPhone = from;
+    
+    // Remove + prefix if present
+    if (normalizedPhone.startsWith('+')) {
+      normalizedPhone = normalizedPhone.substring(1);
+    }
+    
+    // Add + prefix for consistency with existing contacts
+    const phoneWithPlus = `+${normalizedPhone}`;
+    const phoneWithoutPlus = normalizedPhone;
+    
+    logger.info('Phone number normalization', {
+      original: from,
+      normalized: normalizedPhone,
+      withPlus: phoneWithPlus,
+      withoutPlus: phoneWithoutPlus
+    });
+
+    // Find existing contact with either format
+    let contact = await prisma.contact.findFirst({
+      where: {
+        OR: [
+          { phone: phoneWithPlus },
+          { phone: phoneWithoutPlus },
+          { phone: from } // Also check original format
+        ]
+      },
     });
 
     if (!contact) {
-      logger.info('Creating new contact', { phone: from });
+      logger.info('Creating new contact', { phone: phoneWithPlus });
       
-      // Create contact if not exists
+      // Create contact with + prefix for consistency
       contact = await prisma.contact.create({
         data: {
-          name: `WhatsApp User (${from})`,
-          phone: from,
+          name: `WhatsApp User (${phoneWithPlus})`,
+          phone: phoneWithPlus,
           status: "active",
         },
       });
@@ -373,11 +398,25 @@ async function handleIncomingMessage(message: any, logger: any) {
         phone: contact.phone
       });
     } else {
-      logger.debug('Found existing contact', {
+      logger.info('Found existing contact', {
         contactId: contact.id,
         name: contact.name,
-        phone: contact.phone
+        phone: contact.phone,
+        originalPhone: from
       });
+      
+      // Update phone number to consistent format if different
+      if (contact.phone !== phoneWithPlus) {
+        logger.info('Updating contact phone number to consistent format', {
+          oldPhone: contact.phone,
+          newPhone: phoneWithPlus
+        });
+        
+        contact = await prisma.contact.update({
+          where: { id: contact.id },
+          data: { phone: phoneWithPlus }
+        });
+      }
     }
 
     // Find or create conversation
