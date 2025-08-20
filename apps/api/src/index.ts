@@ -9,6 +9,7 @@ import templateRoutes from "./routes/template.routes";
 import campaignRoutes from "./routes/campaign.routes";
 import conversationRoutes from "./routes/conversation.routes";
 import webhookRoutes from "./routes/webhook.routes";
+import configRoutes from "./routes/config.routes";
 import { redis } from "@whatssuite/redis"; // Import redis here
 
 const app = express();
@@ -45,6 +46,7 @@ app.use("/api/v1/templates", templateRoutes);
 app.use("/api/v1/campaigns", campaignRoutes);
 app.use("/api/v1/conversations", conversationRoutes);
 app.use("/api/v1/webhook", webhookRoutes);
+app.use("/api/v1/config", configRoutes);
 
 startServer().catch((error) => {
   console.error("Error starting server:", error);

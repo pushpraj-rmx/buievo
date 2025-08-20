@@ -151,3 +151,14 @@ model MediaAsset {
   @@index([type])
   @@index([createdAt])
 }
+
+model Configuration {
+  id             String   @id @default(uuid())
+  organizationId String?  // For future multi-tenancy support
+  config         Json     // Store the entire configuration as JSON
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("configurations")
+  @@index([organizationId])
+}

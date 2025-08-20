@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { toast } from 'sonner';
+import { configService } from './config';
 
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
 
@@ -37,7 +38,7 @@ interface TaskStore {
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: new Map(),
   taskHistory: new Map(),
-  autoOpenWorkerArea: true,
+  autoOpenWorkerArea: configService.getWorkerAreaConfig().autoOpen,
 
   addTask: (task) => {
     const newTask: Task = {
@@ -53,20 +54,23 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     });
 
     // Auto-open worker area if enabled
-    if (get().autoOpenWorkerArea) {
+    const workerAreaConfig = configService.getWorkerAreaConfig();
+    if (workerAreaConfig.autoOpen) {
       // Dispatch custom event to trigger auto-open
       window.dispatchEvent(new CustomEvent('openWorkerArea'));
     }
 
-    // Show toast notification for new task
-    toast.info(`${task.name} started`, {
-      id: task.id,
-      duration: Infinity,
-      action: {
-        label: 'Cancel',
-        onClick: () => get().cancelTask(task.id),
-      },
-    });
+    // Show toast notification for new task if enabled
+    if (workerAreaConfig.showNotifications) {
+      toast.info(`${task.name} started`, {
+        id: task.id,
+        duration: Infinity,
+        action: {
+          label: 'Cancel',
+          onClick: () => get().cancelTask(task.id),
+        },
+      });
+    }
   },
 
   updateTask: (id, updates) => {
@@ -93,22 +97,25 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         const newHistory = new Map(state.taskHistory);
         newHistory.set(id, taskWithCompletedAt);
 
-        // Update toast based on status
-        if (updates.status === 'completed') {
-          toast.success(`${task.name} completed successfully`, {
-            id,
-            duration: 3000,
-          });
-        } else if (updates.status === 'failed') {
-          toast.error(`${task.name} failed: ${updates.error || 'Unknown error'}`, {
-            id,
-            duration: 5000,
-          });
-        } else if (updates.status === 'cancelled') {
-          toast.info(`${task.name} cancelled`, {
-            id,
-            duration: 3000,
-          });
+        // Update toast based on status if notifications are enabled
+        const workerAreaConfig = configService.getWorkerAreaConfig();
+        if (workerAreaConfig.showNotifications) {
+          if (updates.status === 'completed') {
+            toast.success(`${task.name} completed successfully`, {
+              id,
+              duration: 3000,
+            });
+          } else if (updates.status === 'failed') {
+            toast.error(`${task.name} failed: ${updates.error || 'Unknown error'}`, {
+              id,
+              duration: 5000,
+            });
+          } else if (updates.status === 'cancelled') {
+            toast.info(`${task.name} cancelled`, {
+              id,
+              duration: 3000,
+            });
+          }
         }
 
         return { tasks: newTasks, taskHistory: newHistory };
@@ -118,15 +125,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       newTasks.set(id, updatedTask);
 
       if (updates.progress !== undefined) {
-        // Update progress in toast
-        toast.info(`${task.name} - ${updates.progress}%`, {
-          id,
-          duration: Infinity,
-          action: {
-            label: 'Cancel',
-            onClick: () => get().cancelTask(id),
-          },
-        });
+        // Update progress in toast if notifications are enabled
+        const workerAreaConfig = configService.getWorkerAreaConfig();
+        if (workerAreaConfig.showNotifications) {
+          toast.info(`${task.name} - ${updates.progress}%`, {
+            id,
+            duration: Infinity,
+            action: {
+              label: 'Cancel',
+              onClick: () => get().cancelTask(id),
+            },
+          });
+        }
       }
 
       return { tasks: newTasks };
@@ -198,5 +208,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   setAutoOpenWorkerArea: (autoOpen) => {
     set({ autoOpenWorkerArea: autoOpen });
+    // Also update the centralized config
+    configService.updateWorkerAreaConfig({ autoOpen });
   },
 }));
