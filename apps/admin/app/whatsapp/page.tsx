@@ -47,10 +47,9 @@ export default function WhatsAppPage() {
       title: "Analytics",
       description: "View campaign performance and delivery reports",
       icon: BarChart3,
-      href: "/whatsapp/analytics",
+      href: "/whatsapp/templates/analytics",
       color: "text-orange-600",
       bgColor: "bg-orange-50",
-      comingSoon: true,
     },
   ];
 

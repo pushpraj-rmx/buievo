@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   TemplateManager,
   TemplateDefinition,
+  TemplateValidationResult,
 } from "@whatssuite/template-manager";
 import { z } from "zod";
 import { prisma } from "@whatssuite/db";
@@ -31,11 +32,13 @@ export async function createTemplate(req: Request, res: Response) {
       name: z.string().min(1),
       language: z.string().min(2),
       category: z.enum(["MARKETING", "UTILITY", "AUTHENTICATION"]),
+      description: z.string().optional(),
+      tags: z.array(z.string()).optional(),
       components: z
         .array(
           z.object({
-            type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS", "CAROUSEL"]),
-            format: z.enum(["TEXT", "IMAGE", "VIDEO", "DOCUMENT"]).optional(),
+            type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS", "CAROUSEL", "header", "body", "footer", "buttons", "carousel"]),
+            format: z.enum(["TEXT", "IMAGE", "VIDEO", "DOCUMENT", "text", "image", "video", "document"]).optional(),
             text: z.string().optional(),
             example: z.any().optional(),
             buttons: z
@@ -46,10 +49,15 @@ export async function createTemplate(req: Request, res: Response) {
                     "URL",
                     "PHONE_NUMBER",
                     "COPY_CODE",
+                    "quick_reply",
+                    "url",
+                    "phone_number",
+                    "copy_code",
                   ]),
                   text: z.string().optional(),
                   url: z.string().url().optional(),
                   phone_number: z.string().optional(),
+                  example: z.any().optional(),
                 }),
               )
               .optional(),
@@ -58,8 +66,8 @@ export async function createTemplate(req: Request, res: Response) {
                 z.object({
                   components: z.array(
                     z.object({
-                      type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS"]),
-                      format: z.enum(["TEXT", "IMAGE", "VIDEO", "DOCUMENT"]).optional(),
+                      type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS", "header", "body", "footer", "buttons"]),
+                      format: z.enum(["TEXT", "IMAGE", "VIDEO", "DOCUMENT", "text", "image", "video", "document"]).optional(),
                       text: z.string().optional(),
                       example: z.any().optional(),
                       buttons: z
@@ -70,10 +78,15 @@ export async function createTemplate(req: Request, res: Response) {
                               "URL",
                               "PHONE_NUMBER",
                               "COPY_CODE",
+                              "quick_reply",
+                              "url",
+                              "phone_number",
+                              "copy_code",
                             ]),
                             text: z.string().optional(),
                             url: z.string().url().optional(),
                             phone_number: z.string().optional(),
+                            example: z.any().optional(),
                           }),
                         )
                         .optional(),
@@ -89,26 +102,62 @@ export async function createTemplate(req: Request, res: Response) {
 
     const body = defSchema.parse(req.body) as TemplateDefinition;
 
+    // Validate template before submission
+    const validation = tm.validateTemplate(body);
+    
+    if (!validation.isValid) {
+      return res.status(400).json({
+        message: "Template validation failed",
+        errors: validation.errors,
+        warnings: validation.warnings,
+        estimatedApprovalTime: validation.estimatedApprovalTime,
+      });
+    }
+
+    // Add validation metadata to template
+    const enhancedTemplate = {
+      ...body,
+      variables: validation.variables,
+      estimatedApprovalTime: validation.estimatedApprovalTime,
+    };
+
     try {
-      const data = await tm.create(body);
+      const data = await tm.create(enhancedTemplate);
 
       // Use the actual status returned by WhatsApp API
       const templateStatus = data.status || "PENDING";
 
-      // Persist/Upsert into DB (basic fields)
+      // Persist/Upsert into DB with enhanced metadata
       await prisma.template.upsert({
         where: { name: body.name },
-        update: { content: data, status: templateStatus },
-        create: { name: body.name, content: data, status: templateStatus },
+        update: { 
+          content: data, 
+          status: templateStatus,
+          updatedAt: new Date()
+        },
+        create: { 
+          name: body.name, 
+          content: data, 
+          status: templateStatus,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
       });
 
-      res.status(201).json(data);
+      res.status(201).json({
+        ...data,
+        validation: {
+          warnings: validation.warnings,
+          variables: validation.variables,
+          estimatedApprovalTime: validation.estimatedApprovalTime,
+        }
+      });
     } catch (whatsappError) {
       console.error("WhatsApp API error:", whatsappError);
 
       // Create mock template in database when WhatsApp API fails
       const mockData = {
-        ...body,
+        ...enhancedTemplate,
         status: "PENDING",
         id: `mock_${Date.now()}`,
         created_time: new Date().toISOString(),
@@ -116,18 +165,137 @@ export async function createTemplate(req: Request, res: Response) {
 
       await prisma.template.upsert({
         where: { name: body.name },
-        update: { content: mockData as any, status: "PENDING" },
+        update: { 
+          content: mockData as any, 
+          status: "PENDING",
+          updatedAt: new Date()
+        },
         create: {
           name: body.name,
           content: mockData as any,
           status: "PENDING",
+          createdAt: new Date(),
+          updatedAt: new Date()
         },
       });
 
-      res.status(201).json(mockData);
+      res.status(201).json({
+        ...mockData,
+        validation: {
+          warnings: validation.warnings,
+          variables: validation.variables,
+          estimatedApprovalTime: validation.estimatedApprovalTime,
+        }
+      });
     }
   } catch (error) {
     console.error("createTemplate error:", error);
+    if (error instanceof z.ZodError) {
+      return res
+        .status(400)
+        .json({ message: error.errors.map((e) => e.message).join(", ") });
+    }
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function validateTemplate(req: Request, res: Response) {
+  try {
+    const tm = getTemplateManager();
+    const defSchema = z.object({
+      name: z.string().min(1),
+      language: z.string().min(2),
+      category: z.enum(["MARKETING", "UTILITY", "AUTHENTICATION"]),
+      description: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      components: z
+        .array(
+          z.object({
+            type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS", "CAROUSEL", "header", "body", "footer", "buttons", "carousel"]),
+            format: z.enum(["TEXT", "IMAGE", "VIDEO", "DOCUMENT", "text", "image", "video", "document"]).optional(),
+            text: z.string().optional(),
+            example: z.any().optional(),
+            buttons: z
+              .array(
+                z.object({
+                  type: z.enum([
+                    "QUICK_REPLY",
+                    "URL",
+                    "PHONE_NUMBER",
+                    "COPY_CODE",
+                    "quick_reply",
+                    "url",
+                    "phone_number",
+                    "copy_code",
+                  ]),
+                  text: z.string().optional(),
+                  url: z.string().url().optional(),
+                  phone_number: z.string().optional(),
+                  example: z.any().optional(),
+                }),
+              )
+              .optional(),
+            cards: z
+              .array(
+                z.object({
+                  components: z.array(
+                    z.object({
+                      type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS", "header", "body", "footer", "buttons"]),
+                      format: z.enum(["TEXT", "IMAGE", "VIDEO", "DOCUMENT", "text", "image", "video", "document"]).optional(),
+                      text: z.string().optional(),
+                      example: z.any().optional(),
+                      buttons: z
+                        .array(
+                          z.object({
+                            type: z.enum([
+                              "QUICK_REPLY",
+                              "URL",
+                              "PHONE_NUMBER",
+                              "COPY_CODE",
+                              "quick_reply",
+                              "url",
+                              "phone_number",
+                              "copy_code",
+                            ]),
+                            text: z.string().optional(),
+                            url: z.string().url().optional(),
+                            phone_number: z.string().optional(),
+                            example: z.any().optional(),
+                          }),
+                        )
+                        .optional(),
+                    }),
+                  ),
+                }),
+              )
+              .optional(),
+          }),
+        )
+        .min(1),
+    });
+
+    const body = defSchema.parse(req.body) as TemplateDefinition;
+    const validation = tm.validateTemplate(body);
+    
+    // Generate preview with sample variables
+    const sampleVariables: Record<string, string> = {};
+    validation.variables.forEach((variable, index) => {
+      sampleVariables[variable] = `Sample Value ${index + 1}`;
+    });
+    
+    const preview = tm.generatePreview(body, sampleVariables);
+
+    res.status(200).json({
+      isValid: validation.isValid,
+      errors: validation.errors,
+      warnings: validation.warnings,
+      variables: validation.variables,
+      estimatedApprovalTime: validation.estimatedApprovalTime,
+      preview,
+      sampleVariables,
+    });
+  } catch (error) {
+    console.error("validateTemplate error:", error);
     if (error instanceof z.ZodError) {
       return res
         .status(400)
@@ -366,6 +534,117 @@ export async function deleteTemplate(req: Request, res: Response) {
     res.status(200).json(data);
   } catch (error) {
     console.error("deleteTemplate error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function duplicateTemplate(req: Request, res: Response) {
+  try {
+    const { name } = req.params;
+    const { newName, description, tags } = req.body;
+
+    if (!name || !newName) {
+      return res.status(400).json({ message: "Template name and new name are required" });
+    }
+
+    // Get the original template from database
+    const originalTemplate = await prisma.template.findUnique({
+      where: { name },
+    });
+
+    if (!originalTemplate) {
+      return res.status(404).json({ message: "Template not found" });
+    }
+
+    // Check if new name already exists
+    const existingTemplate = await prisma.template.findUnique({
+      where: { name: newName },
+    });
+
+    if (existingTemplate) {
+      return res.status(400).json({ message: "Template with this name already exists" });
+    }
+
+    // Create duplicate template
+    const tm = getTemplateManager();
+    const originalContent = originalTemplate.content as any;
+    
+    const duplicateTemplate = {
+      name: newName,
+      language: originalContent.language || "en_US",
+      category: originalContent.category || "UTILITY",
+      description: description || originalContent.description,
+      tags: tags || originalContent.tags,
+      components: originalContent.components || [],
+    };
+
+    // Validate the duplicate template
+    const validation = tm.validateTemplate(duplicateTemplate);
+    
+    if (!validation.isValid) {
+      return res.status(400).json({
+        message: "Duplicate template validation failed",
+        errors: validation.errors,
+        warnings: validation.warnings,
+      });
+    }
+
+    try {
+      // Create the template via WhatsApp API
+      const data = await tm.create(duplicateTemplate);
+      const templateStatus = data.status || "PENDING";
+
+      // Save to database
+      await prisma.template.create({
+        data: {
+          name: newName,
+          content: data,
+          status: templateStatus,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      res.status(201).json({
+        ...data,
+        validation: {
+          warnings: validation.warnings,
+          variables: validation.variables,
+          estimatedApprovalTime: validation.estimatedApprovalTime,
+        }
+      });
+    } catch (whatsappError) {
+      console.error("WhatsApp API error during duplication:", whatsappError);
+
+      // Create mock template in database when WhatsApp API fails
+      const mockData = {
+        ...duplicateTemplate,
+        status: "PENDING",
+        id: `mock_${Date.now()}`,
+        created_time: new Date().toISOString(),
+      };
+
+      await prisma.template.create({
+        data: {
+          name: newName,
+          content: mockData as any,
+          status: "PENDING",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      res.status(201).json({
+        ...mockData,
+        validation: {
+          warnings: validation.warnings,
+          variables: validation.variables,
+          estimatedApprovalTime: validation.estimatedApprovalTime,
+        }
+      });
+    }
+  } catch (error) {
+    console.error("duplicateTemplate error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 }

@@ -5,12 +5,16 @@ import {
   getTemplateStatus,
   deleteTemplate,
   syncTemplates,
+  validateTemplate,
+  duplicateTemplate,
 } from "../controllers/template.controller";
 import { prisma } from "@whatssuite/db";
 
 const router = Router();
 
 router.post("/", createTemplate);
+router.post("/validate", validateTemplate);
+router.post("/:name/duplicate", duplicateTemplate);
 router.get("/", listTemplates);
 router.post("/sync", syncTemplates);
 router.get("/db", async (req, res) => {
