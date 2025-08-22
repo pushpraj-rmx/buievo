@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -647,37 +648,76 @@ export default function WhatsAppContactsPage() {
                 </div>
                 <div>
                   <Label>Segments</Label>
-                  <div className="space-y-2">
-                    {segments.map((segment) => (
-                      <label
-                        key={segment.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={contactForm.segmentIds.includes(segment.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setContactForm({
-                                ...contactForm,
-                                segmentIds: [
-                                  ...contactForm.segmentIds,
-                                  segment.id,
-                                ],
-                              });
-                            } else {
-                              setContactForm({
-                                ...contactForm,
-                                segmentIds: contactForm.segmentIds.filter(
-                                  (id) => id !== segment.id,
-                                ),
-                              });
-                            }
-                          }}
-                        />
-                        <span>{segment.name}</span>
-                      </label>
-                    ))}
+                  <div className="space-y-2 max-h-32 overflow-y-auto border rounded-md p-2">
+                    {segments.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No segments available</p>
+                    ) : (
+                      <>
+                        {/* Select All Option */}
+                        <div className="flex items-center space-x-2 cursor-pointer hover:bg-muted p-1 rounded border-b pb-2">
+                          <Checkbox
+                            id="select-all-segments"
+                            checked={contactForm.segmentIds.length === segments.length && segments.length > 0}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setContactForm({
+                                  ...contactForm,
+                                  segmentIds: segments.map(s => s.id),
+                                });
+                              } else {
+                                setContactForm({
+                                  ...contactForm,
+                                  segmentIds: [],
+                                });
+                              }
+                            }}
+                          />
+                          <label
+                            htmlFor="select-all-segments"
+                            className="text-sm font-medium cursor-pointer"
+                          >
+                            Select All
+                          </label>
+                        </div>
+                        
+                        {/* Individual Segments */}
+                        {segments.map((segment) => (
+                          <div
+                            key={segment.id}
+                            className="flex items-center space-x-2 cursor-pointer hover:bg-muted p-1 rounded"
+                          >
+                            <Checkbox
+                              id={`segment-${segment.id}`}
+                              checked={contactForm.segmentIds.includes(segment.id)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setContactForm({
+                                    ...contactForm,
+                                    segmentIds: [
+                                      ...contactForm.segmentIds,
+                                      segment.id,
+                                    ],
+                                  });
+                                } else {
+                                  setContactForm({
+                                    ...contactForm,
+                                    segmentIds: contactForm.segmentIds.filter(
+                                      (id) => id !== segment.id,
+                                    ),
+                                  });
+                                }
+                              }}
+                            />
+                            <label
+                              htmlFor={`segment-${segment.id}`}
+                              className="text-sm cursor-pointer"
+                            >
+                              {segment.name}
+                            </label>
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -745,14 +785,20 @@ export default function WhatsAppContactsPage() {
             <div>
               <Label htmlFor="segment">Segment</Label>
               <Select value={segmentFilter} onValueChange={setSegmentFilter}>
-                <SelectTrigger>
-                  <SelectValue />
+                <SelectTrigger className="min-w-[150px]">
+                  <SelectValue placeholder="All Segments" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Segments</SelectItem>
                   {segments.map((segment) => (
                     <SelectItem key={segment.id} value={segment.id}>
-                      {segment.name}
+                      <div className="flex items-center gap-2">
+                        <Tag className="w-3 h-3" />
+                        {segment.name}
+                        <Badge variant="secondary" className="ml-auto text-xs">
+                          {segment._count?.contacts || 0}
+                        </Badge>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -767,49 +813,68 @@ export default function WhatsAppContactsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Tag className="w-5 h-5" />
-            Segments Overview
+            Segments Overview ({segments.length})
           </CardTitle>
+          <CardDescription>
+            Manage your contact segments for better organization
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {segments.map((segment) => (
-              <div
-                key={segment.id}
-                className="flex items-center justify-between p-4 border rounded-lg"
-              >
-                <div>
-                  <h3 className="font-medium">{segment.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {segment._count?.contacts || 0} contacts
-                  </p>
+          {segments.length === 0 ? (
+            <div className="text-center py-8">
+              <Tag className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium mb-2">No segments yet</h3>
+              <p className="text-muted-foreground mb-4">
+                Create your first segment to organize your contacts
+              </p>
+              <Button onClick={() => setSegmentDialogOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Segment
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {segments.map((segment) => (
+                <div
+                  key={segment.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow"
+                >
+                  <div className="flex-1">
+                    <h3 className="font-medium text-sm">{segment.name}</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {segment._count?.contacts || 0} contacts
+                    </p>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openEditSegmentDialog(segment)}
+                      disabled={segmentUpdateLoading}
+                      className="h-8 w-8 p-0"
+                    >
+                      {segmentUpdateLoading && (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      )}
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteSegment(segment.id)}
+                      disabled={segmentDeleteLoading === segment.id}
+                      className="h-8 w-8 p-0"
+                    >
+                      {segmentDeleteLoading === segment.id && (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      )}
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openEditSegmentDialog(segment)}
-                    disabled={segmentUpdateLoading}
-                  >
-                    {segmentUpdateLoading && (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    )}
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteSegment(segment.id)}
-                    disabled={segmentDeleteLoading === segment.id}
-                  >
-                    {segmentDeleteLoading === segment.id && (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    )}
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -858,15 +923,20 @@ export default function WhatsAppContactsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
-                          {contact.segments.map((segment) => (
-                            <Badge
-                              key={segment.id}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {segment.name}
-                            </Badge>
-                          ))}
+                          {contact.segments.length === 0 ? (
+                            <span className="text-xs text-muted-foreground">No segments</span>
+                          ) : (
+                            contact.segments.map((segment) => (
+                              <Badge
+                                key={segment.id}
+                                variant="outline"
+                                className="text-xs flex items-center gap-1"
+                              >
+                                <Tag className="w-3 h-3" />
+                                {segment.name}
+                              </Badge>
+                            ))
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>

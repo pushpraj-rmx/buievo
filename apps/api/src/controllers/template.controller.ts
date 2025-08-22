@@ -34,7 +34,7 @@ export async function createTemplate(req: Request, res: Response) {
       components: z
         .array(
           z.object({
-            type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS"]),
+            type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS", "CAROUSEL"]),
             format: z.enum(["TEXT", "IMAGE", "VIDEO", "DOCUMENT"]).optional(),
             text: z.string().optional(),
             example: z.any().optional(),
@@ -53,6 +53,35 @@ export async function createTemplate(req: Request, res: Response) {
                 }),
               )
               .optional(),
+            cards: z
+              .array(
+                z.object({
+                  components: z.array(
+                    z.object({
+                      type: z.enum(["HEADER", "BODY", "FOOTER", "BUTTONS"]),
+                      format: z.enum(["TEXT", "IMAGE", "VIDEO", "DOCUMENT"]).optional(),
+                      text: z.string().optional(),
+                      example: z.any().optional(),
+                      buttons: z
+                        .array(
+                          z.object({
+                            type: z.enum([
+                              "QUICK_REPLY",
+                              "URL",
+                              "PHONE_NUMBER",
+                              "COPY_CODE",
+                            ]),
+                            text: z.string().optional(),
+                            url: z.string().url().optional(),
+                            phone_number: z.string().optional(),
+                          }),
+                        )
+                        .optional(),
+                    }),
+                  ),
+                }),
+              )
+              .optional(),
           }),
         )
         .min(1),
@@ -63,11 +92,14 @@ export async function createTemplate(req: Request, res: Response) {
     try {
       const data = await tm.create(body);
 
+      // Use the actual status returned by WhatsApp API
+      const templateStatus = data.status || "PENDING";
+
       // Persist/Upsert into DB (basic fields)
       await prisma.template.upsert({
         where: { name: body.name },
-        update: { content: data, status: "PENDING" },
-        create: { name: body.name, content: data, status: "PENDING" },
+        update: { content: data, status: templateStatus },
+        create: { name: body.name, content: data, status: templateStatus },
       });
 
       res.status(201).json(data);
@@ -107,24 +139,49 @@ export async function createTemplate(req: Request, res: Response) {
 
 export async function listTemplates(_req: Request, res: Response) {
   try {
+    console.log("🔍 Fetching templates from WhatsApp API...");
     const tm = getTemplateManager();
     const data = await tm.getAll();
 
-    // Optionally refresh DB statuses
+    console.log("📋 WhatsApp API Response:", JSON.stringify(data, null, 2));
+
+    // Sync templates with database
     const items = Array.isArray(data?.data) ? data.data : [];
-    await Promise.all(
-      items.map((t: any) =>
-        prisma.template.upsert({
-          where: { name: t.name },
-          update: { status: t.status, content: t },
-          create: { name: t.name, status: t.status, content: t },
-        }),
-      ),
+    console.log(`📊 Found ${items.length} templates from WhatsApp API`);
+
+    const syncResults = await Promise.all(
+      items.map(async (t: any) => {
+        try {
+          const result = await prisma.template.upsert({
+            where: { name: t.name },
+            update: {
+              status: t.status,
+              content: t,
+              updatedAt: new Date()
+            },
+            create: {
+              name: t.name,
+              status: t.status,
+              content: t,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            },
+          });
+          console.log(`✅ Synced template: ${t.name} (${t.status})`);
+          return result;
+        } catch (error) {
+          console.error(`❌ Failed to sync template ${t.name}:`, error);
+          return null;
+        }
+      }),
     );
+
+    const syncedCount = syncResults.filter(r => r !== null).length;
+    console.log(`🔄 Sync completed: ${syncedCount}/${items.length} templates updated`);
 
     res.status(200).json(data);
   } catch (error) {
-    console.error("listTemplates error:", error);
+    console.error("❌ listTemplates error:", error);
 
     // Return mock data when WhatsApp API fails
     const mockTemplates = {
@@ -214,6 +271,65 @@ export async function listTemplates(_req: Request, res: Response) {
     );
 
     res.status(200).json(mockTemplates);
+  }
+}
+
+export async function syncTemplates(_req: Request, res: Response) {
+  try {
+    console.log("🔄 Starting template sync from WhatsApp API...");
+    const tm = getTemplateManager();
+    const data = await tm.getAll();
+
+    const items = Array.isArray(data?.data) ? data.data : [];
+    console.log(`📊 Found ${items.length} templates from WhatsApp API`);
+
+    const syncResults = await Promise.all(
+      items.map(async (t: any) => {
+        try {
+          const result = await prisma.template.upsert({
+            where: { name: t.name },
+            update: {
+              status: t.status,
+              content: t,
+              updatedAt: new Date()
+            },
+            create: {
+              name: t.name,
+              status: t.status,
+              content: t,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            },
+          });
+          console.log(`✅ Synced template: ${t.name} (${t.status})`);
+          return { name: t.name, status: t.status, synced: true };
+        } catch (error) {
+          console.error(`❌ Failed to sync template ${t.name}:`, error);
+          return { name: t.name, status: 'ERROR', synced: false, error: (error as any).message };
+        }
+      }),
+    );
+
+    const syncedCount = syncResults.filter(r => r.synced).length;
+    const failedCount = syncResults.filter(r => !r.synced).length;
+
+    console.log(`🔄 Sync completed: ${syncedCount} synced, ${failedCount} failed`);
+
+    res.status(200).json({
+      message: `Template sync completed`,
+      summary: {
+        total: items.length,
+        synced: syncedCount,
+        failed: failedCount
+      },
+      results: syncResults
+    });
+  } catch (error) {
+    console.error("❌ syncTemplates error:", error);
+    res.status(500).json({
+      message: "Failed to sync templates",
+      error: (error as any).message
+    });
   }
 }
 

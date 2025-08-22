@@ -1,4 +1,10 @@
+import "dotenv/config";
+import path from "path";
 import axios, { isAxiosError } from "axios";
+
+// Load environment variables from the project root
+import { config } from "dotenv";
+config({ path: path.resolve(process.cwd(), "../../.env") });
 
 export interface SendTemplateMessageArgs {
   to: string;

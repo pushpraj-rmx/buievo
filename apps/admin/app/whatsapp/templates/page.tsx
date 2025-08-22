@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,8 +28,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Loader2, Plus, FileText, Eye, RefreshCw, Trash2, Copy } from "lucide-react";
 
 type TemplateRow = {
   name: string;
@@ -100,7 +102,7 @@ export default function WhatsAppTemplatesPage() {
 
       // Add header if provided
       if (headerText.trim()) {
-        components.push({ type: "HEADER", text: headerText.trim() });
+        components.push({ type: "HEADER", format: "TEXT", text: headerText.trim() });
       }
 
       // Add body (required)
@@ -186,15 +188,48 @@ export default function WhatsAppTemplatesPage() {
     }
   }
 
+  async function refreshFromWhatsApp() {
+    setListLoading(true);
+    try {
+      const res = await fetch("/api/v1/templates");
+      if (!res.ok) {
+        toast.error("Failed to refresh from WhatsApp API");
+        return;
+      }
+      toast.success("Templates refreshed from WhatsApp API");
+      // Refetch from database after refresh
+      await fetchList();
+    } catch (error) {
+      toast.error("Failed to refresh templates");
+    } finally {
+      setListLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchList();
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">WhatsApp Templates</h1>
+          <p className="text-muted-foreground">
+            Create and manage your WhatsApp message templates
+          </p>
+        </div>
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>Create WhatsApp Template</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Plus className="w-5 h-5" />
+            Create New Template
+          </CardTitle>
+          <CardDescription>
+            Create a new WhatsApp message template for your business
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Basic Information */}
@@ -227,6 +262,7 @@ export default function WhatsAppTemplatesPage() {
                   <SelectItem value="UTILITY">Utility</SelectItem>
                   <SelectItem value="MARKETING">Marketing</SelectItem>
                   <SelectItem value="AUTHENTICATION">Authentication</SelectItem>
+                  <SelectItem value="CAROUSEL">Carousel</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -300,16 +336,64 @@ export default function WhatsAppTemplatesPage() {
         </CardContent>
       </Card>
 
-      <Card className="mt-6">
+      <Card>
         <CardHeader>
-          <CardTitle>WhatsApp Templates</CardTitle>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                Template Library ({rows.length})
+              </CardTitle>
+              <CardDescription>
+                Manage your existing WhatsApp templates
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={refreshFromWhatsApp}
+              disabled={listLoading}
+            >
+              {listLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
+              <span className="ml-2">Refresh from WhatsApp</span>
+            </Button>
+          </div>
+          {rows.length > 0 && (
+            <div className="flex gap-4 mt-4">
+              <div className="flex items-center gap-2">
+                <Badge variant="default" className="bg-green-100 text-green-800">
+                  ✅ {rows.filter(r => r.status === "APPROVED").length} Approved
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                  ⏳ {rows.filter(r => r.status === "PENDING").length} Pending
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="destructive" className="bg-red-100 text-red-800">
+                  ❌ {rows.filter(r => r.status === "REJECTED").length} Rejected
+                </Badge>
+              </div>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           {listLoading ? (
-            <div className="text-sm text-muted-foreground">Loading...</div>
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-8 h-8 animate-spin" />
+            </div>
           ) : rows.length === 0 ? (
-            <div className="text-sm text-muted-foreground">
-              No templates yet.
+            <div className="text-center py-8">
+              <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium mb-2">No templates yet</h3>
+              <p className="text-muted-foreground mb-4">
+                Create your first template to start sending structured messages
+              </p>
             </div>
           ) : (
             <Table>
@@ -347,139 +431,159 @@ export default function WhatsAppTemplatesPage() {
                                 ? "destructive"
                                 : "outline"
                         }
+                        className={
+                          r.status === "APPROVED"
+                            ? "bg-green-100 text-green-800 hover:bg-green-100"
+                            : r.status === "PENDING"
+                              ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                              : r.status === "REJECTED"
+                                ? "bg-red-100 text-red-800 hover:bg-red-100"
+                                : ""
+                        }
                       >
+                        {r.status === "APPROVED" && "✅ "}
+                        {r.status === "PENDING" && "⏳ "}
+                        {r.status === "REJECTED" && "❌ "}
                         {r.status || "Unknown"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="space-x-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={viewLoading === r.name}
-                            onClick={async () => {
-                              setViewLoading(r.name);
-                              try {
-                                const res = await fetch(
-                                  `/api/v1/templates/${encodeURIComponent(r.name)}/db`,
-                                );
-                                if (res.ok) {
-                                  const json = await res.json();
-                                  setSelected(json);
-                                } else {
-                                  toast.error("Failed to load details");
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={viewLoading === r.name}
+                              onClick={async () => {
+                                setViewLoading(r.name);
+                                try {
+                                  const res = await fetch(
+                                    `/api/v1/templates/${encodeURIComponent(r.name)}/db`,
+                                  );
+                                  if (res.ok) {
+                                    const json = await res.json();
+                                    setSelected(json);
+                                  } else {
+                                    toast.error("Failed to load details");
+                                  }
+                                } finally {
+                                  setViewLoading(null);
                                 }
-                              } finally {
-                                setViewLoading(null);
-                              }
-                            }}
-                          >
-                            {viewLoading === r.name ? (
-                              <>
-                                <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                                Loading...
-                              </>
-                            ) : (
-                              "View"
-                            )}
-                          </Button>
-                        </DialogTrigger>
+                              }}
+                            >
+                              {viewLoading === r.name ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
+                            </Button>
+                          </DialogTrigger>
                         <DialogContent className="max-w-4xl">
                           <DialogHeader>
-                            <DialogTitle>Template: {r.name}</DialogTitle>
+                            <DialogTitle className="flex items-center gap-2">
+                              <FileText className="w-5 h-5" />
+                              Template: {r.name}
+                            </DialogTitle>
                           </DialogHeader>
                           {selected ? (
-                            <div className="space-y-4">
-                              <div className="bg-muted rounded p-4">
-                                <h4 className="font-semibold mb-2">
-                                  Template Preview:
+                            <div className="space-y-6">
+                              <div className="bg-muted rounded-lg p-6">
+                                <h4 className="font-semibold mb-4 flex items-center gap-2">
+                                  <Eye className="w-4 h-4" />
+                                  Template Preview
                                 </h4>
-                                <div className="space-y-2 text-sm">
+                                <div className="space-y-4">
                                   {selected.content?.components?.map(
                                     (comp: TemplateComponent, idx: number) => (
                                       <div
                                         key={idx}
-                                        className="border-l-2 border-blue-500 pl-3"
+                                        className="border-l-4 border-blue-500 pl-4 py-2"
                                       >
-                                        <div className="font-medium text-blue-600">
-                                          {comp.type}:
+                                        <div className="font-medium text-blue-600 mb-1">
+                                          {comp.type}
                                         </div>
-                                        <div className="text-gray-700">
-                                          {comp.text}
+                                        <div className="text-gray-700 bg-white rounded p-3">
+                                          {comp.text || "No content"}
                                         </div>
                                       </div>
                                     ),
                                   )}
                                 </div>
                               </div>
-                              <div className="bg-muted rounded p-3">
-                                <h4 className="font-semibold mb-2">
-                                  Raw Data:
+                              <div className="bg-muted rounded-lg p-4">
+                                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                                  <Copy className="w-4 h-4" />
+                                  Template Data
                                 </h4>
-                                <pre className="text-xs overflow-auto max-h-[200px]">
-                                  {JSON.stringify(selected, null, 2)}
-                                </pre>
+                                <div className="bg-white rounded border p-3">
+                                  <pre className="text-xs overflow-auto max-h-[300px]">
+                                    {JSON.stringify(selected, null, 2)}
+                                  </pre>
+                                </div>
                               </div>
                             </div>
                           ) : (
                             <div className="flex justify-center p-8">
-                              <p>Loading...</p>
+                              <Loader2 className="w-8 h-8 animate-spin" />
                             </div>
                           )}
+                          <DialogFooter>
+                            <Button variant="outline" onClick={() => setSelected(null)}>
+                              Close
+                            </Button>
+                          </DialogFooter>
                         </DialogContent>
                       </Dialog>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={refreshLoading === r.name}
-                        onClick={() => refresh(r.name)}
-                      >
-                        {refreshLoading === r.name ? (
-                          <>
-                            <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                            Refreshing...
-                          </>
-                        ) : (
-                          "Refresh"
-                        )}
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        disabled={deleteLoading === r.name}
-                        onClick={async () => {
-                          setDeleteLoading(r.name);
-                          try {
-                            const res = await fetch(
-                              `/api/v1/templates/${encodeURIComponent(r.name)}`,
-                              { method: "DELETE" },
-                            );
-                            if (res.ok) {
-                              toast.success("Template deleted");
-                              setRows((prev) =>
-                                prev.filter((x) => x.name !== r.name),
-                              );
-                            } else {
-                              const j = await res.json().catch(() => ({}));
-                              toast.error(j.message || "Delete failed");
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={refreshLoading === r.name}
+                          onClick={() => refresh(r.name)}
+                        >
+                          {refreshLoading === r.name ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <RefreshCw className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={deleteLoading === r.name}
+                          onClick={async () => {
+                            if (!confirm(`Are you sure you want to delete template "${r.name}"?`)) {
+                              return;
                             }
-                          } finally {
-                            setDeleteLoading(null);
-                          }
-                        }}
-                      >
-                        {deleteLoading === r.name ? (
-                          <>
-                            <div className="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                            Deleting...
-                          </>
-                        ) : (
-                          "Delete"
-                        )}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                            setDeleteLoading(r.name);
+                            try {
+                              const res = await fetch(
+                                `/api/v1/templates/${encodeURIComponent(r.name)}`,
+                                { method: "DELETE" },
+                              );
+                              if (res.ok) {
+                                toast.success("Template deleted");
+                                setRows((prev) =>
+                                  prev.filter((x) => x.name !== r.name),
+                                );
+                              } else {
+                                const j = await res.json().catch(() => ({}));
+                                toast.error(j.message || "Delete failed");
+                              }
+                            } finally {
+                              setDeleteLoading(null);
+                            }
+                          }}
+                        >
+                          {deleteLoading === r.name ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                                                 </Button>
+                       </div>
+                      </TableCell>
+                    </TableRow>
                 ))}
               </TableBody>
             </Table>
@@ -487,7 +591,7 @@ export default function WhatsAppTemplatesPage() {
         </CardContent>
       </Card>
       {rows.length > 0 && (
-        <div className="mt-3">
+        <div className="flex justify-center">
           <Button
             variant="outline"
             disabled={loadMoreLoading}
@@ -500,7 +604,7 @@ export default function WhatsAppTemplatesPage() {
                 if (!res.ok) return;
                 const json: TemplateDbData[] = await res.json();
                 if (json.length === 0) {
-                  toast.message("No more records");
+                  toast.message("No more templates to load");
                   return;
                 }
                 setRows((prev) => [
@@ -518,11 +622,11 @@ export default function WhatsAppTemplatesPage() {
           >
             {loadMoreLoading ? (
               <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Loading...
               </>
             ) : (
-              "Load more"
+              "Load More Templates"
             )}
           </Button>
         </div>

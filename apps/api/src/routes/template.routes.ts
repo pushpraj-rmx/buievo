@@ -4,6 +4,7 @@ import {
   listTemplates,
   getTemplateStatus,
   deleteTemplate,
+  syncTemplates,
 } from "../controllers/template.controller";
 import { prisma } from "@whatssuite/db";
 
@@ -11,6 +12,7 @@ const router = Router();
 
 router.post("/", createTemplate);
 router.get("/", listTemplates);
+router.post("/sync", syncTemplates);
 router.get("/db", async (req, res) => {
   const take = Math.min(
     parseInt(String(req.query.take ?? "50"), 10) || 50,
