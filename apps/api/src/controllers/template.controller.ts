@@ -3,6 +3,7 @@ import {
   TemplateManager,
   TemplateDefinition,
   TemplateValidationResult,
+  MediaAsset,
 } from "@whatssuite/template-manager";
 import { z } from "zod";
 import { prisma } from "@whatssuite/db";
@@ -302,6 +303,28 @@ export async function validateTemplate(req: Request, res: Response) {
         .json({ message: error.errors.map((e) => e.message).join(", ") });
     }
     res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function uploadMedia(req: Request, res: Response) {
+  try {
+    const tm = getTemplateManager();
+    const { fileUrl, type = "image" } = req.body;
+
+    if (!fileUrl) {
+      return res.status(400).json({ message: "fileUrl is required" });
+    }
+
+    if (!["image", "video"].includes(type)) {
+      return res.status(400).json({ message: "type must be 'image' or 'video'" });
+    }
+
+    const mediaAsset = await tm.uploadMedia(fileUrl, type as "image" | "video");
+
+    res.status(200).json(mediaAsset);
+  } catch (error) {
+    console.error("uploadMedia error:", error);
+    res.status(500).json({ message: "Failed to upload media" });
   }
 }
 

@@ -28,6 +28,14 @@ export default function WhatsAppPage() {
       bgColor: "bg-blue-50",
     },
     {
+      title: "Carousel Templates",
+      description: "Create Media Card Carousel templates with images/videos",
+      icon: FileText,
+      href: "/whatsapp/templates/carousel",
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50",
+    },
+    {
       title: "Campaigns",
       description: "Create and send bulk WhatsApp campaigns",
       icon: MessageSquare,

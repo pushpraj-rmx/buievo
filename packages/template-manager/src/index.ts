@@ -14,21 +14,23 @@ export interface TemplateButton {
   example?: string[];
 }
 
+export interface CarouselCard {
+  components: Array<{
+    type: "HEADER" | "BODY" | "FOOTER" | "BUTTONS";
+    format?: "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT";
+    text?: string;
+    example?: unknown;
+    buttons?: TemplateButton[];
+  }>;
+}
+
 export interface TemplateComponent {
   type: "HEADER" | "BODY" | "FOOTER" | "BUTTONS" | "CAROUSEL";
   format?: "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT";
   text?: string;
   example?: unknown;
   buttons?: TemplateButton[];
-  cards?: Array<{
-    components: Array<{
-      type: "HEADER" | "BODY" | "FOOTER" | "BUTTONS";
-      format?: "TEXT" | "IMAGE" | "VIDEO" | "DOCUMENT";
-      text?: string;
-      example?: unknown;
-      buttons?: TemplateButton[];
-    }>;
-  }>;
+  cards?: CarouselCard[];
 }
 
 export interface TemplateDefinition {
@@ -63,6 +65,15 @@ export interface TemplateValidationResult {
   warnings: string[];
   variables: string[];
   estimatedApprovalTime: string;
+}
+
+export interface MediaAsset {
+  id: string;
+  handle: string;
+  url: string;
+  type: "image" | "video";
+  mimeType: string;
+  size: number;
 }
 
 export class TemplateManager {
@@ -111,6 +122,7 @@ export class TemplateManager {
     let hasHeader = false;
     let hasFooter = false;
     let hasButtons = false;
+    let hasCarousel = false;
 
     template.components.forEach((component) => {
       // Check for required body component
@@ -161,7 +173,129 @@ export class TemplateManager {
           if (button.text && button.text.length > 25) {
             errors.push(`Button ${buttonIndex + 1} text must be 25 characters or less`);
           }
+
+          // Validate URL buttons
+          if (button.type === "URL") {
+            if (!button.url || button.url.trim().length === 0) {
+              errors.push(`URL button ${buttonIndex + 1} must have a URL`);
+            }
+            if (button.url && button.url.length > 2000) {
+              errors.push(`URL button ${buttonIndex + 1} URL must be 2000 characters or less`);
+            }
+            if (button.url) {
+              extractVariables(button.url);
+            }
+          }
+
+          // Validate phone number buttons
+          if (button.type === "PHONE_NUMBER") {
+            if (!button.phone_number || button.phone_number.trim().length === 0) {
+              errors.push(`Phone number button ${buttonIndex + 1} must have a phone number`);
+            }
+            if (button.phone_number && button.phone_number.length > 20) {
+              errors.push(`Phone number button ${buttonIndex + 1} must be 20 characters or less`);
+            }
+          }
         });
+      }
+
+      // Check for carousel
+      if (component.type === "CAROUSEL") {
+        hasCarousel = true;
+        if (!component.cards || component.cards.length === 0) {
+          errors.push("Carousel component must have at least one card");
+        } else if (component.cards.length < 2) {
+          errors.push("Carousel must have at least 2 cards");
+        } else if (component.cards.length > 10) {
+          errors.push("Carousel cannot have more than 10 cards");
+        }
+
+        // Validate each card
+        component.cards?.forEach((card, cardIndex) => {
+          if (!card.components || card.components.length === 0) {
+            errors.push(`Card ${cardIndex + 1} must have at least one component`);
+          }
+
+          let cardHasHeader = false;
+          let cardHasButtons = false;
+
+                     card.components.forEach((cardComponent) => {
+            // Check for header (required for carousel cards)
+            if (cardComponent.type === "HEADER") {
+              cardHasHeader = true;
+              if (!cardComponent.format || !["IMAGE", "VIDEO"].includes(cardComponent.format)) {
+                errors.push(`Card ${cardIndex + 1} header must have format "IMAGE" or "VIDEO"`);
+              }
+            }
+
+            // Check for buttons
+            if (cardComponent.type === "BUTTONS") {
+              cardHasButtons = true;
+              if (!cardComponent.buttons || cardComponent.buttons.length === 0) {
+                errors.push(`Card ${cardIndex + 1} must have at least one button`);
+              } else if (cardComponent.buttons.length > 2) {
+                errors.push(`Card ${cardIndex + 1} cannot have more than 2 buttons`);
+              }
+
+              cardComponent.buttons?.forEach((button, buttonIndex) => {
+                if (!button.text || button.text.trim().length === 0) {
+                  errors.push(`Card ${cardIndex + 1} button ${buttonIndex + 1} must have text`);
+                }
+                if (button.text && button.text.length > 25) {
+                  errors.push(`Card ${cardIndex + 1} button ${buttonIndex + 1} text must be 25 characters or less`);
+                }
+
+                // Validate URL buttons
+                if (button.type === "URL") {
+                  if (!button.url || button.url.trim().length === 0) {
+                    errors.push(`Card ${cardIndex + 1} URL button ${buttonIndex + 1} must have a URL`);
+                  }
+                  if (button.url && button.url.length > 2000) {
+                    errors.push(`Card ${cardIndex + 1} URL button ${buttonIndex + 1} URL must be 2000 characters or less`);
+                  }
+                  if (button.url) {
+                    extractVariables(button.url);
+                  }
+                }
+
+                // Validate phone number buttons
+                if (button.type === "PHONE_NUMBER") {
+                  if (!button.phone_number || button.phone_number.trim().length === 0) {
+                    errors.push(`Card ${cardIndex + 1} phone number button ${buttonIndex + 1} must have a phone number`);
+                  }
+                  if (button.phone_number && button.phone_number.length > 20) {
+                    errors.push(`Card ${cardIndex + 1} phone number button ${buttonIndex + 1} must be 20 characters or less`);
+                  }
+                }
+              });
+            }
+          });
+
+          if (!cardHasHeader) {
+            errors.push(`Card ${cardIndex + 1} must have a header component`);
+          }
+          if (!cardHasButtons) {
+            errors.push(`Card ${cardIndex + 1} must have a buttons component`);
+          }
+        });
+
+        // Check for consistent card structure
+        if (component.cards && component.cards.length > 1) {
+          const firstCard = component.cards[0];
+          if (firstCard) {
+            component.cards.forEach((card, cardIndex) => {
+              if (cardIndex === 0) return;
+
+              // Check if all cards have the same component types
+              const firstCardTypes = firstCard.components.map(c => c.type).sort();
+              const currentCardTypes = card.components.map(c => c.type).sort();
+
+              if (JSON.stringify(firstCardTypes) !== JSON.stringify(currentCardTypes)) {
+                errors.push(`All carousel cards must have the same component structure. Card ${cardIndex + 1} differs from card 1`);
+              }
+            });
+          }
+        }
       }
     });
 
@@ -169,11 +303,21 @@ export class TemplateManager {
       errors.push("Template must have a BODY component");
     }
 
+    // Carousel-specific validation
+    if (hasCarousel) {
+      if (template.category !== "MARKETING") {
+        errors.push("Carousel templates must be in the MARKETING category");
+      }
+      if (hasButtons) {
+        errors.push("Carousel templates cannot have standalone buttons (buttons must be in cards)");
+      }
+    }
+
     // Estimate approval time based on category and complexity
     let estimatedApprovalTime = "24-48 hours";
     if (template.category === "MARKETING") {
       estimatedApprovalTime = "48-72 hours";
-      if (hasButtons) {
+      if (hasButtons || hasCarousel) {
         estimatedApprovalTime = "72-96 hours";
       }
     } else if (template.category === "AUTHENTICATION") {
@@ -184,11 +328,14 @@ export class TemplateManager {
     if (variables.length === 0) {
       warnings.push("Consider adding variables to make your template more dynamic");
     }
-    if (!hasHeader && !hasFooter) {
+    if (!hasHeader && !hasFooter && !hasCarousel) {
       warnings.push("Consider adding a header or footer for better branding");
     }
     if (hasButtons && template.category === "MARKETING") {
       warnings.push("Marketing templates with buttons may take longer to approve");
+    }
+    if (hasCarousel) {
+      warnings.push("Carousel templates require media assets and may take longer to approve");
     }
 
     return {
@@ -244,9 +391,65 @@ export class TemplateManager {
           if (component.buttons) {
             preview += `🔘 BUTTONS:\n`;
             component.buttons.forEach((button, index) => {
-              preview += `  ${index + 1}. [${button.type}] ${button.text}\n`;
+              preview += `  ${index + 1}. [${button.type}] ${button.text}`;
+              if (button.type === "URL" && button.url) {
+                preview += ` → ${button.url}`;
+              }
+              if (button.type === "PHONE_NUMBER" && button.phone_number) {
+                preview += ` → ${button.phone_number}`;
+              }
+              preview += `\n`;
             });
             preview += `\n`;
+          }
+          break;
+        case "CAROUSEL":
+          if (component.cards) {
+            preview += `🎠 CAROUSEL (${component.cards.length} cards):\n`;
+            component.cards.forEach((card, cardIndex) => {
+              preview += `  📦 Card ${cardIndex + 1}:\n`;
+              card.components.forEach((cardComponent) => {
+                switch (cardComponent.type) {
+                  case "HEADER":
+                    preview += `    📷 Header: ${cardComponent.format || "IMAGE"}\n`;
+                    break;
+                  case "BODY":
+                    if (cardComponent.text) {
+                      let cardBodyText = cardComponent.text;
+                      Object.entries(variables).forEach(([key, value]) => {
+                        cardBodyText = cardBodyText.replace(new RegExp(key, 'g'), value);
+                      });
+                      preview += `    💬 Body: ${cardBodyText}\n`;
+                    }
+                    break;
+                  case "FOOTER":
+                    if (cardComponent.text) {
+                      let cardFooterText = cardComponent.text;
+                      Object.entries(variables).forEach(([key, value]) => {
+                        cardFooterText = cardFooterText.replace(new RegExp(key, 'g'), value);
+                      });
+                      preview += `    📝 Footer: ${cardFooterText}\n`;
+                    }
+                    break;
+                  case "BUTTONS":
+                    if (cardComponent.buttons) {
+                      preview += `    🔘 Buttons:\n`;
+                      cardComponent.buttons.forEach((button, index) => {
+                        preview += `      ${index + 1}. [${button.type}] ${button.text}`;
+                        if (button.type === "URL" && button.url) {
+                          preview += ` → ${button.url}`;
+                        }
+                        if (button.type === "PHONE_NUMBER" && button.phone_number) {
+                          preview += ` → ${button.phone_number}`;
+                        }
+                        preview += `\n`;
+                      });
+                    }
+                    break;
+                }
+              });
+              preview += `\n`;
+            });
           }
           break;
       }
@@ -255,8 +458,11 @@ export class TemplateManager {
     return preview;
   }
 
-  async uploadMedia(fileUrl: string, type: "image" | "video" = "image") {
-    console.log("📤 Template Manager - Starting media upload...");
+  /**
+   * Upload media for carousel templates
+   */
+  async uploadMedia(fileUrl: string, type: "image" | "video" = "image"): Promise<MediaAsset> {
+    console.log("📤 Template Manager - Starting media upload for carousel...");
     console.log("🔗 Template Manager - File URL:", fileUrl);
     console.log("📁 Template Manager - File type:", type);
 
@@ -272,7 +478,7 @@ export class TemplateManager {
       const form = new FormData.default();
       form.append('messaging_product', 'whatsapp');
       form.append('file', buffer, {
-        filename: `upload.${type === 'image' ? 'jpg' : 'mp4'}`,
+        filename: `carousel_${Date.now()}.${type === 'image' ? 'jpg' : 'mp4'}`,
         contentType: type === 'image' ? 'image/jpeg' : 'video/mp4'
       });
 
@@ -289,7 +495,14 @@ export class TemplateManager {
       console.log("✅ Template Manager - Media upload successful");
       console.log("📋 Template Manager - Upload response:", JSON.stringify(uploadResponse.data, null, 2));
 
-      return uploadResponse.data;
+      return {
+        id: uploadResponse.data.id,
+        handle: uploadResponse.data.handle,
+        url: fileUrl,
+        type,
+        mimeType: type === 'image' ? 'image/jpeg' : 'video/mp4',
+        size: buffer.length,
+      };
     } catch (error: unknown) {
       console.error("❌ Template Manager - Media upload failed:", error);
       if (error instanceof AxiosError && error.response) {

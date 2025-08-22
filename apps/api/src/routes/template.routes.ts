@@ -7,6 +7,7 @@ import {
   syncTemplates,
   validateTemplate,
   duplicateTemplate,
+  uploadMedia,
 } from "../controllers/template.controller";
 import { prisma } from "@whatssuite/db";
 
@@ -14,6 +15,7 @@ const router = Router();
 
 router.post("/", createTemplate);
 router.post("/validate", validateTemplate);
+router.post("/media", uploadMedia);
 router.post("/:name/duplicate", duplicateTemplate);
 router.get("/", listTemplates);
 router.post("/sync", syncTemplates);
