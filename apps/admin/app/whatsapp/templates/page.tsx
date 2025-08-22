@@ -152,12 +152,12 @@ export default function WhatsAppTemplatesPage() {
     setRefreshLoading(name);
     try {
       const res = await fetch(
-        `/api/v1/templates/${encodeURIComponent(name)}/status`
+        `/api/v1/templates/${encodeURIComponent(name)}/status`,
       );
       const json = await res.json();
       if (res.ok) {
         setRows((r) =>
-          r.map((t) => (t.name === name ? { ...t, status: json.status } : t))
+          r.map((t) => (t.name === name ? { ...t, status: json.status } : t)),
         );
         toast.success("Template status updated");
       } else {
@@ -179,7 +179,7 @@ export default function WhatsAppTemplatesPage() {
           name: x.name,
           status: x.status,
           category: x.content?.category,
-        }))
+        })),
       );
     } finally {
       setListLoading(false);
@@ -217,7 +217,7 @@ export default function WhatsAppTemplatesPage() {
               <Select
                 value={category}
                 onValueChange={(
-                  value: "MARKETING" | "UTILITY" | "AUTHENTICATION"
+                  value: "MARKETING" | "UTILITY" | "AUTHENTICATION",
                 ) => setCategory(value)}
               >
                 <SelectTrigger id="template-category" className="mt-1">
@@ -259,8 +259,9 @@ export default function WhatsAppTemplatesPage() {
                 placeholder="Hello {`{{1}}`}, welcome to our platform! We're excited to have you on board."
                 className="mt-1 min-h-[100px]"
               />
-                              <p className="text-xs text-muted-foreground mt-1">
-                Main message content. Use &#123;&#123;1&#125;&#125;, &#123;&#123;2&#125;&#125;, etc. for variables
+              <p className="text-xs text-muted-foreground mt-1">
+                Main message content. Use &#123;&#123;1&#125;&#125;,
+                &#123;&#123;2&#125;&#125;, etc. for variables
               </p>
             </div>
 
@@ -361,7 +362,7 @@ export default function WhatsAppTemplatesPage() {
                               setViewLoading(r.name);
                               try {
                                 const res = await fetch(
-                                  `/api/v1/templates/${encodeURIComponent(r.name)}/db`
+                                  `/api/v1/templates/${encodeURIComponent(r.name)}/db`,
                                 );
                                 if (res.ok) {
                                   const json = await res.json();
@@ -408,7 +409,7 @@ export default function WhatsAppTemplatesPage() {
                                           {comp.text}
                                         </div>
                                       </div>
-                                    )
+                                    ),
                                   )}
                                 </div>
                               </div>
@@ -452,12 +453,12 @@ export default function WhatsAppTemplatesPage() {
                           try {
                             const res = await fetch(
                               `/api/v1/templates/${encodeURIComponent(r.name)}`,
-                              { method: "DELETE" }
+                              { method: "DELETE" },
                             );
                             if (res.ok) {
                               toast.success("Template deleted");
                               setRows((prev) =>
-                                prev.filter((x) => x.name !== r.name)
+                                prev.filter((x) => x.name !== r.name),
                               );
                             } else {
                               const j = await res.json().catch(() => ({}));
@@ -494,7 +495,7 @@ export default function WhatsAppTemplatesPage() {
               setLoadMoreLoading(true);
               try {
                 const res = await fetch(
-                  `/api/v1/templates/db?take=50&skip=${rows.length}`
+                  `/api/v1/templates/db?take=50&skip=${rows.length}`,
                 );
                 if (!res.ok) return;
                 const json: TemplateDbData[] = await res.json();

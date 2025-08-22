@@ -49,8 +49,8 @@ router.get("/:id/file", async (req, res) => {
           baseUrl: `https://graph.facebook.com/${apiVersion}`,
           accessToken,
           phoneNumberId,
-        }
-      }
+        },
+      },
     });
     const info = await mm.get(mediaId);
     if (!info.url) {

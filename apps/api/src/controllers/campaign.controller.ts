@@ -10,12 +10,12 @@ export const getCampaigns = async (req: Request, res: Response) => {
 
     // Build where clause
     const where: any = {};
-    
+
     if (search) {
-      where.name = { contains: search as string, mode: 'insensitive' };
+      where.name = { contains: search as string, mode: "insensitive" };
     }
 
-    if (status && status !== 'all') {
+    if (status && status !== "all") {
       where.status = status;
     }
 
@@ -27,8 +27,8 @@ export const getCampaigns = async (req: Request, res: Response) => {
           select: {
             id: true,
             name: true,
-            status: true
-          }
+            status: true,
+          },
         },
         targetSegments: {
           select: {
@@ -36,22 +36,22 @@ export const getCampaigns = async (req: Request, res: Response) => {
             name: true,
             _count: {
               select: {
-                contacts: true
-              }
-            }
-          }
+                contacts: true,
+              },
+            },
+          },
         },
         _count: {
           select: {
-            targetSegments: true
-          }
-        }
+            targetSegments: true,
+          },
+        },
       },
       skip,
       take: Number(limit),
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     // Get total count for pagination
@@ -63,8 +63,8 @@ export const getCampaigns = async (req: Request, res: Response) => {
         page: Number(page),
         limit: Number(limit),
         total,
-        pages: Math.ceil(total / Number(limit))
-      }
+        pages: Math.ceil(total / Number(limit)),
+      },
     });
   } catch (error) {
     console.error("Error fetching campaigns:", error);
@@ -89,12 +89,12 @@ export const getCampaign = async (req: Request, res: Response) => {
                 name: true,
                 phone: true,
                 email: true,
-                status: true
-              }
-            }
-          }
-        }
-      }
+                status: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!campaign) {
@@ -111,29 +111,33 @@ export const getCampaign = async (req: Request, res: Response) => {
 // Create a new campaign
 export const createCampaign = async (req: Request, res: Response) => {
   try {
-    const { 
-      name, 
-      templateId, 
-      segmentIds, 
+    const {
+      name,
+      templateId,
+      segmentIds,
       scheduledAt,
-      status = 'draft'
+      status = "draft",
     } = req.body;
 
     if (!name || !templateId) {
-      return res.status(400).json({ message: "Name and template are required" });
+      return res
+        .status(400)
+        .json({ message: "Name and template are required" });
     }
 
     // Verify template exists and is approved
     const template = await prisma.template.findUnique({
-      where: { id: templateId }
+      where: { id: templateId },
     });
 
     if (!template) {
       return res.status(400).json({ message: "Template not found" });
     }
 
-    if (template.status !== 'APPROVED') {
-      return res.status(400).json({ message: "Template must be approved to use in campaigns" });
+    if (template.status !== "APPROVED") {
+      return res
+        .status(400)
+        .json({ message: "Template must be approved to use in campaigns" });
     }
 
     // Create campaign
@@ -143,25 +147,27 @@ export const createCampaign = async (req: Request, res: Response) => {
         status,
         scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
         templateId,
-        targetSegments: segmentIds ? {
-          connect: segmentIds.map((id: string) => ({ id }))
-        } : undefined
+        targetSegments: segmentIds
+          ? {
+              connect: segmentIds.map((id: string) => ({ id })),
+            }
+          : undefined,
       },
       include: {
         template: {
           select: {
             id: true,
             name: true,
-            status: true
-          }
+            status: true,
+          },
         },
         targetSegments: {
           select: {
             id: true,
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     res.status(201).json(campaign);
@@ -175,17 +181,11 @@ export const createCampaign = async (req: Request, res: Response) => {
 export const updateCampaign = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { 
-      name, 
-      templateId, 
-      segmentIds, 
-      scheduledAt,
-      status 
-    } = req.body;
+    const { name, templateId, segmentIds, scheduledAt, status } = req.body;
 
     // Check if campaign exists
     const existingCampaign = await prisma.campaign.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!existingCampaign) {
@@ -193,22 +193,32 @@ export const updateCampaign = async (req: Request, res: Response) => {
     }
 
     // Don't allow updates if campaign is already sending or completed
-    if (existingCampaign.status === 'sending' || existingCampaign.status === 'completed') {
-      return res.status(400).json({ message: "Cannot update campaign that is already sending or completed" });
+    if (
+      existingCampaign.status === "sending" ||
+      existingCampaign.status === "completed"
+    ) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Cannot update campaign that is already sending or completed",
+        });
     }
 
     // Verify template if being changed
     if (templateId) {
       const template = await prisma.template.findUnique({
-        where: { id: templateId }
+        where: { id: templateId },
       });
 
       if (!template) {
         return res.status(400).json({ message: "Template not found" });
       }
 
-      if (template.status !== 'APPROVED') {
-        return res.status(400).json({ message: "Template must be approved to use in campaigns" });
+      if (template.status !== "APPROVED") {
+        return res
+          .status(400)
+          .json({ message: "Template must be approved to use in campaigns" });
       }
     }
 
@@ -220,26 +230,28 @@ export const updateCampaign = async (req: Request, res: Response) => {
         status,
         scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
         templateId,
-        targetSegments: segmentIds ? {
-          set: [], // Clear existing segments
-          connect: segmentIds.map((id: string) => ({ id }))
-        } : undefined
+        targetSegments: segmentIds
+          ? {
+              set: [], // Clear existing segments
+              connect: segmentIds.map((id: string) => ({ id })),
+            }
+          : undefined,
       },
       include: {
         template: {
           select: {
             id: true,
             name: true,
-            status: true
-          }
+            status: true,
+          },
         },
         targetSegments: {
           select: {
             id: true,
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     res.json(campaign);
@@ -255,7 +267,7 @@ export const deleteCampaign = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const campaign = await prisma.campaign.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!campaign) {
@@ -263,12 +275,14 @@ export const deleteCampaign = async (req: Request, res: Response) => {
     }
 
     // Don't allow deletion if campaign is sending
-    if (campaign.status === 'sending') {
-      return res.status(400).json({ message: "Cannot delete campaign that is currently sending" });
+    if (campaign.status === "sending") {
+      return res
+        .status(400)
+        .json({ message: "Cannot delete campaign that is currently sending" });
     }
 
     await prisma.campaign.delete({
-      where: { id }
+      where: { id },
     });
 
     res.json({ message: "Campaign deleted successfully" });
@@ -289,56 +303,68 @@ export const startCampaign = async (req: Request, res: Response) => {
         template: true,
         targetSegments: {
           include: {
-            contacts: true
-          }
-        }
-      }
+            contacts: true,
+          },
+        },
+      },
     });
 
     if (!campaign) {
       return res.status(404).json({ message: "Campaign not found" });
     }
 
-    if (campaign.status !== 'draft' && campaign.status !== 'scheduled') {
-      return res.status(400).json({ message: "Campaign can only be started from draft or scheduled status" });
+    if (campaign.status !== "draft" && campaign.status !== "scheduled") {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Campaign can only be started from draft or scheduled status",
+        });
     }
 
     if (campaign.targetSegments.length === 0) {
-      return res.status(400).json({ message: "Campaign must have at least one target segment" });
+      return res
+        .status(400)
+        .json({ message: "Campaign must have at least one target segment" });
     }
 
     // Get all contacts from target segments
-    const allContacts = campaign.targetSegments.flatMap(segment => segment.contacts);
-    const uniqueContacts = allContacts.filter((contact, index, self) => 
-      index === self.findIndex(c => c.id === contact.id)
+    const allContacts = campaign.targetSegments.flatMap(
+      (segment) => segment.contacts,
+    );
+    const uniqueContacts = allContacts.filter(
+      (contact, index, self) =>
+        index === self.findIndex((c) => c.id === contact.id),
     );
 
     if (uniqueContacts.length === 0) {
-      return res.status(400).json({ message: "No contacts found in target segments" });
+      return res
+        .status(400)
+        .json({ message: "No contacts found in target segments" });
     }
 
     // Update campaign status to sending
     await prisma.campaign.update({
       where: { id },
-      data: { status: 'sending' }
+      data: { status: "sending" },
     });
 
     // Queue messages for each contact
     const jobPayload = {
       campaignId: id,
       templateName: campaign.template.name,
-      contacts: uniqueContacts.map(contact => ({
+      contacts: uniqueContacts.map((contact) => ({
         id: contact.id,
-        phone: contact.phone
-      }))
+        phone: contact.phone,
+      })),
     };
 
     // Publish the job to the Redis queue
     await redis.publish("campaign-queue", JSON.stringify(jobPayload));
 
-    res.json({ 
+    res.json({
       message: "Campaign started successfully",
-      totalContacts: uniqueContacts.length
+      totalContacts: uniqueContacts.length,
     });
   } catch (error) {
     console.error("Error starting campaign:", error);
@@ -352,20 +378,22 @@ export const pauseCampaign = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const campaign = await prisma.campaign.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!campaign) {
       return res.status(404).json({ message: "Campaign not found" });
     }
 
-    if (campaign.status !== 'sending') {
-      return res.status(400).json({ message: "Only sending campaigns can be paused" });
+    if (campaign.status !== "sending") {
+      return res
+        .status(400)
+        .json({ message: "Only sending campaigns can be paused" });
     }
 
     await prisma.campaign.update({
       where: { id },
-      data: { status: 'paused' }
+      data: { status: "paused" },
     });
 
     res.json({ message: "Campaign paused successfully" });
@@ -381,20 +409,22 @@ export const resumeCampaign = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const campaign = await prisma.campaign.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!campaign) {
       return res.status(404).json({ message: "Campaign not found" });
     }
 
-    if (campaign.status !== 'paused') {
-      return res.status(400).json({ message: "Only paused campaigns can be resumed" });
+    if (campaign.status !== "paused") {
+      return res
+        .status(400)
+        .json({ message: "Only paused campaigns can be resumed" });
     }
 
     await prisma.campaign.update({
       where: { id },
-      data: { status: 'sending' }
+      data: { status: "sending" },
     });
 
     res.json({ message: "Campaign resumed successfully" });
@@ -416,12 +446,12 @@ export const getCampaignAnalytics = async (req: Request, res: Response) => {
           include: {
             _count: {
               select: {
-                contacts: true
-              }
-            }
-          }
-        }
-      }
+                contacts: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!campaign) {
@@ -430,24 +460,27 @@ export const getCampaignAnalytics = async (req: Request, res: Response) => {
 
     // Calculate total target contacts
     const totalTargetContacts = campaign.targetSegments.reduce(
-      (total, segment) => total + segment._count.contacts, 
-      0
+      (total, segment) => total + segment._count.contacts,
+      0,
     );
 
     // Calculate delivery rate
-    const deliveryRate = totalTargetContacts > 0 
-      ? (campaign.deliveredCount / totalTargetContacts) * 100 
-      : 0;
+    const deliveryRate =
+      totalTargetContacts > 0
+        ? (campaign.deliveredCount / totalTargetContacts) * 100
+        : 0;
 
     // Calculate read rate
-    const readRate = campaign.deliveredCount > 0 
-      ? (campaign.readCount / campaign.deliveredCount) * 100 
-      : 0;
+    const readRate =
+      campaign.deliveredCount > 0
+        ? (campaign.readCount / campaign.deliveredCount) * 100
+        : 0;
 
     // Calculate click rate
-    const clickRate = campaign.deliveredCount > 0 
-      ? (campaign.clickedCount / campaign.deliveredCount) * 100 
-      : 0;
+    const clickRate =
+      campaign.deliveredCount > 0
+        ? (campaign.clickedCount / campaign.deliveredCount) * 100
+        : 0;
 
     const analytics = {
       campaign,
@@ -455,9 +488,12 @@ export const getCampaignAnalytics = async (req: Request, res: Response) => {
       deliveryRate: Math.round(deliveryRate * 100) / 100,
       readRate: Math.round(readRate * 100) / 100,
       clickRate: Math.round(clickRate * 100) / 100,
-      failureRate: totalTargetContacts > 0 
-        ? Math.round(((campaign.failedCount / totalTargetContacts) * 100) * 100) / 100 
-        : 0
+      failureRate:
+        totalTargetContacts > 0
+          ? Math.round(
+              (campaign.failedCount / totalTargetContacts) * 100 * 100,
+            ) / 100
+          : 0,
     };
 
     res.json(analytics);
@@ -472,28 +508,31 @@ export const getCampaignStats = async (req: Request, res: Response) => {
   try {
     const stats = await prisma.campaign.aggregate({
       _count: {
-        id: true
+        id: true,
       },
       _sum: {
         sentCount: true,
         deliveredCount: true,
         failedCount: true,
         readCount: true,
-        clickedCount: true
-      }
+        clickedCount: true,
+      },
     });
 
     const statusCounts = await prisma.campaign.groupBy({
-      by: ['status'],
+      by: ["status"],
       _count: {
-        id: true
-      }
+        id: true,
+      },
     });
 
-    const statusBreakdown = statusCounts.reduce((acc, item) => {
-      acc[item.status] = item._count.id;
-      return acc;
-    }, {} as Record<string, number>);
+    const statusBreakdown = statusCounts.reduce(
+      (acc, item) => {
+        acc[item.status] = item._count.id;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     res.json({
       totalCampaigns: stats._count.id,
@@ -502,13 +541,10 @@ export const getCampaignStats = async (req: Request, res: Response) => {
       totalFailed: stats._sum.failedCount || 0,
       totalRead: stats._sum.readCount || 0,
       totalClicked: stats._sum.clickedCount || 0,
-      statusBreakdown
+      statusBreakdown,
     });
   } catch (error) {
     console.error("Error fetching campaign stats:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-

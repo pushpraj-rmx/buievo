@@ -16,11 +16,7 @@ export function TaskManager() {
       <CardHeader className="pb-3">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Active Uploads</CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearCompletedTasks}
-          >
+          <Button variant="outline" size="sm" onClick={clearCompletedTasks}>
             Clear Completed
           </Button>
         </div>

@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { TemplateManager, TemplateDefinition } from "@whatssuite/template-manager";
+import {
+  TemplateManager,
+  TemplateDefinition,
+} from "@whatssuite/template-manager";
 import { z } from "zod";
 import { prisma } from "@whatssuite/db";
 
@@ -9,7 +12,9 @@ function getTemplateManager(): TemplateManager {
   const phoneNumberId = process.env.PHONE_NUMBER_ID;
   const apiVersion = process.env.META_API_VERSION || "v21.0";
   if (!accessToken || !businessId || !phoneNumberId) {
-    throw new Error("Missing WhatsApp env vars: ACCESS_TOKEN/WABA_ID/PHONE_NUMBER_ID");
+    throw new Error(
+      "Missing WhatsApp env vars: ACCESS_TOKEN/WABA_ID/PHONE_NUMBER_ID",
+    );
   }
   return new TemplateManager({
     baseUrl: `https://graph.facebook.com/${apiVersion}`,
@@ -36,23 +41,28 @@ export async function createTemplate(req: Request, res: Response) {
             buttons: z
               .array(
                 z.object({
-                  type: z.enum(["QUICK_REPLY", "URL", "PHONE_NUMBER", "COPY_CODE"]),
+                  type: z.enum([
+                    "QUICK_REPLY",
+                    "URL",
+                    "PHONE_NUMBER",
+                    "COPY_CODE",
+                  ]),
                   text: z.string().optional(),
                   url: z.string().url().optional(),
                   phone_number: z.string().optional(),
-                })
+                }),
               )
               .optional(),
-          })
+          }),
         )
         .min(1),
     });
 
     const body = defSchema.parse(req.body) as TemplateDefinition;
-    
+
     try {
       const data = await tm.create(body);
-      
+
       // Persist/Upsert into DB (basic fields)
       await prisma.template.upsert({
         where: { name: body.name },
@@ -63,19 +73,23 @@ export async function createTemplate(req: Request, res: Response) {
       res.status(201).json(data);
     } catch (whatsappError) {
       console.error("WhatsApp API error:", whatsappError);
-      
+
       // Create mock template in database when WhatsApp API fails
       const mockData = {
         ...body,
         status: "PENDING",
         id: `mock_${Date.now()}`,
-        created_time: new Date().toISOString()
+        created_time: new Date().toISOString(),
       };
-      
+
       await prisma.template.upsert({
         where: { name: body.name },
         update: { content: mockData as any, status: "PENDING" },
-        create: { name: body.name, content: mockData as any, status: "PENDING" },
+        create: {
+          name: body.name,
+          content: mockData as any,
+          status: "PENDING",
+        },
       });
 
       res.status(201).json(mockData);
@@ -104,73 +118,88 @@ export async function listTemplates(_req: Request, res: Response) {
           where: { name: t.name },
           update: { status: t.status, content: t },
           create: { name: t.name, status: t.status, content: t },
-        })
-      )
+        }),
+      ),
     );
 
     res.status(200).json(data);
   } catch (error) {
     console.error("listTemplates error:", error);
-    
+
     // Return mock data when WhatsApp API fails
     const mockTemplates = {
       data: [
         {
-          name: 'welcome_message',
-          status: 'APPROVED',
-          category: 'UTILITY',
-          language: 'en_US',
+          name: "welcome_message",
+          status: "APPROVED",
+          category: "UTILITY",
+          language: "en_US",
           components: [
-            { type: 'HEADER', text: 'Welcome to BNI Delhi West!' },
-            { type: 'BODY', text: 'Hello {{1}}, welcome to our BNI community! Your membership number is {{2}}.' },
-            { type: 'FOOTER', text: 'Thank you for choosing BNI Delhi West' }
-          ]
+            { type: "HEADER", text: "Welcome to BNI Delhi West!" },
+            {
+              type: "BODY",
+              text: "Hello {{1}}, welcome to our BNI community! Your membership number is {{2}}.",
+            },
+            { type: "FOOTER", text: "Thank you for choosing BNI Delhi West" },
+          ],
         },
         {
-          name: 'meeting_reminder',
-          status: 'APPROVED',
-          category: 'UTILITY',
-          language: 'en_US',
+          name: "meeting_reminder",
+          status: "APPROVED",
+          category: "UTILITY",
+          language: "en_US",
           components: [
-            { type: 'HEADER', text: 'BNI Meeting Reminder' },
-            { type: 'BODY', text: 'Hi {{1}}, reminder for our BNI meeting tomorrow at {{2}}.' },
-            { type: 'FOOTER', text: 'Looking forward to seeing you there!' }
-          ]
+            { type: "HEADER", text: "BNI Meeting Reminder" },
+            {
+              type: "BODY",
+              text: "Hi {{1}}, reminder for our BNI meeting tomorrow at {{2}}.",
+            },
+            { type: "FOOTER", text: "Looking forward to seeing you there!" },
+          ],
         },
         {
-          name: 'referral_request',
-          status: 'PENDING',
-          category: 'MARKETING',
-          language: 'en_US',
+          name: "referral_request",
+          status: "PENDING",
+          category: "MARKETING",
+          language: "en_US",
           components: [
-            { type: 'HEADER', text: 'Referral Request' },
-            { type: 'BODY', text: 'Hi {{1}}, I am looking for referrals for {{2}} services.' },
-            { type: 'FOOTER', text: 'Thank you for your support!' }
-          ]
+            { type: "HEADER", text: "Referral Request" },
+            {
+              type: "BODY",
+              text: "Hi {{1}}, I am looking for referrals for {{2}} services.",
+            },
+            { type: "FOOTER", text: "Thank you for your support!" },
+          ],
         },
         {
-          name: 'event_invitation',
-          status: 'APPROVED',
-          category: 'MARKETING',
-          language: 'en_US',
+          name: "event_invitation",
+          status: "APPROVED",
+          category: "MARKETING",
+          language: "en_US",
           components: [
-            { type: 'HEADER', text: 'BNI Special Event' },
-            { type: 'BODY', text: 'You are invited to our special BNI networking event on {{1}} at {{2}}.' },
-            { type: 'FOOTER', text: 'RSVP required. Limited seats available.' }
-          ]
+            { type: "HEADER", text: "BNI Special Event" },
+            {
+              type: "BODY",
+              text: "You are invited to our special BNI networking event on {{1}} at {{2}}.",
+            },
+            { type: "FOOTER", text: "RSVP required. Limited seats available." },
+          ],
         },
         {
-          name: 'member_announcement',
-          status: 'REJECTED',
-          category: 'UTILITY',
-          language: 'en_US',
+          name: "member_announcement",
+          status: "REJECTED",
+          category: "UTILITY",
+          language: "en_US",
           components: [
-            { type: 'HEADER', text: 'New Member Announcement' },
-            { type: 'BODY', text: 'Please welcome {{1}} to our BNI chapter! {{1}} specializes in {{2}}.' },
-            { type: 'FOOTER', text: 'Let\'s make them feel welcome!' }
-          ]
-        }
-      ]
+            { type: "HEADER", text: "New Member Announcement" },
+            {
+              type: "BODY",
+              text: "Please welcome {{1}} to our BNI chapter! {{1}} specializes in {{2}}.",
+            },
+            { type: "FOOTER", text: "Let's make them feel welcome!" },
+          ],
+        },
+      ],
     };
 
     // Also save mock templates to database
@@ -180,8 +209,8 @@ export async function listTemplates(_req: Request, res: Response) {
           where: { name: t.name },
           update: { status: t.status, content: t },
           create: { name: t.name, status: t.status, content: t },
-        })
-      )
+        }),
+      ),
     );
 
     res.status(200).json(mockTemplates);

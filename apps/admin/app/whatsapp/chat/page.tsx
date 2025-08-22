@@ -203,7 +203,7 @@ export default function WhatsAppChatPage() {
             content: message.trim(),
             type: "text",
           }),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to send message");
@@ -222,8 +222,8 @@ export default function WhatsAppChatPage() {
                 lastMessage: newMessage,
                 updatedAt: new Date().toISOString(),
               }
-            : conv
-        )
+            : conv,
+        ),
       );
     } catch (error) {
       toast.error("Failed to send message");
@@ -246,7 +246,7 @@ export default function WhatsAppChatPage() {
     try {
       // Check if conversation already exists
       const existingConversation = conversations.find(
-        (conv) => conv.contactId === contact.id
+        (conv) => conv.contactId === contact.id,
       );
 
       if (existingConversation) {
@@ -266,7 +266,7 @@ export default function WhatsAppChatPage() {
             content: "Hello! 👋",
             type: "text",
           }),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to start conversation");
@@ -304,7 +304,7 @@ export default function WhatsAppChatPage() {
     (conversation) =>
       conversation.contact.name.toLowerCase().includes(search.toLowerCase()) ||
       conversation.contact.phone.includes(search) ||
-      conversation.contact.email?.toLowerCase().includes(search.toLowerCase())
+      conversation.contact.email?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const getStatusIcon = (status: string) => {
@@ -823,7 +823,7 @@ export default function WhatsAppChatPage() {
                       (contact) =>
                         contact.name.toLowerCase().includes(searchTerm) ||
                         contact.phone.includes(searchTerm) ||
-                        contact.email?.toLowerCase().includes(searchTerm)
+                        contact.email?.toLowerCase().includes(searchTerm),
                     );
                     setFilteredContacts(filtered);
                   }}

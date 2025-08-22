@@ -10,24 +10,24 @@ export const getContacts = async (req: Request, res: Response) => {
 
     // Build where clause
     const where: any = {};
-    
+
     if (search) {
       where.OR = [
-        { name: { contains: search as string, mode: 'insensitive' } },
-        { email: { contains: search as string, mode: 'insensitive' } },
-        { phone: { contains: search as string, mode: 'insensitive' } },
+        { name: { contains: search as string, mode: "insensitive" } },
+        { email: { contains: search as string, mode: "insensitive" } },
+        { phone: { contains: search as string, mode: "insensitive" } },
       ];
     }
 
-    if (status && status !== 'all') {
+    if (status && status !== "all") {
       where.status = status;
     }
 
     if (segmentId) {
       where.segments = {
         some: {
-          id: segmentId as string
-        }
+          id: segmentId as string,
+        },
       };
     }
 
@@ -43,16 +43,16 @@ export const getContacts = async (req: Request, res: Response) => {
             unreadCount: true,
           },
           orderBy: {
-            lastMessageAt: 'desc'
+            lastMessageAt: "desc",
           },
-          take: 1
-        }
+          take: 1,
+        },
       },
       skip,
       take: Number(limit),
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     // Get total count for pagination
@@ -64,8 +64,8 @@ export const getContacts = async (req: Request, res: Response) => {
         page: Number(page),
         limit: Number(limit),
         total,
-        pages: Math.ceil(total / Number(limit))
-      }
+        pages: Math.ceil(total / Number(limit)),
+      },
     });
   } catch (error) {
     console.error("Error fetching contacts:", error);
@@ -86,16 +86,16 @@ export const getContact = async (req: Request, res: Response) => {
           include: {
             messages: {
               orderBy: {
-                timestamp: 'desc'
+                timestamp: "desc",
               },
-              take: 10
-            }
+              take: 10,
+            },
           },
           orderBy: {
-            lastMessageAt: 'desc'
-          }
-        }
-      }
+            lastMessageAt: "desc",
+          },
+        },
+      },
     });
 
     if (!contact) {
@@ -112,7 +112,14 @@ export const getContact = async (req: Request, res: Response) => {
 // Create a new contact
 export const createContact = async (req: Request, res: Response) => {
   try {
-    const { name, email, phone, status = 'active', comment, segmentIds } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      status = "active",
+      comment,
+      segmentIds,
+    } = req.body;
 
     if (!name || !phone) {
       return res.status(400).json({ message: "Name and phone are required" });
@@ -120,11 +127,13 @@ export const createContact = async (req: Request, res: Response) => {
 
     // Check if phone already exists
     const existingContact = await prisma.contact.findUnique({
-      where: { phone }
+      where: { phone },
     });
 
     if (existingContact) {
-      return res.status(400).json({ message: "Contact with this phone number already exists" });
+      return res
+        .status(400)
+        .json({ message: "Contact with this phone number already exists" });
     }
 
     // Create contact with optional segments
@@ -135,13 +144,15 @@ export const createContact = async (req: Request, res: Response) => {
         phone,
         status,
         comment,
-        segments: segmentIds ? {
-          connect: segmentIds.map((id: string) => ({ id }))
-        } : undefined
+        segments: segmentIds
+          ? {
+              connect: segmentIds.map((id: string) => ({ id })),
+            }
+          : undefined,
       },
       include: {
-        segments: true
-      }
+        segments: true,
+      },
     });
 
     res.status(201).json(contact);
@@ -159,7 +170,7 @@ export const updateContact = async (req: Request, res: Response) => {
 
     // Check if contact exists
     const existingContact = await prisma.contact.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!existingContact) {
@@ -169,11 +180,13 @@ export const updateContact = async (req: Request, res: Response) => {
     // Check if phone is being changed and if it already exists
     if (phone && phone !== existingContact.phone) {
       const phoneExists = await prisma.contact.findUnique({
-        where: { phone }
+        where: { phone },
       });
 
       if (phoneExists) {
-        return res.status(400).json({ message: "Contact with this phone number already exists" });
+        return res
+          .status(400)
+          .json({ message: "Contact with this phone number already exists" });
       }
     }
 
@@ -186,14 +199,16 @@ export const updateContact = async (req: Request, res: Response) => {
         phone,
         status,
         comment,
-        segments: segmentIds ? {
-          set: [], // Clear existing segments
-          connect: segmentIds.map((id: string) => ({ id }))
-        } : undefined
+        segments: segmentIds
+          ? {
+              set: [], // Clear existing segments
+              connect: segmentIds.map((id: string) => ({ id })),
+            }
+          : undefined,
       },
       include: {
-        segments: true
-      }
+        segments: true,
+      },
     });
 
     res.json(contact);
@@ -209,7 +224,7 @@ export const deleteContact = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const contact = await prisma.contact.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!contact) {
@@ -217,7 +232,7 @@ export const deleteContact = async (req: Request, res: Response) => {
     }
 
     await prisma.contact.delete({
-      where: { id }
+      where: { id },
     });
 
     res.json({ message: "Contact deleted successfully" });
@@ -239,21 +254,23 @@ export const bulkImportContacts = async (req: Request, res: Response) => {
     const results = {
       created: 0,
       skipped: 0,
-      errors: [] as string[]
+      errors: [] as string[],
     };
 
     for (const contactData of contacts) {
       try {
-        const { name, email, phone, status = 'active', comment } = contactData;
+        const { name, email, phone, status = "active", comment } = contactData;
 
         if (!name || !phone) {
-          results.errors.push(`Contact missing name or phone: ${JSON.stringify(contactData)}`);
+          results.errors.push(
+            `Contact missing name or phone: ${JSON.stringify(contactData)}`,
+          );
           continue;
         }
 
         // Check if phone already exists
         const existingContact = await prisma.contact.findUnique({
-          where: { phone }
+          where: { phone },
         });
 
         if (existingContact) {
@@ -269,10 +286,12 @@ export const bulkImportContacts = async (req: Request, res: Response) => {
             phone,
             status,
             comment,
-            segments: segmentIds ? {
-              connect: segmentIds.map((id: string) => ({ id }))
-            } : undefined
-          }
+            segments: segmentIds
+              ? {
+                  connect: segmentIds.map((id: string) => ({ id })),
+                }
+              : undefined,
+          },
         });
 
         results.created++;
@@ -283,7 +302,7 @@ export const bulkImportContacts = async (req: Request, res: Response) => {
 
     res.json({
       message: "Bulk import completed",
-      results
+      results,
     });
   } catch (error) {
     console.error("Error in bulk import:", error);
@@ -298,13 +317,13 @@ export const getSegments = async (req: Request, res: Response) => {
       include: {
         _count: {
           select: {
-            contacts: true
-          }
-        }
+            contacts: true,
+          },
+        },
       },
       orderBy: {
-        name: 'asc'
-      }
+        name: "asc",
+      },
     });
 
     res.json(segments);
@@ -325,11 +344,13 @@ export const createSegment = async (req: Request, res: Response) => {
 
     // Check if segment already exists
     const existingSegment = await prisma.segment.findUnique({
-      where: { name }
+      where: { name },
     });
 
     if (existingSegment) {
-      return res.status(400).json({ message: "Segment with this name already exists" });
+      return res
+        .status(400)
+        .json({ message: "Segment with this name already exists" });
     }
 
     const segment = await prisma.segment.create({
@@ -337,10 +358,10 @@ export const createSegment = async (req: Request, res: Response) => {
       include: {
         _count: {
           select: {
-            contacts: true
-          }
-        }
-      }
+            contacts: true,
+          },
+        },
+      },
     });
 
     res.status(201).json(segment);
@@ -361,7 +382,7 @@ export const updateSegment = async (req: Request, res: Response) => {
     }
 
     const segment = await prisma.segment.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!segment) {
@@ -371,11 +392,13 @@ export const updateSegment = async (req: Request, res: Response) => {
     // Check if name is being changed and if it already exists
     if (name !== segment.name) {
       const nameExists = await prisma.segment.findUnique({
-        where: { name }
+        where: { name },
       });
 
       if (nameExists) {
-        return res.status(400).json({ message: "Segment with this name already exists" });
+        return res
+          .status(400)
+          .json({ message: "Segment with this name already exists" });
       }
     }
 
@@ -385,10 +408,10 @@ export const updateSegment = async (req: Request, res: Response) => {
       include: {
         _count: {
           select: {
-            contacts: true
-          }
-        }
-      }
+            contacts: true,
+          },
+        },
+      },
     });
 
     res.json(updatedSegment);
@@ -404,7 +427,7 @@ export const deleteSegment = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const segment = await prisma.segment.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!segment) {
@@ -412,7 +435,7 @@ export const deleteSegment = async (req: Request, res: Response) => {
     }
 
     await prisma.segment.delete({
-      where: { id }
+      where: { id },
     });
 
     res.json({ message: "Segment deleted successfully" });

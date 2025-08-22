@@ -1,45 +1,53 @@
 import { Request, Response } from "express";
 import { prisma } from "@whatssuite/db";
-import { webhookLogger, generateRequestId, createRequestLogger } from "../utils/logger";
+import {
+  webhookLogger,
+  generateRequestId,
+  createRequestLogger,
+} from "../utils/logger";
 import { webhookMonitor } from "../utils/webhook-status";
 
 export const handleWebhook = async (req: Request, res: Response) => {
   const requestId = generateRequestId();
-  const logger = createRequestLogger(requestId, 'WEBHOOK');
-  
-  logger.info('Webhook request received', {
+  const logger = createRequestLogger(requestId, "WEBHOOK");
+
+  logger.info("Webhook request received", {
     method: req.method,
     url: req.url,
     headers: {
-      'user-agent': req.headers['user-agent'],
-      'content-type': req.headers['content-type'],
-      'content-length': req.headers['content-length']
+      "user-agent": req.headers["user-agent"],
+      "content-type": req.headers["content-type"],
+      "content-length": req.headers["content-length"],
     },
     query: req.query,
-    bodySize: req.body ? JSON.stringify(req.body).length : 0
+    bodySize: req.body ? JSON.stringify(req.body).length : 0,
   });
 
   try {
     // Handle webhook verification (GET request)
-    if (req.method === "GET" && req.query["hub.mode"] === "subscribe" && req.query["hub.verify_token"]) {
-      logger.info('Processing webhook verification request', {
+    if (
+      req.method === "GET" &&
+      req.query["hub.mode"] === "subscribe" &&
+      req.query["hub.verify_token"]
+    ) {
+      logger.info("Processing webhook verification request", {
         mode: req.query["hub.mode"],
         verifyToken: req.query["hub.verify_token"],
-        challenge: req.query["hub.challenge"]
+        challenge: req.query["hub.challenge"],
       });
 
       const verifyToken = process.env.WEBHOOK_VERIFY_TOKEN;
       const challenge = req.query["hub.challenge"];
 
       if (req.query["hub.verify_token"] === verifyToken) {
-        logger.info('Webhook verification successful', { challenge });
-        webhookMonitor.setVerificationStatus('verified');
+        logger.info("Webhook verification successful", { challenge });
+        webhookMonitor.setVerificationStatus("verified");
         res.status(200).send(challenge);
         return;
       } else {
-        logger.warn('Webhook verification failed - invalid token', {
+        logger.warn("Webhook verification failed - invalid token", {
           providedToken: req.query["hub.verify_token"],
-          expectedToken: verifyToken ? '***' : 'NOT_SET'
+          expectedToken: verifyToken ? "***" : "NOT_SET",
         });
         res.status(403).send("Forbidden");
         return;
@@ -49,66 +57,66 @@ export const handleWebhook = async (req: Request, res: Response) => {
     // Handle incoming messages and status updates (POST request)
     if (req.method === "POST") {
       const { body } = req;
-      
+
       // Record webhook received
       webhookMonitor.recordWebhookReceived();
-      logger.info('Webhook received and recorded', {
+      logger.info("Webhook received and recorded", {
         object: body.object,
-        entryCount: body.entry?.length || 0
+        entryCount: body.entry?.length || 0,
       });
-      
-      logger.info('Processing POST webhook', {
+
+      logger.info("Processing POST webhook", {
         object: body.object,
-        entryCount: body.entry?.length || 0
+        entryCount: body.entry?.length || 0,
       });
-      
+
       if (body.object === "whatsapp_business_account") {
         for (const entry of body.entry) {
-          logger.debug('Processing webhook entry', {
+          logger.debug("Processing webhook entry", {
             id: entry.id,
             time: entry.time,
-            changesCount: entry.changes?.length || 0
+            changesCount: entry.changes?.length || 0,
           });
 
           for (const change of entry.changes) {
-            logger.debug('Processing webhook change', {
+            logger.debug("Processing webhook change", {
               field: change.field,
               value: {
                 messagingProduct: change.value.messaging_product,
                 metadata: change.value.metadata,
                 messagesCount: change.value.messages?.length || 0,
-                statusesCount: change.value.statuses?.length || 0
-              }
+                statusesCount: change.value.statuses?.length || 0,
+              },
             });
 
             if (change.value.messages) {
-              logger.info('Processing incoming messages', {
+              logger.info("Processing incoming messages", {
                 count: change.value.messages.length,
                 messages: change.value.messages.map((m: any) => ({
                   id: m.id,
                   from: m.from,
                   type: m.type,
-                  hasText: !!m.text
-                }))
+                  hasText: !!m.text,
+                })),
               });
-              
+
               // Handle incoming messages
               for (const message of change.value.messages) {
-                logger.info('Starting to process message', {
+                logger.info("Starting to process message", {
                   messageId: message.id,
                   from: message.from,
                   type: message.type,
-                  fullMessage: JSON.stringify(message)
+                  fullMessage: JSON.stringify(message),
                 });
                 await handleIncomingMessage(message, logger);
               }
             }
 
             if (change.value.statuses) {
-              logger.info('Processing status updates', {
-                count: change.value.statuses.length
+              logger.info("Processing status updates", {
+                count: change.value.statuses.length,
               });
-              
+
               // Handle message status updates
               for (const status of change.value.statuses) {
                 await handleStatusUpdate(status, logger);
@@ -117,17 +125,17 @@ export const handleWebhook = async (req: Request, res: Response) => {
           }
         }
       } else {
-        logger.warn('Unknown webhook object type', { object: body.object });
+        logger.warn("Unknown webhook object type", { object: body.object });
       }
     }
 
-    logger.info('Webhook processing completed successfully');
+    logger.info("Webhook processing completed successfully");
     res.status(200).send("OK");
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logger.error('Webhook processing failed', {
+    logger.error("Webhook processing failed", {
       error: errorMessage,
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
     webhookMonitor.recordWebhookError(errorMessage);
     res.status(500).send("Internal Server Error");
@@ -137,22 +145,24 @@ export const handleWebhook = async (req: Request, res: Response) => {
 // Test endpoint to simulate receiving a message
 export const testReceiveMessage = async (req: Request, res: Response) => {
   const requestId = generateRequestId();
-  const logger = createRequestLogger(requestId, 'TEST_WEBHOOK');
-  
-  logger.info('Test receive message request', {
+  const logger = createRequestLogger(requestId, "TEST_WEBHOOK");
+
+  logger.info("Test receive message request", {
     body: req.body,
-    headers: req.headers
+    headers: req.headers,
   });
 
   try {
     const { contactId, message } = req.body;
-    
+
     if (!contactId || !message) {
-      logger.warn('Test receive message - missing required fields', {
+      logger.warn("Test receive message - missing required fields", {
         contactId: !!contactId,
-        message: !!message
+        message: !!message,
       });
-      return res.status(400).json({ error: "contactId and message are required" });
+      return res
+        .status(400)
+        .json({ error: "contactId and message are required" });
     }
 
     // Get contact
@@ -161,14 +171,14 @@ export const testReceiveMessage = async (req: Request, res: Response) => {
     });
 
     if (!contact) {
-      logger.warn('Test receive message - contact not found', { contactId });
+      logger.warn("Test receive message - contact not found", { contactId });
       return res.status(404).json({ error: "Contact not found" });
     }
 
-    logger.info('Found contact for test message', {
+    logger.info("Found contact for test message", {
       contactId: contact.id,
       contactPhone: contact.phone,
-      contactName: contact.name
+      contactName: contact.name,
     });
 
     // Simulate incoming message
@@ -180,20 +190,20 @@ export const testReceiveMessage = async (req: Request, res: Response) => {
       text: { body: message },
     };
 
-    logger.info('Simulating incoming message', {
+    logger.info("Simulating incoming message", {
       messageId: mockMessage.id,
       from: mockMessage.from,
-      message: mockMessage.text.body
+      message: mockMessage.text.body,
     });
 
     await handleIncomingMessage(mockMessage, logger);
-    
-    logger.info('Test message processed successfully');
+
+    logger.info("Test message processed successfully");
     res.json({ success: true, message: "Test message received" });
   } catch (error) {
-    logger.error('Test receive message failed', {
+    logger.error("Test receive message failed", {
       error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
     res.status(500).json({ error: "Internal server error" });
   }
@@ -202,70 +212,70 @@ export const testReceiveMessage = async (req: Request, res: Response) => {
 // Debug endpoint to test webhook processing step by step
 export const debugWebhook = async (req: Request, res: Response) => {
   const requestId = generateRequestId();
-  const logger = createRequestLogger(requestId, 'DEBUG_WEBHOOK');
-  
-  logger.info('Debug webhook request', {
+  const logger = createRequestLogger(requestId, "DEBUG_WEBHOOK");
+
+  logger.info("Debug webhook request", {
     body: req.body,
-    headers: req.headers
+    headers: req.headers,
   });
 
   try {
     const debugSteps = [];
-    
+
     // Step 1: Parse webhook body
     const body = req.body;
     debugSteps.push({
       step: 1,
-      action: 'Parse webhook body',
+      action: "Parse webhook body",
       success: true,
       data: {
         object: body.object,
         hasEntry: !!body.entry,
-        entryCount: body.entry?.length || 0
-      }
+        entryCount: body.entry?.length || 0,
+      },
     });
 
     if (body.object !== "whatsapp_business_account") {
       debugSteps.push({
         step: 2,
-        action: 'Check object type',
+        action: "Check object type",
         success: false,
-        error: 'Invalid object type'
+        error: "Invalid object type",
       });
       return res.json({ debugSteps });
     }
 
     debugSteps.push({
       step: 2,
-      action: 'Check object type',
+      action: "Check object type",
       success: true,
-      data: { object: body.object }
+      data: { object: body.object },
     });
 
     // Step 3: Process entries
     for (const entry of body.entry || []) {
       debugSteps.push({
         step: 3,
-        action: 'Process entry',
+        action: "Process entry",
         success: true,
         data: {
           entryId: entry.id,
-          changesCount: entry.changes?.length || 0
-        }
+          changesCount: entry.changes?.length || 0,
+        },
       });
 
       // Step 4: Process changes
       for (const change of entry.changes || []) {
         debugSteps.push({
           step: 4,
-          action: 'Process change',
+          action: "Process change",
           success: true,
           data: {
             field: change.field,
             hasValue: !!change.value,
             hasMessages: !!change.value?.messages,
-            messagesCount: change.value?.messages?.length || 0
-          }
+            messagesCount: change.value?.messages?.length || 0,
+          },
         });
 
         if (change.field === "messages" && change.value?.messages) {
@@ -273,14 +283,14 @@ export const debugWebhook = async (req: Request, res: Response) => {
           for (const message of change.value.messages) {
             debugSteps.push({
               step: 5,
-              action: 'Process message',
+              action: "Process message",
               success: true,
               data: {
                 messageId: message.id,
                 from: message.from,
                 type: message.type,
-                hasText: !!message.text
-              }
+                hasText: !!message.text,
+              },
             });
 
             // Step 6: Try to process the message
@@ -288,16 +298,16 @@ export const debugWebhook = async (req: Request, res: Response) => {
               await handleIncomingMessage(message, logger);
               debugSteps.push({
                 step: 6,
-                action: 'Handle incoming message',
+                action: "Handle incoming message",
                 success: true,
-                data: { messageId: message.id }
+                data: { messageId: message.id },
               });
             } catch (error) {
               debugSteps.push({
                 step: 6,
-                action: 'Handle incoming message',
+                action: "Handle incoming message",
                 success: false,
-                error: error instanceof Error ? error.message : String(error)
+                error: error instanceof Error ? error.message : String(error),
               });
             }
           }
@@ -305,85 +315,91 @@ export const debugWebhook = async (req: Request, res: Response) => {
       }
     }
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       debugSteps,
       summary: {
         totalSteps: debugSteps.length,
-        successfulSteps: debugSteps.filter(s => s.success).length,
-        failedSteps: debugSteps.filter(s => !s.success).length
-      }
+        successfulSteps: debugSteps.filter((s) => s.success).length,
+        failedSteps: debugSteps.filter((s) => !s.success).length,
+      },
     });
   } catch (error) {
-    logger.error('Debug webhook failed', {
+    logger.error("Debug webhook failed", {
       error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
       error: "Internal server error",
-      debugSteps: []
+      debugSteps: [],
     });
   }
 };
 
 async function handleIncomingMessage(message: any, logger: any) {
-  logger.info('Processing incoming message', {
+  logger.info("Processing incoming message", {
     whatsappId: message.id,
     from: message.from,
     type: message.type,
     timestamp: message.timestamp,
     hasText: !!message.text,
     hasImage: !!message.image,
-    hasDocument: !!message.document
+    hasDocument: !!message.document,
   });
 
   try {
     const { from, id, timestamp, type, text, image, document } = message;
-    
-    logger.info('Message data extracted', {
+
+    logger.info("Message data extracted", {
       from,
       id,
       timestamp,
       type,
       hasText: !!text,
       hasImage: !!image,
-      hasDocument: !!document
+      hasDocument: !!document,
     });
 
     // Normalize phone number for consistent contact lookup
     let normalizedPhone = from;
-    
+
     // Remove + prefix if present
-    if (normalizedPhone.startsWith('+')) {
+    if (normalizedPhone.startsWith("+")) {
       normalizedPhone = normalizedPhone.substring(1);
     }
-    
+
     // Handle country code - ensure consistent format
     let phoneWithCountryCode = normalizedPhone;
-    
+
     // If it's exactly 10 digits, add country code 91
     if (normalizedPhone.length === 10) {
       phoneWithCountryCode = `91${normalizedPhone}`;
     }
     // If it's 12 digits and starts with 91, keep as is
-    else if (normalizedPhone.length === 12 && normalizedPhone.startsWith('91')) {
+    else if (
+      normalizedPhone.length === 12 &&
+      normalizedPhone.startsWith("91")
+    ) {
       phoneWithCountryCode = normalizedPhone;
     }
     // If it's 11 digits and starts with 91, keep as is
-    else if (normalizedPhone.length === 11 && normalizedPhone.startsWith('91')) {
+    else if (
+      normalizedPhone.length === 11 &&
+      normalizedPhone.startsWith("91")
+    ) {
       phoneWithCountryCode = normalizedPhone;
     }
-    
+
     // Add + prefix for consistency with existing contacts
     const phoneWithPlus = `+${phoneWithCountryCode}`;
     const phoneWithoutPlus = phoneWithCountryCode;
-    
-    logger.info('Phone number normalization', {
+
+    logger.info("Phone number normalization", {
       original: from,
       normalized: normalizedPhone,
       withPlus: phoneWithPlus,
-      withoutPlus: phoneWithoutPlus
+      withoutPlus: phoneWithoutPlus,
     });
 
     // Find existing contact with either format
@@ -392,14 +408,14 @@ async function handleIncomingMessage(message: any, logger: any) {
         OR: [
           { phone: phoneWithPlus },
           { phone: phoneWithoutPlus },
-          { phone: from } // Also check original format
-        ]
+          { phone: from }, // Also check original format
+        ],
       },
     });
 
     if (!contact) {
-      logger.info('Creating new contact', { phone: phoneWithPlus });
-      
+      logger.info("Creating new contact", { phone: phoneWithPlus });
+
       // Create contact with + prefix for consistency
       contact = await prisma.contact.create({
         data: {
@@ -408,29 +424,29 @@ async function handleIncomingMessage(message: any, logger: any) {
           status: "active",
         },
       });
-      logger.info('Contact created successfully', {
-        contactId: contact.id,
-        name: contact.name,
-        phone: contact.phone
-      });
-    } else {
-      logger.info('Found existing contact', {
+      logger.info("Contact created successfully", {
         contactId: contact.id,
         name: contact.name,
         phone: contact.phone,
-        originalPhone: from
       });
-      
+    } else {
+      logger.info("Found existing contact", {
+        contactId: contact.id,
+        name: contact.name,
+        phone: contact.phone,
+        originalPhone: from,
+      });
+
       // Update phone number to consistent format if different
       if (contact.phone !== phoneWithPlus) {
-        logger.info('Updating contact phone number to consistent format', {
+        logger.info("Updating contact phone number to consistent format", {
           oldPhone: contact.phone,
-          newPhone: phoneWithPlus
+          newPhone: phoneWithPlus,
         });
-        
+
         contact = await prisma.contact.update({
           where: { id: contact.id },
-          data: { phone: phoneWithPlus }
+          data: { phone: phoneWithPlus },
         });
       }
     }
@@ -441,19 +457,19 @@ async function handleIncomingMessage(message: any, logger: any) {
     });
 
     if (!conversation) {
-      logger.info('Creating new conversation', { contactId: contact.id });
-      
+      logger.info("Creating new conversation", { contactId: contact.id });
+
       conversation = await prisma.conversation.create({
         data: { contactId: contact.id },
       });
-      logger.info('Conversation created successfully', {
+      logger.info("Conversation created successfully", {
         conversationId: conversation.id,
-        contactId: conversation.contactId
+        contactId: conversation.contactId,
       });
     } else {
-      logger.debug('Found existing conversation', {
+      logger.debug("Found existing conversation", {
         conversationId: conversation.id,
-        contactId: conversation.contactId
+        contactId: conversation.contactId,
       });
     }
 
@@ -463,53 +479,55 @@ async function handleIncomingMessage(message: any, logger: any) {
 
     if (type === "text" && text) {
       content = text.body;
-      logger.debug('Processing text message', { content: content.substring(0, 100) });
+      logger.debug("Processing text message", {
+        content: content.substring(0, 100),
+      });
     } else if (type === "image" && image) {
       content = image.caption || "Image";
       messageType = "image";
-      logger.debug('Processing image message', { 
+      logger.debug("Processing image message", {
         caption: image.caption,
         mimeType: image.mime_type,
         sha256: image.sha256,
-        id: image.id
+        id: image.id,
       });
     } else if (type === "document" && document) {
       content = document.caption || document.filename || "Document";
       messageType = "document";
-      logger.debug('Processing document message', {
+      logger.debug("Processing document message", {
         filename: document.filename,
         caption: document.caption,
         mimeType: document.mime_type,
         sha256: document.sha256,
-        id: document.id
+        id: document.id,
       });
     } else {
       content = `[${type} message]`;
       messageType = type;
-      logger.debug('Processing unknown message type', { type, content });
+      logger.debug("Processing unknown message type", { type, content });
     }
 
     // Check if message already exists to handle duplicate webhooks
-    logger.info('Checking for existing message', { whatsappId: id });
-    
+    logger.info("Checking for existing message", { whatsappId: id });
+
     let dbMessage = await prisma.message.findUnique({
       where: { whatsappId: id },
     });
 
     if (dbMessage) {
-      logger.info('Message already exists, skipping duplicate', {
+      logger.info("Message already exists, skipping duplicate", {
         whatsappId: id,
-        dbMessageId: dbMessage.id
+        dbMessageId: dbMessage.id,
       });
     } else {
-      logger.info('Creating new message in database', {
+      logger.info("Creating new message in database", {
         whatsappId: id,
         from,
         content: content.substring(0, 100),
         type: messageType,
-        conversationId: conversation.id
+        conversationId: conversation.id,
       });
-      
+
       // Store the message
       dbMessage = await prisma.message.create({
         data: {
@@ -525,12 +543,12 @@ async function handleIncomingMessage(message: any, logger: any) {
         },
       });
 
-      logger.info('Message stored in database successfully', {
+      logger.info("Message stored in database successfully", {
         dbMessageId: dbMessage.id,
         whatsappId: dbMessage.whatsappId,
         type: dbMessage.type,
         direction: dbMessage.direction,
-        status: dbMessage.status
+        status: dbMessage.status,
       });
 
       // Update conversation's last message timestamp and increment unread count
@@ -544,45 +562,47 @@ async function handleIncomingMessage(message: any, logger: any) {
         },
       });
 
-      logger.info('Conversation updated', {
+      logger.info("Conversation updated", {
         conversationId: conversation.id,
         lastMessageAt: new Date(parseInt(timestamp) * 1000),
-        unreadCountIncremented: true
+        unreadCountIncremented: true,
       });
     }
 
-    logger.info('Incoming message processing completed', {
+    logger.info("Incoming message processing completed", {
       dbMessageId: dbMessage.id,
       whatsappId: id,
       from,
-      type: messageType
+      type: messageType,
     });
   } catch (error) {
-    logger.error('Failed to process incoming message', {
+    logger.error("Failed to process incoming message", {
       whatsappId: message.id,
       from: message.from,
       error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
-    
+
     // Record the error in webhook monitor
-    webhookMonitor.recordWebhookError(`Message processing failed: ${error instanceof Error ? error.message : String(error)}`);
-    
+    webhookMonitor.recordWebhookError(
+      `Message processing failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
     // Also log to console for immediate visibility
-    console.error('WEBHOOK ERROR:', {
+    console.error("WEBHOOK ERROR:", {
       whatsappId: message.id,
       from: message.from,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }
 
 async function handleStatusUpdate(status: any, logger: any) {
-  logger.info('Processing status update', {
+  logger.info("Processing status update", {
     whatsappId: status.id,
     status: status.status,
     timestamp: status.timestamp,
-    recipientId: status.recipient_id
+    recipientId: status.recipient_id,
   });
 
   try {
@@ -597,22 +617,22 @@ async function handleStatusUpdate(status: any, logger: any) {
       },
     });
 
-    logger.info('Status update processed', {
+    logger.info("Status update processed", {
       whatsappId: id,
       newStatus: messageStatus,
       recordsUpdated: updateResult.count,
-      timestamp: new Date(parseInt(timestamp) * 1000)
+      timestamp: new Date(parseInt(timestamp) * 1000),
     });
 
     if (updateResult.count === 0) {
-      logger.warn('No message found for status update', { whatsappId: id });
+      logger.warn("No message found for status update", { whatsappId: id });
     }
   } catch (error) {
-    logger.error('Failed to process status update', {
+    logger.error("Failed to process status update", {
       whatsappId: status.id,
       status: status.status,
       error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
   }
 }

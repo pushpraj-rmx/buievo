@@ -123,7 +123,7 @@ export default function IndividualChatPage({
             content: message.trim(),
             type: "text",
           }),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to send message");
@@ -135,7 +135,7 @@ export default function IndividualChatPage({
               ...prev,
               messages: [...prev.messages, newMessage],
             }
-          : null
+          : null,
       );
       setMessage("");
       toast.success("Message sent");

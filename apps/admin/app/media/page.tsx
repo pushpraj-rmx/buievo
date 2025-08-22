@@ -300,7 +300,7 @@ export default function MediaPage() {
                               setViewLoading(r.id);
                               try {
                                 const res = await fetch(
-                                  `/api/v1/media/${r.id}`
+                                  `/api/v1/media/${r.id}`,
                                 );
                                 if (res.ok) {
                                   const json = await res.json();
@@ -409,8 +409,10 @@ export default function MediaPage() {
                               if (remoteUrl) {
                                 setRows((prev) =>
                                   prev.map((x) =>
-                                    x.id === r.id ? { ...x, url: remoteUrl } : x
-                                  )
+                                    x.id === r.id
+                                      ? { ...x, url: remoteUrl }
+                                      : x,
+                                  ),
                                 );
                                 toast.success("Info refreshed");
                               } else {
@@ -446,7 +448,7 @@ export default function MediaPage() {
                             if (res.ok) {
                               toast.success("Deleted");
                               setRows((prev) =>
-                                prev.filter((x) => x.id !== r.id)
+                                prev.filter((x) => x.id !== r.id),
                               );
                             } else {
                               const j = await res.json().catch(() => ({}));
@@ -483,7 +485,7 @@ export default function MediaPage() {
               setLoadMoreLoading(true);
               try {
                 const res = await fetch(
-                  `/api/v1/media?take=50&skip=${rows.length}`
+                  `/api/v1/media?take=50&skip=${rows.length}`,
                 );
                 if (!res.ok) return;
                 const json: Array<{

@@ -3,7 +3,7 @@ export interface LogData {
   [key: string]: any;
 }
 
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+export type LogLevel = "debug" | "info" | "warn" | "error";
 
 export class Logger {
   private context: string;
@@ -14,30 +14,34 @@ export class Logger {
     this.requestId = requestId;
   }
 
-  private formatMessage(level: LogLevel, message: string, data?: LogData): string {
+  private formatMessage(
+    level: LogLevel,
+    message: string,
+    data?: LogData,
+  ): string {
     const timestamp = new Date().toISOString();
-    const requestIdStr = this.requestId ? `[${this.requestId}]` : '';
-    const contextStr = this.context ? `[${this.context}]` : '';
-    
+    const requestIdStr = this.requestId ? `[${this.requestId}]` : "";
+    const contextStr = this.context ? `[${this.context}]` : "";
+
     return `[${timestamp}] [${level.toUpperCase()}] ${requestIdStr} ${contextStr} ${message}`;
   }
 
   debug(message: string, data?: LogData): void {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(this.formatMessage('debug', message), data || '');
+    if (process.env.NODE_ENV !== "production") {
+      console.log(this.formatMessage("debug", message), data || "");
     }
   }
 
   info(message: string, data?: LogData): void {
-    console.log(this.formatMessage('info', message), data || '');
+    console.log(this.formatMessage("info", message), data || "");
   }
 
   warn(message: string, data?: LogData): void {
-    console.warn(this.formatMessage('warn', message), data || '');
+    console.warn(this.formatMessage("warn", message), data || "");
   }
 
   error(message: string, data?: LogData): void {
-    console.error(this.formatMessage('error', message), data || '');
+    console.error(this.formatMessage("error", message), data || "");
   }
 
   // Create a new logger instance with the same context but different request ID
@@ -52,9 +56,9 @@ export class Logger {
 }
 
 // Global logger instances
-export const apiLogger = new Logger('API');
-export const webhookLogger = new Logger('WEBHOOK');
-export const dbLogger = new Logger('DATABASE');
+export const apiLogger = new Logger("API");
+export const webhookLogger = new Logger("WEBHOOK");
+export const dbLogger = new Logger("DATABASE");
 
 // Utility function to generate request IDs
 export const generateRequestId = (): string => {
@@ -62,6 +66,9 @@ export const generateRequestId = (): string => {
 };
 
 // Utility function to create a logger for a specific request
-export const createRequestLogger = (requestId: string, context: string = 'REQUEST'): Logger => {
+export const createRequestLogger = (
+  requestId: string,
+  context: string = "REQUEST",
+): Logger => {
   return new Logger(context, requestId);
 };

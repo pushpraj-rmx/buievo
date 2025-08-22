@@ -29,6 +29,3 @@ router.post("/:id/pause", pauseCampaign);
 router.post("/:id/resume", resumeCampaign);
 
 export default router;
-
-
-

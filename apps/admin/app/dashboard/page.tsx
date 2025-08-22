@@ -2,9 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { WorkerAreaDemo } from "@/components/worker-area-demo";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Users, Send, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import {
+  MessageCircle,
+  Users,
+  Send,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+} from "lucide-react";
 
 interface DashboardStats {
   totalContacts: number;
@@ -20,7 +33,12 @@ interface DashboardStats {
 
 interface RecentActivity {
   id: string;
-  type: "message_sent" | "message_received" | "template_created" | "contact_added" | "media_uploaded";
+  type:
+    | "message_sent"
+    | "message_received"
+    | "template_created"
+    | "contact_added"
+    | "media_uploaded";
   description: string;
   timestamp: string;
   status: "success" | "pending" | "failed";
@@ -69,23 +87,50 @@ export default function Page() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch conversations to get stats
-      const conversations = await fetch("/api/v1/conversations").then(res => res.json());
-      
+      const conversations = await fetch("/api/v1/conversations").then((res) =>
+        res.json(),
+      );
+
       // Fetch contacts
-      const contacts = await fetch("/api/v1/contacts").then(res => res.json());
-      
+      const contacts = await fetch("/api/v1/contacts").then((res) =>
+        res.json(),
+      );
+
       // Calculate stats
-      const totalMessages = conversations.reduce((acc: number, conv: Conversation) => acc + (conv.messageCount || 0), 0);
-      const messagesSent = conversations.reduce((acc: number, conv: Conversation) => 
-        acc + (conv.messages?.filter((m: Message) => m.direction === "outbound").length || 0), 0);
-      const messagesDelivered = conversations.reduce((acc: number, conv: Conversation) => 
-        acc + (conv.messages?.filter((m: Message) => m.status === "delivered").length || 0), 0);
-      const messagesPending = conversations.reduce((acc: number, conv: Conversation) => 
-        acc + (conv.messages?.filter((m: Message) => m.status === "sent").length || 0), 0);
-      const messagesFailed = conversations.reduce((acc: number, conv: Conversation) => 
-        acc + (conv.messages?.filter((m: Message) => m.status === "failed").length || 0), 0);
+      const totalMessages = conversations.reduce(
+        (acc: number, conv: Conversation) => acc + (conv.messageCount || 0),
+        0,
+      );
+      const messagesSent = conversations.reduce(
+        (acc: number, conv: Conversation) =>
+          acc +
+          (conv.messages?.filter((m: Message) => m.direction === "outbound")
+            .length || 0),
+        0,
+      );
+      const messagesDelivered = conversations.reduce(
+        (acc: number, conv: Conversation) =>
+          acc +
+          (conv.messages?.filter((m: Message) => m.status === "delivered")
+            .length || 0),
+        0,
+      );
+      const messagesPending = conversations.reduce(
+        (acc: number, conv: Conversation) =>
+          acc +
+          (conv.messages?.filter((m: Message) => m.status === "sent").length ||
+            0),
+        0,
+      );
+      const messagesFailed = conversations.reduce(
+        (acc: number, conv: Conversation) =>
+          acc +
+          (conv.messages?.filter((m: Message) => m.status === "failed")
+            .length || 0),
+        0,
+      );
 
       setStats({
         totalContacts: contacts.length,
@@ -106,19 +151,28 @@ export default function Page() {
           const lastMessage = conv.messages[conv.messages.length - 1];
           activity.push({
             id: lastMessage.id,
-            type: lastMessage.direction === "outbound" ? "message_sent" : "message_received",
+            type:
+              lastMessage.direction === "outbound"
+                ? "message_sent"
+                : "message_received",
             description: `${lastMessage.direction === "outbound" ? "Sent" : "Received"} message to ${conv.contact?.name || conv.contact?.phone}`,
             timestamp: lastMessage.timestamp,
-            status: lastMessage.status === "delivered" ? "success" : 
-                   lastMessage.status === "sent" ? "pending" : "failed"
+            status:
+              lastMessage.status === "delivered"
+                ? "success"
+                : lastMessage.status === "sent"
+                  ? "pending"
+                  : "failed",
           });
         }
       });
 
       // Sort by timestamp and take last 10
-      activity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      activity.sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      );
       setRecentActivity(activity.slice(0, 10));
-
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -170,7 +224,9 @@ export default function Page() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Contacts
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -180,7 +236,7 @@ export default function Page() {
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Conversations</CardTitle>
@@ -193,7 +249,7 @@ export default function Page() {
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Messages Sent</CardTitle>
@@ -201,12 +257,10 @@ export default function Page() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.messagesSent}</div>
-            <p className="text-xs text-muted-foreground">
-              Outbound messages
-            </p>
+            <p className="text-xs text-muted-foreground">Outbound messages</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Delivery Rate</CardTitle>
@@ -214,7 +268,12 @@ export default function Page() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats.messagesSent > 0 ? Math.round((stats.messagesDelivered / stats.messagesSent) * 100) : 0}%
+              {stats.messagesSent > 0
+                ? Math.round(
+                    (stats.messagesDelivered / stats.messagesSent) * 100,
+                  )
+                : 0}
+              %
             </div>
             <p className="text-xs text-muted-foreground">
               Successfully delivered
@@ -227,7 +286,9 @@ export default function Page() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Message Status</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Message Status
+            </CardTitle>
             <CardDescription>Current message delivery status</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -239,15 +300,16 @@ export default function Page() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm">Pending</span>
-              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+              <Badge
+                variant="secondary"
+                className="bg-yellow-100 text-yellow-800"
+              >
                 {stats.messagesPending}
               </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm">Failed</span>
-              <Badge variant="destructive">
-                {stats.messagesFailed}
-              </Badge>
+              <Badge variant="destructive">{stats.messagesFailed}</Badge>
             </div>
           </CardContent>
         </Card>
@@ -272,9 +334,7 @@ export default function Page() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.mediaUploads}</div>
-            <p className="text-xs text-muted-foreground">
-              Total media uploads
-            </p>
+            <p className="text-xs text-muted-foreground">Total media uploads</p>
           </CardContent>
         </Card>
       </div>
@@ -303,7 +363,9 @@ export default function Page() {
                 </div>
               ))
             ) : (
-              <p className="text-sm text-muted-foreground">No recent activity</p>
+              <p className="text-sm text-muted-foreground">
+                No recent activity
+              </p>
             )}
           </div>
         </CardContent>

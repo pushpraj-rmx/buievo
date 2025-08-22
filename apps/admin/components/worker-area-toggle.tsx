@@ -23,8 +23,8 @@ export function WorkerAreaToggle({ isOpen, onToggle }: WorkerAreaToggleProps) {
       <Activity className="h-4 w-4 mr-2" />
       Worker Area
       {activeCount > 0 && (
-        <Badge 
-          variant="secondary" 
+        <Badge
+          variant="secondary"
           className="ml-2 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
         >
           {activeCount}
@@ -33,5 +33,3 @@ export function WorkerAreaToggle({ isOpen, onToggle }: WorkerAreaToggleProps) {
     </Button>
   );
 }
-
-

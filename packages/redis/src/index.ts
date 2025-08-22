@@ -2,7 +2,7 @@ import { createClient, RedisClientType } from "redis";
 
 // --- ADD THIS DEBUG LINE ---
 console.log(
-  `[redis-client] Attempting to connect with URL: ${process.env.REDIS_URL}`
+  `[redis-client] Attempting to connect with URL: ${process.env.REDIS_URL}`,
 );
 
 export const redis: RedisClientType = createClient({

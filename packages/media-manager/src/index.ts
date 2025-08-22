@@ -93,12 +93,12 @@ export class WhatsAppStorageProvider implements StorageProvider {
       },
     });
 
-    return { 
-      id: data.id, 
-      mimeType: params.mimeType, 
-      fileName: params.fileName, 
+    return {
+      id: data.id,
+      mimeType: params.mimeType,
+      fileName: params.fileName,
       status: "UPLOADED",
-      storageProvider: "whatsapp"
+      storageProvider: "whatsapp",
     };
   }
 
@@ -107,12 +107,12 @@ export class WhatsAppStorageProvider implements StorageProvider {
     const { data } = await axios.get(url, {
       headers: { Authorization: `Bearer ${this.accessToken}` },
     });
-    return { 
-      id: data.id, 
-      url: data.url, 
-      mimeType: data.mime_type, 
+    return {
+      id: data.id,
+      url: data.url,
+      mimeType: data.mime_type,
       sha256: data.sha256,
-      storageProvider: "whatsapp"
+      storageProvider: "whatsapp",
     };
   }
 
@@ -316,19 +316,23 @@ export class MediaManager {
   getStorageInfo(): { primary: string; fallback?: string } {
     return {
       primary: this.primaryStorage.constructor.name,
-      fallback: this.fallbackStorage?.constructor.name
+      fallback: this.fallbackStorage?.constructor.name,
     };
   }
 }
 
 // Legacy support - maintain backward compatibility
 export class LegacyMediaManager extends MediaManager {
-  constructor(options: { baseUrl: string; accessToken: string; phoneNumberId: string }) {
+  constructor(options: {
+    baseUrl: string;
+    accessToken: string;
+    phoneNumberId: string;
+  }) {
     super({
       storage: {
         provider: "whatsapp",
-        whatsapp: options
-      }
+        whatsapp: options,
+      },
     });
   }
 }

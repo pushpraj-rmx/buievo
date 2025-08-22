@@ -12,9 +12,16 @@ const router = Router();
 router.post("/", createTemplate);
 router.get("/", listTemplates);
 router.get("/db", async (req, res) => {
-  const take = Math.min(parseInt(String(req.query.take ?? "50"), 10) || 50, 200);
+  const take = Math.min(
+    parseInt(String(req.query.take ?? "50"), 10) || 50,
+    200,
+  );
   const skip = parseInt(String(req.query.skip ?? "0"), 10) || 0;
-  const items = await prisma.template.findMany({ orderBy: { createdAt: "desc" }, take, skip });
+  const items = await prisma.template.findMany({
+    orderBy: { createdAt: "desc" },
+    take,
+    skip,
+  });
   res.json(items);
 });
 router.get("/:name/db", async (req, res) => {

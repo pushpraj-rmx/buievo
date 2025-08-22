@@ -3,7 +3,7 @@ import { MediaManager, LegacyMediaManager } from "./index.js";
 // Test the new MediaManager
 async function testNewMediaManager() {
   console.log("🧪 Testing new MediaManager...");
-  
+
   try {
     const mediaManager = new MediaManager({
       storage: {
@@ -11,14 +11,14 @@ async function testNewMediaManager() {
         whatsapp: {
           baseUrl: "https://graph.facebook.com/v21.0",
           accessToken: "test-token",
-          phoneNumberId: "test-phone-id"
-        }
-      }
+          phoneNumberId: "test-phone-id",
+        },
+      },
     });
-    
+
     console.log("✅ New MediaManager created successfully");
     console.log("📊 Storage info:", mediaManager.getStorageInfo());
-    
+
     // Test that we can access the storage provider
     const storageInfo = mediaManager.getStorageInfo();
     if (storageInfo.primary === "WhatsAppStorageProvider") {
@@ -26,7 +26,6 @@ async function testNewMediaManager() {
     } else {
       console.log("❌ Unexpected storage provider:", storageInfo.primary);
     }
-    
   } catch (error) {
     console.error("❌ New MediaManager test failed:", error);
   }
@@ -35,25 +34,27 @@ async function testNewMediaManager() {
 // Test the legacy MediaManager for backward compatibility
 async function testLegacyMediaManager() {
   console.log("\n🧪 Testing legacy MediaManager...");
-  
+
   try {
     const legacyManager = new LegacyMediaManager({
       baseUrl: "https://graph.facebook.com/v21.0",
       accessToken: "test-token",
-      phoneNumberId: "test-phone-id"
+      phoneNumberId: "test-phone-id",
     });
-    
+
     console.log("✅ Legacy MediaManager created successfully");
     console.log("📊 Storage info:", legacyManager.getStorageInfo());
-    
+
     // Test that it's using WhatsApp storage
     const storageInfo = legacyManager.getStorageInfo();
     if (storageInfo.primary === "WhatsAppStorageProvider") {
       console.log("✅ Legacy manager correctly uses WhatsApp storage");
     } else {
-      console.log("❌ Legacy manager storage provider mismatch:", storageInfo.primary);
+      console.log(
+        "❌ Legacy manager storage provider mismatch:",
+        storageInfo.primary,
+      );
     }
-    
   } catch (error) {
     console.error("❌ Legacy MediaManager test failed:", error);
   }
@@ -62,7 +63,7 @@ async function testLegacyMediaManager() {
 // Test configuration validation
 async function testConfiguration() {
   console.log("\n🧪 Testing configuration...");
-  
+
   try {
     // Test valid WhatsApp config
     const validConfig = {
@@ -71,15 +72,15 @@ async function testConfiguration() {
         whatsapp: {
           baseUrl: "https://graph.facebook.com/v21.0",
           accessToken: "test-token",
-          phoneNumberId: "test-phone-id"
-        }
-      }
+          phoneNumberId: "test-phone-id",
+        },
+      },
     };
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const mediaManager = new MediaManager(validConfig);
     console.log("✅ Valid WhatsApp configuration accepted");
-    
+
     // Test invalid config (should throw error)
     try {
       const invalidConfig = {
@@ -89,12 +90,12 @@ async function testConfiguration() {
             bucket: "test-bucket",
             region: "us-east-1",
             accessKeyId: "test",
-            secretAccessKey: "test"
+            secretAccessKey: "test",
             // This should still work since we have required fields
-          }
-        }
+          },
+        },
       };
-      
+
       new MediaManager(invalidConfig);
       console.log("✅ S3 config accepted (required fields present)");
     } catch (error) {
@@ -104,7 +105,6 @@ async function testConfiguration() {
         console.log("✅ Invalid config correctly rejected");
       }
     }
-    
   } catch (error) {
     console.error("❌ Configuration test failed:", error);
   }
@@ -113,17 +113,21 @@ async function testConfiguration() {
 // Run all tests
 async function runTests() {
   console.log("🚀 Starting MediaManager tests...\n");
-  
+
   await testNewMediaManager();
   await testLegacyMediaManager();
   await testConfiguration();
-  
+
   console.log("\n✨ All tests completed!");
 }
 
 // Run tests if this file is executed directly
 // Note: This check is simplified for compatibility with both CJS and ESM
-if (typeof process !== 'undefined' && process.argv[1] && process.argv[1].includes('test.ts')) {
+if (
+  typeof process !== "undefined" &&
+  process.argv[1] &&
+  process.argv[1].includes("test.ts")
+) {
   runTests().catch(console.error);
 }
 

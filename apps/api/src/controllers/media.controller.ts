@@ -17,15 +17,13 @@ function getMediaManager(): MediaManager {
         baseUrl: `https://graph.facebook.com/${apiVersion}`,
         accessToken,
         phoneNumberId,
-      }
-    }
+      },
+    },
   });
 }
 
 const uploadSchema = z.object({
-  type: z.enum(["image", "video", "audio", "document"]).default(
-    "document"
-  ),
+  type: z.enum(["image", "video", "audio", "document"]).default("document"),
 });
 
 export async function uploadMedia(req: Request, res: Response) {
@@ -34,24 +32,27 @@ export async function uploadMedia(req: Request, res: Response) {
     const { type } = uploadSchema.parse({ type: req.query.type });
 
     if (!file) {
-      return res.status(400).json({ message: "file is required (multipart/form-data)" });
+      return res
+        .status(400)
+        .json({ message: "file is required (multipart/form-data)" });
     }
 
     // WhatsApp media size limits (in bytes)
     const WHATSAPP_MEDIA_LIMITS = {
-      image: 5 * 1024 * 1024,      // 5MB
-      video: 16 * 1024 * 1024,     // 16MB
-      audio: 16 * 1024 * 1024,     // 16MB
+      image: 5 * 1024 * 1024, // 5MB
+      video: 16 * 1024 * 1024, // 16MB
+      audio: 16 * 1024 * 1024, // 16MB
       document: 100 * 1024 * 1024, // 100MB
     };
 
     // Validate file size
-    const maxSize = WHATSAPP_MEDIA_LIMITS[type as keyof typeof WHATSAPP_MEDIA_LIMITS];
+    const maxSize =
+      WHATSAPP_MEDIA_LIMITS[type as keyof typeof WHATSAPP_MEDIA_LIMITS];
     if (file.size > maxSize) {
       const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(1);
       const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
-      return res.status(400).json({ 
-        message: `${type.charAt(0).toUpperCase() + type.slice(1)} files cannot exceed ${maxSizeMB}MB. Your file is ${fileSizeMB}MB.` 
+      return res.status(400).json({
+        message: `${type.charAt(0).toUpperCase() + type.slice(1)} files cannot exceed ${maxSizeMB}MB. Your file is ${fileSizeMB}MB.`,
       });
     }
 
@@ -81,7 +82,9 @@ export async function uploadMedia(req: Request, res: Response) {
   } catch (error) {
     console.error("uploadMedia error:", error);
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ message: error.errors.map((e) => e.message).join(", ") });
+      return res
+        .status(400)
+        .json({ message: error.errors.map((e) => e.message).join(", ") });
     }
     res.status(500).json({ message: "Internal server error" });
   }

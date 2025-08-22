@@ -66,7 +66,7 @@ export class TemplateManager {
   async get(templateName: string) {
     // Use phoneNumberId as the business ID for template operations
     const url = `${this.baseUrl}/${this.phoneNumberId}/message_templates?name=${encodeURIComponent(
-      templateName
+      templateName,
     )}`;
     const { data } = await axios.get(url, {
       headers: { Authorization: `Bearer ${this.accessToken}` },
@@ -86,9 +86,9 @@ export class TemplateManager {
 
   async status(templateName: string) {
     const data = await this.get(templateName);
-    const item = (data?.data as Array<{ name: string; status?: TemplateStatus }> | undefined)?.find(
-      (t) => t.name === templateName
-    );
+    const item = (
+      data?.data as Array<{ name: string; status?: TemplateStatus }> | undefined
+    )?.find((t) => t.name === templateName);
     return item?.status as TemplateStatus | undefined;
   }
 }

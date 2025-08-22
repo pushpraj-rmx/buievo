@@ -23,11 +23,11 @@ export interface WhatsAppSuccessResponse {
 
 export const wappClient = {
   async sendTextMessage(
-    args: SendTextMessageArgs
+    args: SendTextMessageArgs,
   ): Promise<WhatsAppSuccessResponse> {
     console.log(
       "wappClient.sendTextMessage received args:",
-      JSON.stringify(args, null, 2)
+      JSON.stringify(args, null, 2),
     );
 
     const { to, text } = args;
@@ -41,8 +41,14 @@ export const wappClient = {
 
     console.log("🔧 Configuration:");
     console.log("  - API Version:", apiVersion);
-    console.log("  - Phone Number ID:", PHONE_NUMBER_ID ? `${PHONE_NUMBER_ID.substring(0, 4)}...` : "NOT SET");
-    console.log("  - Access Token:", ACCESS_TOKEN ? `${ACCESS_TOKEN.substring(0, 10)}...` : "NOT SET");
+    console.log(
+      "  - Phone Number ID:",
+      PHONE_NUMBER_ID ? `${PHONE_NUMBER_ID.substring(0, 4)}...` : "NOT SET",
+    );
+    console.log(
+      "  - Access Token:",
+      ACCESS_TOKEN ? `${ACCESS_TOKEN.substring(0, 10)}...` : "NOT SET",
+    );
     console.log("  - API URL:", url);
 
     const payload = {
@@ -65,7 +71,7 @@ export const wappClient = {
       });
 
       console.log(
-        `✅ Text message sent successfully to ${to} (Status: ${response.status})`
+        `✅ Text message sent successfully to ${to} (Status: ${response.status})`,
       );
       return response.data;
     } catch (error) {
@@ -74,10 +80,13 @@ export const wappClient = {
           error.response?.data?.error?.message || error.message;
         console.error(
           `❌ Failed to send text message to ${to} (Status: ${error.response?.status}):`,
-          errorMessage
+          errorMessage,
         );
-        
-        console.error("🔍 Full Meta API Error Response:", JSON.stringify(error.response?.data, null, 2));
+
+        console.error(
+          "🔍 Full Meta API Error Response:",
+          JSON.stringify(error.response?.data, null, 2),
+        );
         console.error("🔍 HTTP Status:", error.response?.status);
         console.error("🔍 Error Headers:", error.response?.headers);
         console.error("📤 Sent Payload:", JSON.stringify(payload, null, 2));
@@ -90,15 +99,23 @@ export const wappClient = {
   },
 
   async sendTemplateMessage(
-    args: SendTemplateMessageArgs
+    args: SendTemplateMessageArgs,
   ): Promise<WhatsAppSuccessResponse> {
     // --- Log the raw arguments received by the function ---
     console.log(
       "wappClient.sendTemplateMessage received args:",
-      JSON.stringify(args, null, 2)
+      JSON.stringify(args, null, 2),
     );
 
-    const { to, templateName, bodyParams = [], buttonParams = [], imageUrl, documentUrl, filename } = args;
+    const {
+      to,
+      templateName,
+      bodyParams = [],
+      buttonParams = [],
+      imageUrl,
+      documentUrl,
+      filename,
+    } = args;
     const { PHONE_NUMBER_ID, ACCESS_TOKEN } = process.env;
     const apiVersion = process.env.META_API_VERSION || "v21.0";
     const url = `https://graph.facebook.com/${apiVersion}/${PHONE_NUMBER_ID}/messages`;
@@ -110,8 +127,14 @@ export const wappClient = {
     // Log configuration details for debugging (without exposing sensitive data)
     console.log("🔧 Configuration:");
     console.log("  - API Version:", apiVersion);
-    console.log("  - Phone Number ID:", PHONE_NUMBER_ID ? `${PHONE_NUMBER_ID.substring(0, 4)}...` : "NOT SET");
-    console.log("  - Access Token:", ACCESS_TOKEN ? `${ACCESS_TOKEN.substring(0, 10)}...` : "NOT SET");
+    console.log(
+      "  - Phone Number ID:",
+      PHONE_NUMBER_ID ? `${PHONE_NUMBER_ID.substring(0, 4)}...` : "NOT SET",
+    );
+    console.log(
+      "  - Access Token:",
+      ACCESS_TOKEN ? `${ACCESS_TOKEN.substring(0, 10)}...` : "NOT SET",
+    );
     console.log("  - API URL:", url);
 
     const components: any[] = [];
@@ -124,10 +147,10 @@ export const wappClient = {
           {
             type: "image",
             image: {
-              link: imageUrl
-            }
-          }
-        ]
+              link: imageUrl,
+            },
+          },
+        ],
       });
     }
 
@@ -140,10 +163,10 @@ export const wappClient = {
             type: "document",
             document: {
               link: documentUrl,
-              ...(filename && { filename })
-            }
-          }
-        ]
+              ...(filename && { filename }),
+            },
+          },
+        ],
       });
     }
 
@@ -196,7 +219,7 @@ export const wappClient = {
       });
 
       console.log(
-        `✅ Message sent successfully to ${to} (Status: ${response.status})`
+        `✅ Message sent successfully to ${to} (Status: ${response.status})`,
       );
       return response.data;
     } catch (error) {
@@ -205,14 +228,17 @@ export const wappClient = {
           error.response?.data?.error?.message || error.message;
         console.error(
           `❌ Failed to send message to ${to} (Status: ${error.response?.status}):`,
-          errorMessage
+          errorMessage,
         );
-        
+
         // Log the full Meta API error response for debugging
-        console.error("🔍 Full Meta API Error Response:", JSON.stringify(error.response?.data, null, 2));
+        console.error(
+          "🔍 Full Meta API Error Response:",
+          JSON.stringify(error.response?.data, null, 2),
+        );
         console.error("🔍 HTTP Status:", error.response?.status);
         console.error("🔍 Error Headers:", error.response?.headers);
-        
+
         // log the full payload for debugging
         console.error("📤 Sent Payload:", JSON.stringify(payload, null, 2));
       } else {

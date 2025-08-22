@@ -199,7 +199,7 @@ export default function WhatsAppContactsPage() {
       fetchContacts();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create contact"
+        error instanceof Error ? error.message : "Failed to create contact",
       );
     } finally {
       setCreateLoading(false);
@@ -230,7 +230,7 @@ export default function WhatsAppContactsPage() {
       fetchContacts();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update contact"
+        error instanceof Error ? error.message : "Failed to update contact",
       );
     } finally {
       setUpdateLoading(false);
@@ -280,7 +280,7 @@ export default function WhatsAppContactsPage() {
       fetchSegments();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create segment"
+        error instanceof Error ? error.message : "Failed to create segment",
       );
     } finally {
       setSegmentCreateLoading(false);
@@ -299,7 +299,7 @@ export default function WhatsAppContactsPage() {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(segmentForm),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -314,7 +314,7 @@ export default function WhatsAppContactsPage() {
       fetchSegments();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update segment"
+        error instanceof Error ? error.message : "Failed to update segment",
       );
     } finally {
       setSegmentUpdateLoading(false);
@@ -371,14 +371,14 @@ export default function WhatsAppContactsPage() {
 
       const result = await response.json();
       toast.success(
-        `Import completed: ${result.results.created} created, ${result.results.skipped} skipped`
+        `Import completed: ${result.results.created} created, ${result.results.skipped} skipped`,
       );
       setImportDialogOpen(false);
       setImportData("");
       fetchContacts();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to import contacts"
+        error instanceof Error ? error.message : "Failed to import contacts",
       );
     } finally {
       setImportLoading(false);
@@ -437,7 +437,7 @@ export default function WhatsAppContactsPage() {
           contact.comment || "",
           contact.segments.map((s) => s.name).join("; "),
           new Date(contact.createdAt).toLocaleDateString(),
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -669,7 +669,7 @@ export default function WhatsAppContactsPage() {
                               setContactForm({
                                 ...contactForm,
                                 segmentIds: contactForm.segmentIds.filter(
-                                  (id) => id !== segment.id
+                                  (id) => id !== segment.id,
                                 ),
                               });
                             }

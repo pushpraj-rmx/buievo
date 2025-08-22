@@ -43,7 +43,7 @@ async function processJob(jobData: string): Promise<void> {
       });
       if (!contact || !contact.phone) {
         throw new Error(
-          `Contact or phone not found for contactId: ${contactId}`
+          `Contact or phone not found for contactId: ${contactId}`,
         );
       }
       to = contact.phone;
@@ -56,11 +56,23 @@ async function processJob(jobData: string): Promise<void> {
 
     console.log(
       "Parsed job data:",
-      JSON.stringify({ to, templateName, params, buttonParams, imageUrl, documentUrl, filename }, null, 2)
+      JSON.stringify(
+        {
+          to,
+          templateName,
+          params,
+          buttonParams,
+          imageUrl,
+          documentUrl,
+          filename,
+        },
+        null,
+        2,
+      ),
     );
 
     console.log("🚀 Calling wappClient.sendTemplateMessage...");
-    
+
     await wappClient.sendTemplateMessage({
       to,
       templateName,
@@ -70,9 +82,9 @@ async function processJob(jobData: string): Promise<void> {
       documentUrl,
       filename,
     });
-    
+
     console.log(
-      `✅ Message sent successfully to ${to} using template ${templateName}`
+      `✅ Message sent successfully to ${to} using template ${templateName}`,
     );
   } catch (error: unknown) {
     if (error instanceof Error) {

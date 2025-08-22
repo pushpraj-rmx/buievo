@@ -268,7 +268,7 @@ export default function WhatsAppCampaignsPage() {
       fetchStats();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create campaign"
+        error instanceof Error ? error.message : "Failed to create campaign",
       );
     } finally {
       setCreateLoading(false);
@@ -300,7 +300,7 @@ export default function WhatsAppCampaignsPage() {
       fetchStats();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update campaign"
+        error instanceof Error ? error.message : "Failed to update campaign",
       );
     } finally {
       setUpdateLoading(false);
@@ -345,13 +345,13 @@ export default function WhatsAppCampaignsPage() {
 
       const result = await response.json();
       toast.success(
-        `Campaign started successfully! Targeting ${result.totalContacts} contacts.`
+        `Campaign started successfully! Targeting ${result.totalContacts} contacts.`,
       );
       fetchCampaigns();
       fetchStats();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to start campaign"
+        error instanceof Error ? error.message : "Failed to start campaign",
       );
     } finally {
       setStartLoading("");
@@ -376,7 +376,7 @@ export default function WhatsAppCampaignsPage() {
       fetchStats();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to pause campaign"
+        error instanceof Error ? error.message : "Failed to pause campaign",
       );
     } finally {
       setPauseLoading("");
@@ -401,7 +401,7 @@ export default function WhatsAppCampaignsPage() {
       fetchStats();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to resume campaign"
+        error instanceof Error ? error.message : "Failed to resume campaign",
       );
     } finally {
       setResumeLoading("");
@@ -495,7 +495,7 @@ export default function WhatsAppCampaignsPage() {
   };
 
   const approvedTemplates = templates.filter(
-    (template) => template.status === "APPROVED"
+    (template) => template.status === "APPROVED",
   );
 
   return (
@@ -577,7 +577,7 @@ export default function WhatsAppCampaignsPage() {
                             setCampaignForm({
                               ...campaignForm,
                               segmentIds: campaignForm.segmentIds.filter(
-                                (id) => id !== segment.id
+                                (id) => id !== segment.id,
                               ),
                             });
                           }
@@ -767,7 +767,7 @@ export default function WhatsAppCampaignsPage() {
                   {campaigns.map((campaign) => {
                     const totalTarget = campaign.targetSegments.reduce(
                       (sum, segment) => sum + segment._count.contacts,
-                      0
+                      0,
                     );
                     const progress =
                       totalTarget > 0

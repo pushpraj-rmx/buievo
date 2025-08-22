@@ -58,10 +58,10 @@ export default function SettingsPage() {
   const [themeConfig, setThemeConfig] = useState(config.theme);
   const [sidebarConfig, setSidebarConfig] = useState(config.sidebar);
   const [localizationConfig, setLocalizationConfig] = useState(
-    config.localization
+    config.localization,
   );
   const [advancedStorageConfig, setAdvancedStorageConfig] = useState(
-    config.advancedStorage
+    config.advancedStorage,
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -440,7 +440,7 @@ export default function SettingsPage() {
                     try {
                       await updateStorageConfig(storageConfig);
                       toast.success(
-                        "Storage configuration saved successfully!"
+                        "Storage configuration saved successfully!",
                       );
                     } catch (error) {
                       toast.error("Failed to save storage configuration");
@@ -610,7 +610,7 @@ export default function SettingsPage() {
                     try {
                       await updateWorkerAreaConfig(workerAreaConfig);
                       toast.success(
-                        "Worker Area configuration saved successfully!"
+                        "Worker Area configuration saved successfully!",
                       );
                     } catch (error) {
                       toast.error("Failed to save Worker Area configuration");
@@ -815,7 +815,7 @@ export default function SettingsPage() {
                     try {
                       await updateSidebarConfig(sidebarConfig);
                       toast.success(
-                        "Sidebar configuration saved successfully!"
+                        "Sidebar configuration saved successfully!",
                       );
                     } catch (error) {
                       toast.error("Failed to save sidebar configuration");
@@ -943,7 +943,7 @@ export default function SettingsPage() {
                     try {
                       await updateLocalizationConfig(localizationConfig);
                       toast.success(
-                        "Localization configuration saved successfully!"
+                        "Localization configuration saved successfully!",
                       );
                     } catch (error) {
                       toast.error("Failed to save localization configuration");
@@ -1064,11 +1064,11 @@ export default function SettingsPage() {
                     try {
                       await updateAdvancedStorageConfig(advancedStorageConfig);
                       toast.success(
-                        "Advanced storage configuration saved successfully!"
+                        "Advanced storage configuration saved successfully!",
                       );
                     } catch (error) {
                       toast.error(
-                        "Failed to save advanced storage configuration"
+                        "Failed to save advanced storage configuration",
                       );
                     } finally {
                       setIsLoading(false);

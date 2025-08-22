@@ -21,6 +21,3 @@ router.post("/:contactId/messages", sendMessage);
 router.post("/:contactId/read", markAsRead);
 
 export default router;
-
-
-

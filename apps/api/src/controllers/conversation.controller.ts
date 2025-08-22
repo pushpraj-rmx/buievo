@@ -169,9 +169,12 @@ export const sendMessage = async (req: Request, res: Response) => {
       });
     } catch (whatsappError) {
       console.error("WhatsApp API error:", whatsappError);
-      return res.status(500).json({ 
+      return res.status(500).json({
         message: "Failed to send message via WhatsApp",
-        error: whatsappError instanceof Error ? whatsappError.message : "Unknown error"
+        error:
+          whatsappError instanceof Error
+            ? whatsappError.message
+            : "Unknown error",
       });
     }
 

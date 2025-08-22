@@ -89,4 +89,3 @@ export function WorkerAreaDemo() {
     </Card>
   );
 }
-

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 /**
  * The Prisma client instance for interacting with the database.
@@ -29,4 +29,4 @@ export const prisma = new PrismaClient();
  * }
  * ```
  */
-export * from '@prisma/client';
+export * from "@prisma/client";
