@@ -105,7 +105,7 @@ export async function createTemplate(req: Request, res: Response) {
 
     // Validate template before submission
     const validation = tm.validateTemplate(body);
-    
+
     if (!validation.isValid) {
       return res.status(400).json({
         message: "Template validation failed",
@@ -131,14 +131,14 @@ export async function createTemplate(req: Request, res: Response) {
       // Persist/Upsert into DB with enhanced metadata
       await prisma.template.upsert({
         where: { name: body.name },
-        update: { 
-          content: data, 
+        update: {
+          content: data,
           status: templateStatus,
           updatedAt: new Date()
         },
-        create: { 
-          name: body.name, 
-          content: data, 
+        create: {
+          name: body.name,
+          content: data,
           status: templateStatus,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -166,8 +166,8 @@ export async function createTemplate(req: Request, res: Response) {
 
       await prisma.template.upsert({
         where: { name: body.name },
-        update: { 
-          content: mockData as any, 
+        update: {
+          content: mockData as any,
           status: "PENDING",
           updatedAt: new Date()
         },
@@ -277,13 +277,13 @@ export async function validateTemplate(req: Request, res: Response) {
 
     const body = defSchema.parse(req.body) as TemplateDefinition;
     const validation = tm.validateTemplate(body);
-    
+
     // Generate preview with sample variables
     const sampleVariables: Record<string, string> = {};
     validation.variables.forEach((variable, index) => {
       sampleVariables[variable] = `Sample Value ${index + 1}`;
     });
-    
+
     const preview = tm.generatePreview(body, sampleVariables);
 
     res.status(200).json({
@@ -309,22 +309,26 @@ export async function validateTemplate(req: Request, res: Response) {
 export async function uploadMedia(req: Request, res: Response) {
   try {
     const tm = getTemplateManager();
-    const { fileUrl, type = "image" } = req.body;
+    const { fileUrl, type } = req.body;
 
     if (!fileUrl) {
       return res.status(400).json({ message: "fileUrl is required" });
     }
 
-    if (!["image", "video"].includes(type)) {
-      return res.status(400).json({ message: "type must be 'image' or 'video'" });
-    }
+    console.log("📤 Template Controller - Uploading media for template...");
+    console.log("🔗 Template Controller - File URL:", fileUrl);
+    console.log("📁 Template Controller - File type:", type);
 
-    const mediaAsset = await tm.uploadMedia(fileUrl, type as "image" | "video");
+    // Use the template-specific media upload method
+    const mediaAsset = await tm.uploadMediaForTemplate(fileUrl, type as "image" | "video");
+
+    console.log("✅ Template Controller - Media upload successful");
+    console.log("📋 Template Controller - Media asset:", JSON.stringify(mediaAsset, null, 2));
 
     res.status(200).json(mediaAsset);
-  } catch (error) {
-    console.error("uploadMedia error:", error);
-    res.status(500).json({ message: "Failed to upload media" });
+  } catch (error: unknown) {
+    console.error("❌ Template Controller - uploadMedia error:", error);
+    res.status(500).json({ message: "Failed to upload media", error: error instanceof Error ? error.message : "Unknown error" });
   }
 }
 
@@ -591,7 +595,7 @@ export async function duplicateTemplate(req: Request, res: Response) {
     // Create duplicate template
     const tm = getTemplateManager();
     const originalContent = originalTemplate.content as any;
-    
+
     const duplicateTemplate = {
       name: newName,
       language: originalContent.language || "en_US",
@@ -603,7 +607,7 @@ export async function duplicateTemplate(req: Request, res: Response) {
 
     // Validate the duplicate template
     const validation = tm.validateTemplate(duplicateTemplate);
-    
+
     if (!validation.isValid) {
       return res.status(400).json({
         message: "Duplicate template validation failed",

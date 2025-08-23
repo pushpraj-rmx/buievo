@@ -219,7 +219,7 @@ export class TemplateManager {
           let cardHasHeader = false;
           let cardHasButtons = false;
 
-                     card.components.forEach((cardComponent) => {
+          card.components.forEach((cardComponent) => {
             // Check for header (required for carousel cards)
             if (cardComponent.type === "HEADER") {
               cardHasHeader = true;
@@ -459,7 +459,218 @@ export class TemplateManager {
   }
 
   /**
-   * Upload media for carousel templates
+   * Upload media specifically for templates (generates template-compatible handles)
+   */
+  async uploadMediaForTemplate(fileUrl: string, type: "image" | "video" = "image"): Promise<MediaAsset> {
+    console.log("📤 Template Manager - Starting template media upload...");
+    console.log("🔗 Template Manager - File URL:", fileUrl);
+    console.log("📁 Template Manager - File type:", type);
+
+    try {
+      // First, download the file
+      const response = await axios.get(fileUrl, { responseType: 'arraybuffer' });
+      const buffer = Buffer.from(response.data);
+
+      console.log("📥 Template Manager - Downloaded file, size:", buffer.length, "bytes");
+
+      // Try different approaches to get template-compatible media handle
+
+      // Approach 1: Try using the App ID for media upload (might generate special handles)
+      const appMediaUrl = `${this.baseUrl}/${process.env.APP_ID}/uploads`;
+      console.log("🔗 Template Manager - Trying app-level media upload:", appMediaUrl);
+
+      try {
+        // Step 1: Create upload session
+        const uploadSessionResponse = await axios.post(appMediaUrl, {
+          file_length: buffer.length,
+          file_type: type === 'image' ? 'image/jpeg' : 'video/mp4',
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.accessToken}`,
+          },
+        });
+
+        console.log("✅ Template Manager - Upload session created");
+        console.log("📋 Template Manager - Session response:", JSON.stringify(uploadSessionResponse.data, null, 2));
+
+        const uploadHandle = uploadSessionResponse.data.id;
+
+        // Step 2: Upload the actual file data
+        const fileUploadResponse = await axios.post(`${this.baseUrl}/${uploadHandle}`, buffer, {
+          headers: {
+            'Content-Type': type === 'image' ? 'image/jpeg' : 'video/mp4',
+            'Content-Length': buffer.length.toString(),
+            Authorization: `Bearer ${this.accessToken}`,
+          },
+        });
+
+        console.log("✅ Template Manager - File data uploaded");
+        console.log("📋 Template Manager - File upload response:", JSON.stringify(fileUploadResponse.data, null, 2));
+
+        const appUploadResponse = fileUploadResponse;
+
+        console.log("✅ Template Manager - App-level media upload successful");
+        console.log("📋 Template Manager - App upload response:", JSON.stringify(appUploadResponse.data, null, 2));
+
+        // Extract the special handle from the file upload response
+        const specialHandle = appUploadResponse.data.h;
+
+        if (specialHandle) {
+          console.log("🎉 Template Manager - Got special handle for templates:", specialHandle);
+          return {
+            id: specialHandle,
+            handle: specialHandle,
+            url: fileUrl,
+            type,
+            mimeType: type === 'image' ? 'image/jpeg' : 'video/mp4',
+            size: buffer.length,
+          };
+        }
+
+        // Fallback: Step 3 - Get details from upload handle if no special handle
+        const finalUploadHandle = appUploadResponse.data.id || uploadHandle;
+        console.log("🔄 Template Manager - No special handle, retrieving from upload handle:", finalUploadHandle);
+
+        try {
+          const mediaDetailsUrl = `${this.baseUrl}/${finalUploadHandle}`;
+          const mediaDetailsResponse = await axios.get(mediaDetailsUrl, {
+            headers: { Authorization: `Bearer ${this.accessToken}` },
+          });
+
+          console.log("✅ Template Manager - Final media details retrieved");
+          console.log("📋 Template Manager - Final media details:", JSON.stringify(mediaDetailsResponse.data, null, 2));
+
+          // Extract the actual media ID from the response
+          const finalMediaId = mediaDetailsResponse.data.media?.id || mediaDetailsResponse.data.id;
+          const finalHandle = mediaDetailsResponse.data.media?.id || finalMediaId;
+
+          return {
+            id: finalMediaId,
+            handle: finalHandle,
+            url: fileUrl,
+            type,
+            mimeType: type === 'image' ? 'image/jpeg' : 'video/mp4',
+            size: buffer.length,
+          };
+        } catch (detailsError: unknown) {
+          console.log("⚠️ Template Manager - Could not retrieve final media ID, using upload handle");
+          console.log("Debug:", detailsError);
+          // Fallback to upload handle if media details retrieval fails
+          return {
+            id: finalUploadHandle,
+            handle: finalUploadHandle,
+            url: fileUrl,
+            type,
+            mimeType: type === 'image' ? 'image/jpeg' : 'video/mp4',
+            size: buffer.length,
+          };
+        }
+      } catch (appError: unknown) {
+        console.log("⚠️ Template Manager - App-level media upload failed, trying business upload");
+        console.log("Debug:", appError);
+      }
+
+      // Approach 2: Try using the business account ID for media upload
+      const businessMediaUrl = `${this.baseUrl}/${this.businessId}/media`;
+      console.log("🔗 Template Manager - Trying business media upload:", businessMediaUrl);
+
+      try {
+        const FormData = await import('form-data');
+        const form = new FormData.default();
+        form.append('messaging_product', 'whatsapp');
+        form.append('file', buffer, {
+          filename: `template_${Date.now()}.${type === 'image' ? 'jpg' : 'mp4'}`,
+          contentType: type === 'image' ? 'image/jpeg' : 'video/mp4'
+        });
+
+        const businessUploadResponse = await axios.post(businessMediaUrl, form, {
+          headers: {
+            ...form.getHeaders(),
+            Authorization: `Bearer ${this.accessToken}`,
+          },
+        });
+
+        console.log("✅ Template Manager - Business media upload successful");
+        console.log("📋 Template Manager - Business upload response:", JSON.stringify(businessUploadResponse.data, null, 2));
+
+        // Get media details
+        const mediaId = businessUploadResponse.data.id;
+        const mediaDetailsUrl = `${this.baseUrl}/${mediaId}`;
+
+        const mediaDetailsResponse = await axios.get(mediaDetailsUrl, {
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+        });
+
+        console.log("✅ Template Manager - Media details retrieved");
+        console.log("📋 Template Manager - Media details:", JSON.stringify(mediaDetailsResponse.data, null, 2));
+
+        return {
+          id: mediaId,
+          handle: mediaDetailsResponse.data.url,
+          url: fileUrl,
+          type,
+          mimeType: type === 'image' ? 'image/jpeg' : 'video/mp4',
+          size: buffer.length,
+        };
+      } catch (businessError: unknown) {
+        console.log("⚠️ Template Manager - Business media upload failed, trying phone number upload");
+        console.log("Debug:", businessError);
+
+        // Approach 2: Fallback to phone number upload
+        const phoneMediaUrl = `${this.baseUrl}/${this.phoneNumberId}/media`;
+        console.log("🔗 Template Manager - Trying phone media upload:", phoneMediaUrl);
+
+        const FormData = await import('form-data');
+        const form = new FormData.default();
+        form.append('messaging_product', 'whatsapp');
+        form.append('file', buffer, {
+          filename: `template_${Date.now()}.${type === 'image' ? 'jpg' : 'mp4'}`,
+          contentType: type === 'image' ? 'image/jpeg' : 'video/mp4'
+        });
+
+        const phoneUploadResponse = await axios.post(phoneMediaUrl, form, {
+          headers: {
+            ...form.getHeaders(),
+            Authorization: `Bearer ${this.accessToken}`,
+          },
+        });
+
+        console.log("✅ Template Manager - Phone media upload successful");
+        console.log("📋 Template Manager - Phone upload response:", JSON.stringify(phoneUploadResponse.data, null, 2));
+
+        // Get media details
+        const mediaId = phoneUploadResponse.data.id;
+        const mediaDetailsUrl = `${this.baseUrl}/${mediaId}`;
+
+        const mediaDetailsResponse = await axios.get(mediaDetailsUrl, {
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+        });
+
+        console.log("✅ Template Manager - Media details retrieved");
+        console.log("📋 Template Manager - Media details:", JSON.stringify(mediaDetailsResponse.data, null, 2));
+
+        return {
+          id: mediaId,
+          handle: mediaDetailsResponse.data.url,
+          url: fileUrl,
+          type,
+          mimeType: type === 'image' ? 'image/jpeg' : 'video/mp4',
+          size: buffer.length,
+        };
+      }
+    } catch (error: unknown) {
+      console.error("❌ Template Manager - Template media upload failed:", error);
+      if (error instanceof AxiosError && error.response) {
+        console.error("❌ Error response:", error.response.data);
+        console.error("❌ Error status:", error.response.status);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Upload media for regular message sending (existing method)
    */
   async uploadMedia(fileUrl: string, type: "image" | "video" = "image"): Promise<MediaAsset> {
     console.log("📤 Template Manager - Starting media upload for carousel...");
@@ -495,9 +706,22 @@ export class TemplateManager {
       console.log("✅ Template Manager - Media upload successful");
       console.log("📋 Template Manager - Upload response:", JSON.stringify(uploadResponse.data, null, 2));
 
+      // Get the media details to get the full URL
+      const mediaId = uploadResponse.data.id;
+      const mediaDetailsUrl = `${this.baseUrl}/${mediaId}`;
+
+      console.log("🔗 Template Manager - Getting media details from:", mediaDetailsUrl);
+
+      const mediaDetailsResponse = await axios.get(mediaDetailsUrl, {
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      });
+
+      console.log("✅ Template Manager - Media details retrieved");
+      console.log("📋 Template Manager - Media details:", JSON.stringify(mediaDetailsResponse.data, null, 2));
+
       return {
-        id: uploadResponse.data.id,
-        handle: uploadResponse.data.handle,
+        id: mediaId,
+        handle: mediaDetailsResponse.data.url, // Use the full URL as handle
         url: fileUrl,
         type,
         mimeType: type === 'image' ? 'image/jpeg' : 'video/mp4',
@@ -593,3 +817,12 @@ export class TemplateManager {
     return item?.status as TemplateStatus | undefined;
   }
 }
+
+
+/*
+normal messages hum kisi bhi public image ke url se  bhej sakte the
+lekin template ke liye 
+
+CARD_HEADER_ASSET_HANDLE ke liye 
+
+*/
