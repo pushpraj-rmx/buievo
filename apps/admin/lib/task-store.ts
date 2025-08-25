@@ -1,13 +1,8 @@
-import { create } from "zustand";
-import { toast } from "sonner";
-import { configService } from "./config";
+import { create } from 'zustand';
+import { toast } from 'sonner';
+import { configService } from './config';
 
-export type TaskStatus =
-  | "pending"
-  | "running"
-  | "completed"
-  | "failed"
-  | "cancelled";
+export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
 
 export interface Task {
   id: string;
@@ -27,7 +22,7 @@ interface TaskStore {
   tasks: Map<string, Task>;
   taskHistory: Map<string, Task>;
   autoOpenWorkerArea: boolean;
-  addTask: (task: Omit<Task, "createdAt" | "updatedAt">) => void;
+  addTask: (task: Omit<Task, 'createdAt' | 'updatedAt'>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   removeTask: (id: string) => void;
   getTask: (id: string) => Task | undefined;
@@ -62,7 +57,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const workerAreaConfig = configService.getWorkerAreaConfig();
     if (workerAreaConfig.autoOpen) {
       // Dispatch custom event to trigger auto-open
-      window.dispatchEvent(new CustomEvent("openWorkerArea"));
+      window.dispatchEvent(new CustomEvent('openWorkerArea'));
     }
 
     // Show toast notification for new task if enabled
@@ -71,7 +66,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         id: task.id,
         duration: Infinity,
         action: {
-          label: "Cancel",
+          label: 'Cancel',
           onClick: () => get().cancelTask(task.id),
         },
       });
@@ -90,11 +85,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       };
 
       // Move to history when task is completed, failed, or cancelled
-      if (
-        updates.status === "completed" ||
-        updates.status === "failed" ||
-        updates.status === "cancelled"
-      ) {
+      if (updates.status === 'completed' || updates.status === 'failed' || updates.status === 'cancelled') {
         const taskWithCompletedAt = {
           ...updatedTask,
           completedAt: new Date(),
@@ -102,27 +93,24 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
         const newTasks = new Map(state.tasks);
         newTasks.delete(id);
-
+        
         const newHistory = new Map(state.taskHistory);
         newHistory.set(id, taskWithCompletedAt);
 
         // Update toast based on status if notifications are enabled
         const workerAreaConfig = configService.getWorkerAreaConfig();
         if (workerAreaConfig.showNotifications) {
-          if (updates.status === "completed") {
+          if (updates.status === 'completed') {
             toast.success(`${task.name} completed successfully`, {
               id,
               duration: 3000,
             });
-          } else if (updates.status === "failed") {
-            toast.error(
-              `${task.name} failed: ${updates.error || "Unknown error"}`,
-              {
-                id,
-                duration: 5000,
-              },
-            );
-          } else if (updates.status === "cancelled") {
+          } else if (updates.status === 'failed') {
+            toast.error(`${task.name} failed: ${updates.error || 'Unknown error'}`, {
+              id,
+              duration: 5000,
+            });
+          } else if (updates.status === 'cancelled') {
             toast.info(`${task.name} cancelled`, {
               id,
               duration: 3000,
@@ -144,7 +132,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
             id,
             duration: Infinity,
             action: {
-              label: "Cancel",
+              label: 'Cancel',
               onClick: () => get().cancelTask(id),
             },
           });
@@ -176,14 +164,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   getActiveTasks: () => {
     return Array.from(get().tasks.values()).filter(
-      (task) => task.status === "pending" || task.status === "running",
+      (task) => task.status === 'pending' || task.status === 'running'
     );
   },
 
   getTaskHistory: () => {
     return Array.from(get().taskHistory.values()).sort(
-      (a, b) =>
-        (b.completedAt?.getTime() || 0) - (a.completedAt?.getTime() || 0),
+      (a, b) => (b.completedAt?.getTime() || 0) - (a.completedAt?.getTime() || 0)
     );
   },
 
@@ -196,18 +183,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       task.abortController.abort();
     }
 
-    get().updateTask(id, { status: "cancelled" });
+    get().updateTask(id, { status: 'cancelled' });
   },
 
   clearCompletedTasks: () => {
     set((state) => {
       const newTasks = new Map();
       for (const [id, task] of state.tasks) {
-        if (
-          task.status !== "completed" &&
-          task.status !== "failed" &&
-          task.status !== "cancelled"
-        ) {
+        if (task.status !== 'completed' && task.status !== 'failed' && task.status !== 'cancelled') {
           newTasks.set(id, task);
         } else {
           toast.dismiss(id);

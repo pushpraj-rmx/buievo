@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 // Centralized Configuration Management for WhatsSuite
 // This service manages all application settings and provides a single source of truth
@@ -13,7 +13,7 @@ export interface WhatsAppConfig {
 }
 
 export interface StorageConfig {
-  provider: "whatsapp" | "local" | "s3" | "gcs";
+  provider: 'whatsapp' | 'local' | 's3' | 'gcs';
   maxFileSize: number;
   retentionDays: number;
   compressionEnabled: boolean;
@@ -45,7 +45,7 @@ export interface WorkerAreaConfig {
 }
 
 export interface ThemeConfig {
-  mode: "light" | "dark" | "system";
+  mode: 'light' | 'dark' | 'system';
   primaryColor: string;
   accentColor: string;
 }
@@ -53,7 +53,7 @@ export interface ThemeConfig {
 export interface SidebarConfig {
   width: string;
   collapsible: boolean;
-  position: "left" | "right";
+  position: 'left' | 'right';
   defaultCollapsed: boolean;
 }
 
@@ -66,7 +66,7 @@ export interface LocalizationConfig {
 }
 
 export interface AdvancedStorageConfig {
-  fallbackProvider: "whatsapp" | "local" | "s3" | "gcs" | null;
+  fallbackProvider: 'whatsapp' | 'local' | 's3' | 'gcs' | null;
   enableFallback: boolean;
   retryAttempts: number;
   retryDelay: number;
@@ -89,38 +89,38 @@ export interface AppConfig {
   localization: LocalizationConfig;
   advancedStorage: AdvancedStorageConfig;
   version: string;
-  environment: "development" | "production" | "staging";
+  environment: 'development' | 'production' | 'staging';
 }
 
 // Default configuration
 export const defaultConfig: AppConfig = {
   whatsapp: {
-    phoneNumberId: "",
-    accessToken: "",
-    wabaId: "",
-    webhookVerifyToken: "",
-    apiVersion: "v21.0",
+    phoneNumberId: '',
+    accessToken: '',
+    wabaId: '',
+    webhookVerifyToken: '',
+    apiVersion: 'v21.0',
     isEnabled: false,
   },
   storage: {
-    provider: "whatsapp",
+    provider: 'whatsapp',
     maxFileSize: 16,
     retentionDays: 30,
     compressionEnabled: true,
     allowedTypes: [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "video/mp4",
-      "application/pdf",
-      "text/plain",
+      'image/jpeg',
+      'image/png', 
+      'image/gif',
+      'video/mp4',
+      'application/pdf',
+      'text/plain'
     ],
   },
   api: {
-    corsOrigin: "*",
+    corsOrigin: '*',
     rateLimit: 100,
-    webhookUrl: "",
-    apiKey: "",
+    webhookUrl: '',
+    apiKey: '',
     enableSwagger: true,
   },
   notifications: {
@@ -128,7 +128,7 @@ export const defaultConfig: AppConfig = {
     webhookNotifications: false,
     campaignAlerts: true,
     errorAlerts: true,
-    emailAddress: "",
+    emailAddress: '',
   },
   workerArea: {
     autoOpen: true,
@@ -138,22 +138,22 @@ export const defaultConfig: AppConfig = {
     clearAfterDays: 7,
   },
   theme: {
-    mode: "system",
-    primaryColor: "#3b82f6",
-    accentColor: "#8b5cf6",
+    mode: 'system',
+    primaryColor: '#3b82f6',
+    accentColor: '#8b5cf6',
   },
   sidebar: {
-    width: "16rem",
+    width: '16rem',
     collapsible: true,
-    position: "left",
+    position: 'left',
     defaultCollapsed: false,
   },
   localization: {
-    language: "en",
-    dateFormat: "MM/dd/yyyy",
-    timeFormat: "HH:mm",
-    timezone: "UTC",
-    numberFormat: "en-US",
+    language: 'en',
+    dateFormat: 'MM/dd/yyyy',
+    timeFormat: 'HH:mm',
+    timezone: 'UTC',
+    numberFormat: 'en-US',
   },
   advancedStorage: {
     fallbackProvider: null,
@@ -161,8 +161,8 @@ export const defaultConfig: AppConfig = {
     retryAttempts: 3,
     retryDelay: 1000,
   },
-  version: "1.0.0",
-  environment: "development",
+  version: '1.0.0',
+  environment: 'development',
 };
 
 class ConfigService {
@@ -176,26 +176,28 @@ class ConfigService {
   // Load configuration from localStorage or API
   private async loadConfig() {
     try {
-      // Try to load from localStorage first
-      const savedConfig = localStorage.getItem("whatssuite-config");
-      if (savedConfig) {
-        this.config = { ...defaultConfig, ...JSON.parse(savedConfig) };
+      // Try to load from localStorage first (only in browser)
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedConfig = localStorage.getItem('whatssuite-config');
+        if (savedConfig) {
+          this.config = { ...defaultConfig, ...JSON.parse(savedConfig) };
+        }
       }
 
       // Then try to load from API
       await this.loadFromAPI();
     } catch (error) {
-      console.warn("Failed to load configuration:", error);
+      console.warn('Failed to load configuration:', error);
     }
   }
 
   // Load configuration from API
   private async loadFromAPI() {
     try {
-      const response = await fetch("/api/v1/config", {
-        method: "GET",
+      const response = await fetch('/api/v1/config', {
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
@@ -205,35 +207,37 @@ class ConfigService {
         this.saveToLocalStorage();
       }
     } catch (error) {
-      console.warn("Failed to load configuration from API:", error);
+      console.warn('Failed to load configuration from API:', error);
     }
   }
 
   // Save configuration to localStorage
   private saveToLocalStorage() {
     try {
-      localStorage.setItem("whatssuite-config", JSON.stringify(this.config));
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('whatssuite-config', JSON.stringify(this.config));
+      }
     } catch (error) {
-      console.warn("Failed to save configuration to localStorage:", error);
+      console.warn('Failed to save configuration to localStorage:', error);
     }
   }
 
   // Save configuration to API
   private async saveToAPI() {
     try {
-      const response = await fetch("/api/v1/config", {
-        method: "POST",
+      const response = await fetch('/api/v1/config', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(this.config),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save configuration to API");
+        throw new Error('Failed to save configuration to API');
       }
     } catch (error) {
-      console.error("Failed to save configuration to API:", error);
+      console.error('Failed to save configuration to API:', error);
       throw error;
     }
   }
@@ -343,29 +347,29 @@ class ConfigService {
   subscribe(listener: (config: AppConfig) => void) {
     this.listeners.push(listener);
     return () => {
-      this.listeners = this.listeners.filter((l) => l !== listener);
+      this.listeners = this.listeners.filter(l => l !== listener);
     };
   }
 
   // Notify all listeners of configuration changes
   private notifyListeners() {
-    this.listeners.forEach((listener) => listener(this.config));
+    this.listeners.forEach(listener => listener(this.config));
   }
 
   // Test WhatsApp connection
   async testWhatsAppConnection(): Promise<boolean> {
     try {
-      const response = await fetch("/api/v1/whatsapp/test", {
-        method: "POST",
+      const response = await fetch('/api/v1/whatsapp/test', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(this.config.whatsapp),
       });
 
       return response.ok;
     } catch (error) {
-      console.error("WhatsApp connection test failed:", error);
+      console.error('WhatsApp connection test failed:', error);
       return false;
     }
   }
@@ -377,37 +381,32 @@ class ConfigService {
     // Validate WhatsApp config
     if (this.config.whatsapp.isEnabled) {
       if (!this.config.whatsapp.phoneNumberId) {
-        errors.push("WhatsApp Phone Number ID is required");
+        errors.push('WhatsApp Phone Number ID is required');
       }
       if (!this.config.whatsapp.accessToken) {
-        errors.push("WhatsApp Access Token is required");
+        errors.push('WhatsApp Access Token is required');
       }
       if (!this.config.whatsapp.wabaId) {
-        errors.push("WhatsApp Business Account ID is required");
+        errors.push('WhatsApp Business Account ID is required');
       }
     }
 
     // Validate storage config
     if (this.config.storage.maxFileSize <= 0) {
-      errors.push("Maximum file size must be greater than 0");
+      errors.push('Maximum file size must be greater than 0');
     }
     if (this.config.storage.retentionDays <= 0) {
-      errors.push("Retention period must be greater than 0");
+      errors.push('Retention period must be greater than 0');
     }
 
     // Validate API config
     if (this.config.api.rateLimit <= 0) {
-      errors.push("Rate limit must be greater than 0");
+      errors.push('Rate limit must be greater than 0');
     }
 
     // Validate notification config
-    if (
-      this.config.notifications.emailNotifications &&
-      !this.config.notifications.emailAddress
-    ) {
-      errors.push(
-        "Email address is required when email notifications are enabled",
-      );
+    if (this.config.notifications.emailNotifications && !this.config.notifications.emailAddress) {
+      errors.push('Email address is required when email notifications are enabled');
     }
 
     return {
@@ -435,7 +434,7 @@ class ConfigService {
       await this.saveConfig();
       return true;
     } catch (error) {
-      console.error("Failed to import configuration:", error);
+      console.error('Failed to import configuration:', error);
       return false;
     }
   }
@@ -455,23 +454,17 @@ export function useConfig() {
 
   return {
     config,
-    updateWhatsAppConfig:
-      configService.updateWhatsAppConfig.bind(configService),
+    updateWhatsAppConfig: configService.updateWhatsAppConfig.bind(configService),
     updateStorageConfig: configService.updateStorageConfig.bind(configService),
     updateAPIConfig: configService.updateAPIConfig.bind(configService),
-    updateNotificationConfig:
-      configService.updateNotificationConfig.bind(configService),
-    updateWorkerAreaConfig:
-      configService.updateWorkerAreaConfig.bind(configService),
+    updateNotificationConfig: configService.updateNotificationConfig.bind(configService),
+    updateWorkerAreaConfig: configService.updateWorkerAreaConfig.bind(configService),
     updateThemeConfig: configService.updateThemeConfig.bind(configService),
     updateSidebarConfig: configService.updateSidebarConfig.bind(configService),
-    updateLocalizationConfig:
-      configService.updateLocalizationConfig.bind(configService),
-    updateAdvancedStorageConfig:
-      configService.updateAdvancedStorageConfig.bind(configService),
+    updateLocalizationConfig: configService.updateLocalizationConfig.bind(configService),
+    updateAdvancedStorageConfig: configService.updateAdvancedStorageConfig.bind(configService),
     updateConfig: configService.updateConfig.bind(configService),
-    testWhatsAppConnection:
-      configService.testWhatsAppConnection.bind(configService),
+    testWhatsAppConnection: configService.testWhatsAppConnection.bind(configService),
     validateConfig: configService.validateConfig.bind(configService),
     resetConfig: configService.resetConfig.bind(configService),
     exportConfig: configService.exportConfig.bind(configService),
