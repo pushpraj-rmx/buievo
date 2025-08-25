@@ -31,7 +31,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, FileText, Eye, RefreshCw, Trash2, Copy } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, Plus, FileText, Eye, RefreshCw, Trash2, Copy, CheckCircle, AlertTriangle, Info, Copy as CopyIcon } from "lucide-react";
 
 type TemplateRow = {
   name: string;
@@ -64,11 +65,23 @@ type TemplateDbData = {
   content?: TemplateContent;
 };
 
+type ValidationResult = {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+  variables: string[];
+  estimatedApprovalTime: string;
+  preview: string;
+  sampleVariables: Record<string, string>;
+};
+
 export default function WhatsAppTemplatesPage() {
   const [name, setName] = useState("");
   const [category, setCategory] = useState<
     "MARKETING" | "UTILITY" | "AUTHENTICATION"
   >("UTILITY");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
   const [headerText, setHeaderText] = useState("");
   const [bodyText, setBodyText] = useState("");
   const [footerText, setFooterText] = useState("");
@@ -78,12 +91,80 @@ export default function WhatsAppTemplatesPage() {
   const [viewLoading, setViewLoading] = useState<string | null>(null);
   const [refreshLoading, setRefreshLoading] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [duplicateLoading, setDuplicateLoading] = useState<string | null>(null);
   const [loadMoreLoading, setLoadMoreLoading] = useState(false);
+  const [validating, setValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   const [selected, setSelected] = useState<TemplateDbData | null>(null);
 
   // WhatsApp templates are always in English (en_US)
   const LANGUAGE = "en_US";
+
+  // Debounced validation
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (name.trim() || bodyText.trim()) {
+        validateTemplate();
+      } else {
+        setValidationResult(null);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [name, category, headerText, bodyText, footerText]);
+
+  async function validateTemplate() {
+    if (!name.trim() || !bodyText.trim()) {
+      setValidationResult(null);
+      return;
+    }
+
+    setValidating(true);
+    try {
+      const components: TemplateComponent[] = [];
+
+      // Add header if provided
+      if (headerText.trim()) {
+        components.push({ type: "HEADER", format: "TEXT", text: headerText.trim() });
+      }
+
+      // Add body (required)
+      components.push({ type: "BODY", text: bodyText.trim() });
+
+      // Add footer if provided
+      if (footerText.trim()) {
+        components.push({ type: "FOOTER", text: footerText.trim() });
+      }
+
+      const body = {
+        name: name.trim(),
+        language: LANGUAGE,
+        category,
+        description: description.trim() || undefined,
+        tags: tags.trim() ? tags.split(',').map(t => t.trim()) : undefined,
+        components,
+      };
+
+      const res = await fetch("/api/v1/templates/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      
+      if (res.ok) {
+        const result = await res.json();
+        setValidationResult(result);
+      } else {
+        setValidationResult(null);
+      }
+    } catch (error) {
+      setValidationResult(null);
+    } finally {
+      setValidating(false);
+    }
+  }
 
   async function createTemplate() {
     if (!name.trim()) {
@@ -93,6 +174,11 @@ export default function WhatsAppTemplatesPage() {
 
     if (!bodyText.trim()) {
       toast.error("Template body is required");
+      return;
+    }
+
+    if (validationResult && !validationResult.isValid) {
+      toast.error("Please fix validation errors before creating template");
       return;
     }
 
@@ -117,6 +203,8 @@ export default function WhatsAppTemplatesPage() {
         name: name.trim(),
         language: LANGUAGE,
         category,
+        description: description.trim() || undefined,
+        tags: tags.trim() ? tags.split(',').map(t => t.trim()) : undefined,
         components,
       };
 
@@ -139,9 +227,12 @@ export default function WhatsAppTemplatesPage() {
 
         // Clear form
         setName("");
+        setDescription("");
+        setTags("");
         setHeaderText("");
         setBodyText("");
         setFooterText("");
+        setValidationResult(null);
       } else {
         toast.error(json.message || "Failed to create template");
       }
@@ -206,6 +297,33 @@ export default function WhatsAppTemplatesPage() {
     }
   }
 
+  async function duplicateTemplate(templateName: string) {
+    const newName = prompt(`Enter a new name for "${templateName}":`, `${templateName}_copy`);
+    if (!newName || newName.trim() === "") return;
+
+    setDuplicateLoading(templateName);
+    try {
+      const res = await fetch(`/api/v1/templates/${encodeURIComponent(templateName)}/duplicate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newName: newName.trim() }),
+      });
+      
+      if (res.ok) {
+        toast.success(`Template "${templateName}" duplicated as "${newName}"`);
+        // Refresh the list to show the new template
+        await fetchList();
+      } else {
+        const json = await res.json();
+        toast.error(json.message || "Failed to duplicate template");
+      }
+    } catch (error) {
+      toast.error("Failed to duplicate template");
+    } finally {
+      setDuplicateLoading(null);
+    }
+  }
+
   useEffect(() => {
     fetchList();
   }, []);
@@ -262,9 +380,35 @@ export default function WhatsAppTemplatesPage() {
                   <SelectItem value="UTILITY">Utility</SelectItem>
                   <SelectItem value="MARKETING">Marketing</SelectItem>
                   <SelectItem value="AUTHENTICATION">Authentication</SelectItem>
-                  <SelectItem value="CAROUSEL">Carousel</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+
+          {/* Description and Tags */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="template-description">Description (Optional)</Label>
+              <Input
+                id="template-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief description of this template"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="template-tags">Tags (Optional)</Label>
+              <Input
+                id="template-tags"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="welcome, onboarding, greeting"
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Comma-separated tags for organization
+              </p>
             </div>
           </div>
 
@@ -292,7 +436,7 @@ export default function WhatsAppTemplatesPage() {
                 id="template-body"
                 value={bodyText}
                 onChange={(e) => setBodyText(e.target.value)}
-                placeholder="Hello {`{{1}}`}, welcome to our platform! We're excited to have you on board."
+                placeholder="Hello {{1}}, welcome to our platform! We're excited to have you on board."
                 className="mt-1 min-h-[100px]"
               />
               <p className="text-xs text-muted-foreground mt-1">
@@ -316,13 +460,105 @@ export default function WhatsAppTemplatesPage() {
             </div>
           </div>
 
+          {/* Validation Results */}
+          {validating && (
+            <Alert>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <AlertDescription>
+                Validating template...
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {validationResult && (
+            <div className="space-y-4">
+              {/* Validation Status */}
+              <Alert className={validationResult.isValid ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
+                {validationResult.isValid ? (
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                ) : (
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                )}
+                <AlertDescription className={validationResult.isValid ? "text-green-800" : "text-red-800"}>
+                  {validationResult.isValid ? "Template is valid" : "Template has validation errors"}
+                </AlertDescription>
+              </Alert>
+
+              {/* Errors */}
+              {validationResult.errors.length > 0 && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-800">
+                    <div className="font-medium mb-2">Errors:</div>
+                    <ul className="list-disc list-inside space-y-1">
+                      {validationResult.errors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Warnings */}
+              {validationResult.warnings.length > 0 && (
+                <Alert className="border-yellow-200 bg-yellow-50">
+                  <Info className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-800">
+                    <div className="font-medium mb-2">Warnings:</div>
+                    <ul className="list-disc list-inside space-y-1">
+                      {validationResult.warnings.map((warning, index) => (
+                        <li key={index}>{warning}</li>
+                      ))}
+                    </ul>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Variables */}
+              {validationResult.variables.length > 0 && (
+                <Alert className="border-blue-200 bg-blue-50">
+                  <Info className="h-4 w-4 text-blue-600" />
+                  <AlertDescription className="text-blue-800">
+                    <div className="font-medium mb-2">Variables detected:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {validationResult.variables.map((variable, index) => (
+                        <Badge key={index} variant="outline" className="bg-white">
+                          {variable}
+                        </Badge>
+                      ))}
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Approval Time */}
+              <Alert className="border-purple-200 bg-purple-50">
+                <Info className="h-4 w-4 text-purple-600" />
+                <AlertDescription className="text-purple-800">
+                  <div className="font-medium">Estimated approval time:</div>
+                  <div>{validationResult.estimatedApprovalTime}</div>
+                </AlertDescription>
+              </Alert>
+
+              {/* Preview Button */}
+              <Button
+                variant="outline"
+                onClick={() => setShowPreview(true)}
+                className="w-full"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Preview Template
+              </Button>
+            </div>
+          )}
+
           {/* Submit Button */}
           <div className="flex justify-end">
-            <Button
-              onClick={createTemplate}
-              disabled={creating || !name.trim() || !bodyText.trim()}
-              className="min-w-[200px]"
-            >
+                          <Button
+                onClick={createTemplate}
+                disabled={creating || !name.trim() || !bodyText.trim() || (validationResult ? !validationResult.isValid : false)}
+                className="min-w-[200px]"
+              >
               {creating ? (
                 <>
                   <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -335,6 +571,43 @@ export default function WhatsAppTemplatesPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Preview Dialog */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Template Preview</DialogTitle>
+          </DialogHeader>
+          {validationResult && (
+            <div className="space-y-4">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-medium mb-2">Template Preview:</h4>
+                <pre className="whitespace-pre-wrap text-sm bg-white p-3 rounded border">
+                  {validationResult.preview}
+                </pre>
+              </div>
+              {Object.keys(validationResult.sampleVariables).length > 0 && (
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-medium mb-2">Sample Variables:</h4>
+                  <div className="space-y-2">
+                    {Object.entries(validationResult.sampleVariables).map(([key, value]) => (
+                      <div key={key} className="flex justify-between items-center bg-white p-2 rounded border">
+                        <span className="font-mono text-sm">{key}</span>
+                        <span className="text-sm text-gray-600">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPreview(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Card>
         <CardHeader>
@@ -545,6 +818,18 @@ export default function WhatsAppTemplatesPage() {
                             <Loader2 className="w-4 h-4 animate-spin" />
                           ) : (
                             <RefreshCw className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={duplicateLoading === r.name}
+                          onClick={() => duplicateTemplate(r.name)}
+                        >
+                          {duplicateLoading === r.name ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <CopyIcon className="w-4 h-4" />
                           )}
                         </Button>
                         <Button

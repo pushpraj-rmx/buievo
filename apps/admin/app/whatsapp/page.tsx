@@ -28,6 +28,14 @@ export default function WhatsAppPage() {
       bgColor: "bg-blue-50",
     },
     {
+      title: "Carousel Templates",
+      description: "Create Media Card Carousel templates with images/videos",
+      icon: FileText,
+      href: "/whatsapp/templates/carousel",
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50",
+    },
+    {
       title: "Campaigns",
       description: "Create and send bulk WhatsApp campaigns",
       icon: MessageSquare,
@@ -47,10 +55,9 @@ export default function WhatsAppPage() {
       title: "Analytics",
       description: "View campaign performance and delivery reports",
       icon: BarChart3,
-      href: "/whatsapp/analytics",
+      href: "/whatsapp/templates/analytics",
       color: "text-orange-600",
       bgColor: "bg-orange-50",
-      comingSoon: true,
     },
   ];
 
