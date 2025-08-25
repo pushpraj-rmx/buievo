@@ -18,6 +18,7 @@ export default function WhatsAppPage() {
       href: "/whatsapp/chat",
       color: "text-indigo-600",
       bgColor: "bg-indigo-50",
+      comingSoon: false,
     },
     {
       title: "Templates",
@@ -26,6 +27,7 @@ export default function WhatsAppPage() {
       href: "/whatsapp/templates",
       color: "text-blue-600",
       bgColor: "bg-blue-50",
+      comingSoon: false,
     },
     {
       title: "Carousel Templates",
@@ -34,6 +36,7 @@ export default function WhatsAppPage() {
       href: "/whatsapp/templates/carousel",
       color: "text-indigo-600",
       bgColor: "bg-indigo-50",
+      comingSoon: false,
     },
     {
       title: "Campaigns",
@@ -42,6 +45,7 @@ export default function WhatsAppPage() {
       href: "/whatsapp/campaigns",
       color: "text-green-600",
       bgColor: "bg-green-50",
+      comingSoon: false,
     },
     {
       title: "Contacts",
@@ -50,6 +54,7 @@ export default function WhatsAppPage() {
       href: "/whatsapp/contacts",
       color: "text-purple-600",
       bgColor: "bg-purple-50",
+      comingSoon: false,
     },
     {
       title: "Analytics",
@@ -58,6 +63,7 @@ export default function WhatsAppPage() {
       href: "/whatsapp/templates/analytics",
       color: "text-orange-600",
       bgColor: "bg-orange-50",
+      comingSoon: false,
     },
   ];
 
