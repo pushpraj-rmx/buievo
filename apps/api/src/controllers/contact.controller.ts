@@ -1,6 +1,15 @@
 import { Request, Response } from "express";
 import { prisma } from "@whatssuite/db";
 import { redis } from "@whatssuite/redis";
+import type { 
+  Contact, 
+  ContactFilters, 
+  PaginatedResponse, 
+  CreateContactRequest, 
+  UpdateContactRequest,
+  ContactWithSegments,
+  ApiResponse 
+} from "@whatssuite/types";
 
 // Get all contacts with pagination and filtering
 export const getContacts = async (req: Request, res: Response) => {
@@ -8,25 +17,25 @@ export const getContacts = async (req: Request, res: Response) => {
     const { page = 1, limit = 10, search, status, segmentId } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
 
-    // Build where clause
+    // Build where clause for Prisma
     const where: any = {};
 
-    if (search) {
+    if (search && typeof search === 'string') {
       where.OR = [
-        { name: { contains: search as string, mode: "insensitive" } },
-        { email: { contains: search as string, mode: "insensitive" } },
-        { phone: { contains: search as string, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { phone: { contains: search, mode: "insensitive" } },
       ];
     }
 
-    if (status && status !== "all") {
+    if (status && status !== "all" && typeof status === 'string') {
       where.status = status;
     }
 
-    if (segmentId) {
+    if (segmentId && typeof segmentId === 'string') {
       where.segments = {
         some: {
-          id: segmentId as string,
+          id: segmentId,
         },
       };
     }

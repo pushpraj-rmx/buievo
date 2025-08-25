@@ -1,6 +1,11 @@
-// This file can be used to export common types
+// WhatsSuite Type Definitions
+// Export all type definitions from this package
 
-export type MyType = {
-  id: string;
-  name: string;
-};
+// Database types
+export * from './database';
+
+// API types
+export * from './api';
+
+// WhatsApp types
+export * from './whatsapp';

@@ -49,7 +49,6 @@ export default function SettingsPage() {
     updateLocalizationConfig,
     updateAdvancedStorageConfig,
     testWhatsAppConnection,
-    validateConfig,
   } = useConfig();
 
   const [whatsappConfig, setWhatsappConfig] = useState(config.whatsapp);
@@ -81,7 +80,7 @@ export default function SettingsPage() {
     try {
       await updateWhatsAppConfig(whatsappConfig);
       toast.success("WhatsApp configuration saved successfully!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to save WhatsApp configuration");
     } finally {
       setIsLoading(false);
@@ -97,7 +96,7 @@ export default function SettingsPage() {
       } else {
         toast.error("WhatsApp connection test failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("WhatsApp connection test failed");
     } finally {
       setIsLoading(false);
@@ -442,7 +441,7 @@ export default function SettingsPage() {
                       toast.success(
                         "Storage configuration saved successfully!",
                       );
-                    } catch (error) {
+                    } catch {
                       toast.error("Failed to save storage configuration");
                     } finally {
                       setIsLoading(false);
@@ -612,7 +611,7 @@ export default function SettingsPage() {
                       toast.success(
                         "Worker Area configuration saved successfully!",
                       );
-                    } catch (error) {
+                    } catch {
                       toast.error("Failed to save Worker Area configuration");
                     } finally {
                       setIsLoading(false);
@@ -706,7 +705,7 @@ export default function SettingsPage() {
                     try {
                       await updateThemeConfig(themeConfig);
                       toast.success("Theme configuration saved successfully!");
-                    } catch (error) {
+                    } catch {
                       toast.error("Failed to save theme configuration");
                     } finally {
                       setIsLoading(false);
@@ -817,7 +816,7 @@ export default function SettingsPage() {
                       toast.success(
                         "Sidebar configuration saved successfully!",
                       );
-                    } catch (error) {
+                    } catch {
                       toast.error("Failed to save sidebar configuration");
                     } finally {
                       setIsLoading(false);
@@ -945,7 +944,7 @@ export default function SettingsPage() {
                       toast.success(
                         "Localization configuration saved successfully!",
                       );
-                    } catch (error) {
+                    } catch {
                       toast.error("Failed to save localization configuration");
                     } finally {
                       setIsLoading(false);
@@ -1066,7 +1065,7 @@ export default function SettingsPage() {
                       toast.success(
                         "Advanced storage configuration saved successfully!",
                       );
-                    } catch (error) {
+                    } catch {
                       toast.error(
                         "Failed to save advanced storage configuration",
                       );

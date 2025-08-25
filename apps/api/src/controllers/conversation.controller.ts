@@ -1,6 +1,13 @@
 import { Request, Response } from "express";
 import { prisma } from "@whatssuite/db";
 import { wappClient } from "@whatssuite/wapp-client";
+import type { 
+  ConversationSummary, 
+  ConversationWithMessages, 
+  MessageResponse,
+  SendMessageRequest,
+  ApiResponse 
+} from "@whatssuite/types";
 
 export const getConversations = async (req: Request, res: Response) => {
   try {
@@ -23,11 +30,18 @@ export const getConversations = async (req: Request, res: Response) => {
       },
     });
 
-    const transformedConversations = conversations.map((conversation: any) => ({
+    const transformedConversations = conversations.map((conversation) => ({
       id: conversation.id,
       contactId: conversation.contactId,
       contact: conversation.contact,
-      lastMessage: conversation.messages[0] || {
+      lastMessage: conversation.messages[0] ? {
+        id: conversation.messages[0].id,
+        content: conversation.messages[0].body || "",
+        type: conversation.messages[0].type,
+        direction: conversation.messages[0].direction,
+        status: conversation.messages[0].status,
+        timestamp: conversation.messages[0].timestamp.toISOString(),
+      } : {
         id: "",
         content: "No messages yet",
         type: "text",
@@ -36,7 +50,9 @@ export const getConversations = async (req: Request, res: Response) => {
         timestamp: conversation.createdAt.toISOString(),
       },
       unreadCount: conversation.unreadCount,
-      updatedAt: conversation.updatedAt.toISOString(),
+      lastMessageAt: conversation.lastMessageAt,
+      createdAt: conversation.createdAt,
+      updatedAt: conversation.updatedAt,
     }));
 
     res.json(transformedConversations);
@@ -106,13 +122,17 @@ export const getConversation = async (req: Request, res: Response) => {
       data: { unreadCount: 0 },
     });
 
-    const transformedMessages = conversation.messages.map((message: any) => ({
+    const transformedMessages = conversation.messages.map((message) => ({
       id: message.id,
+      conversationId: message.conversationId,
       content: message.body || "",
       type: message.type,
       direction: message.direction,
       status: message.status,
       timestamp: message.timestamp.toISOString(),
+      whatsappId: message.whatsappId,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
     }));
 
     res.json({

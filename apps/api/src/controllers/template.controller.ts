@@ -5,6 +5,14 @@ import {
 } from "@whatssuite/template-manager";
 import { z } from "zod";
 import { prisma } from "@whatssuite/db";
+import type { 
+  Template, 
+  TemplateFilters, 
+  PaginatedResponse, 
+  CreateTemplateRequest, 
+  UpdateTemplateRequest,
+  ApiResponse 
+} from "@whatssuite/types";
 
 function getTemplateManager(): TemplateManager {
   const accessToken = process.env.ACCESS_TOKEN;
@@ -261,7 +269,7 @@ export async function listTemplates(_req: Request, res: Response) {
 
     // Also save mock templates to database
     await Promise.all(
-      mockTemplates.data.map((t: any) =>
+      mockTemplates.data.map((t) =>
         prisma.template.upsert({
           where: { name: t.name },
           update: { status: t.status, content: t },

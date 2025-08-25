@@ -6,6 +6,14 @@ import axios, { isAxiosError } from "axios";
 import { config } from "dotenv";
 config({ path: path.resolve(process.cwd(), "../../.env") });
 
+import type {
+  WhatsAppMessagePayload,
+  WhatsAppApiResponse,
+  WhatsAppTemplate,
+  WhatsAppTemplateComponent,
+  WhatsAppMessageComponent
+} from "@whatssuite/types";
+
 export interface SendTemplateMessageArgs {
   to: string;
   templateName: string;
@@ -21,11 +29,8 @@ export interface SendTextMessageArgs {
   text: string;
 }
 
-export interface WhatsAppSuccessResponse {
-  messaging_product: "whatsapp";
-  contacts: { input: string; wa_id: string }[];
-  messages: { id: string }[];
-}
+// Use the shared WhatsApp types
+export type WhatsAppSuccessResponse = WhatsAppApiResponse;
 
 export const wappClient = {
   async sendTextMessage(
@@ -57,10 +62,10 @@ export const wappClient = {
     );
     console.log("  - API URL:", url);
 
-    const payload = {
-      messaging_product: "whatsapp" as const,
+    const payload: WhatsAppMessagePayload = {
+      messaging_product: "whatsapp",
       to,
-      type: "text" as const,
+      type: "text",
       text: {
         body: text,
       },
@@ -143,12 +148,12 @@ export const wappClient = {
     );
     console.log("  - API URL:", url);
 
-    const components: any[] = [];
+    const components: WhatsAppMessageComponent[] = [];
 
     // Add image component if imageUrl is provided
     if (imageUrl) {
       components.push({
-        type: "header",
+        type: "HEADER",
         parameters: [
           {
             type: "image",
@@ -163,7 +168,7 @@ export const wappClient = {
     // Add document component if documentUrl is provided
     if (documentUrl) {
       components.push({
-        type: "header",
+        type: "HEADER",
         parameters: [
           {
             type: "document",
@@ -179,7 +184,7 @@ export const wappClient = {
     // Add body parameters
     if (bodyParams.length > 0) {
       components.push({
-        type: "body",
+        type: "BODY",
         parameters: bodyParams.map((param) => ({
           type: "text",
           text: param,
@@ -190,7 +195,7 @@ export const wappClient = {
     // Add button parameters (for dynamic URLs)
     buttonParams.forEach((param, index) => {
       components.push({
-        type: "button",
+        type: "BUTTONS",
         sub_type: "url",
         index, // index must match button index in the template
         parameters: [

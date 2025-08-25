@@ -6,6 +6,12 @@ import {
   createRequestLogger,
 } from "../utils/logger";
 import { webhookMonitor } from "../utils/webhook-status";
+import type { 
+  WhatsAppWebhookPayload,
+  WhatsAppWebhookMessage,
+  WhatsAppWebhookStatus,
+  ApiResponse 
+} from "@whatssuite/types";
 
 export const handleWebhook = async (req: Request, res: Response) => {
   const requestId = generateRequestId();
@@ -92,7 +98,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
             if (change.value.messages) {
               logger.info("Processing incoming messages", {
                 count: change.value.messages.length,
-                messages: change.value.messages.map((m: any) => ({
+                messages: change.value.messages.map((m: WhatsAppWebhookMessage) => ({
                   id: m.id,
                   from: m.from,
                   type: m.type,
@@ -337,7 +343,7 @@ export const debugWebhook = async (req: Request, res: Response) => {
   }
 };
 
-async function handleIncomingMessage(message: any, logger: any) {
+async function handleIncomingMessage(message: WhatsAppWebhookMessage, logger: any) {
   logger.info("Processing incoming message", {
     whatsappId: message.id,
     from: message.from,
@@ -597,7 +603,7 @@ async function handleIncomingMessage(message: any, logger: any) {
   }
 }
 
-async function handleStatusUpdate(status: any, logger: any) {
+async function handleStatusUpdate(status: WhatsAppWebhookStatus, logger: any) {
   logger.info("Processing status update", {
     whatsappId: status.id,
     status: status.status,

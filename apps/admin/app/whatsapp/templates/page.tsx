@@ -199,7 +199,7 @@ export default function WhatsAppTemplatesPage() {
       toast.success("Templates refreshed from WhatsApp API");
       // Refetch from database after refresh
       await fetchList();
-    } catch (error) {
+    } catch {
       toast.error("Failed to refresh templates");
     } finally {
       setListLoading(false);

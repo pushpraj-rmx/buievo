@@ -1,14 +1,15 @@
 {
-  "name": "@whatssuite/wapp-client",
+  "name": "@whatssuite/validation",
   "version": "1.0.0",
-  "description": "",
+  "description": "Validation schemas for WhatsSuite",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["validation", "schemas", "whatssuite"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -16,9 +17,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "axios": "^1.11.0",
-    "dotenv": "^17.2.1",
-    "express": "^5.1.0",
+    "zod": "^3.23.8",
     "@whatssuite/types": "workspace:*"
   }
 }
