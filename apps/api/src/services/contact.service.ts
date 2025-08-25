@@ -1,4 +1,11 @@
 import { prisma } from "@whatssuite/db";
+import type { 
+  ContactServiceResponse, 
+  SingleContactResponse,
+  CreateContactRequest,
+  UpdateContactRequest,
+  ContactWithSegments
+} from "@whatssuite/types";
 
 export class ContactService {
   /**
@@ -9,17 +16,7 @@ export class ContactService {
     limit: number = 20,
     search?: string,
     status?: string
-  ): Promise<{
-    data: any[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-      hasNext: boolean;
-      hasPrev: boolean;
-    };
-  }> {
+  ): Promise<ContactServiceResponse> {
     const skip = (page - 1) * limit;
     
     // Build where clause based on filters
@@ -75,7 +72,7 @@ export class ContactService {
   /**
    * Get a single contact by ID
    */
-  async getContactById(id: string): Promise<any | null> {
+  async getContactById(id: string): Promise<{ contact: any }> {
     const contact = await prisma.contact.findUnique({
       where: { id },
       include: {
@@ -103,68 +100,48 @@ export class ContactService {
       },
     });
 
-    return contact;
+    return { contact };
   }
 
   /**
    * Create a new contact
    */
-  async createContact(data: {
-    name: string;
-    email?: string;
-    phone: string;
-    comment?: string;
-    status?: string;
-    segmentIds?: string[];
-  }): Promise<any> {
+  async createContact(data: CreateContactRequest): Promise<{ contact: any }> {
     const contact = await prisma.contact.create({
       data: {
         name: data.name,
         email: data.email,
         phone: data.phone,
-        status: data.status || 'active',
         comment: data.comment,
-        segments: data.segmentIds ? {
-          connect: data.segmentIds.map(id => ({ id }))
-        } : undefined,
+        status: 'active',
       },
       include: {
         segments: true,
       },
     });
 
-    return contact;
+    return { contact };
   }
 
   /**
    * Update an existing contact
    */
-  async updateContact(id: string, data: {
-    name?: string;
-    email?: string;
-    phone?: string;
-    comment?: string;
-    status?: string;
-    segmentIds?: string[];
-  }): Promise<any> {
+  async updateContact(id: string, data: UpdateContactRequest): Promise<{ contact: any }> {
     const contact = await prisma.contact.update({
       where: { id },
       data: {
         name: data.name,
         email: data.email,
         phone: data.phone,
-        status: data.status,
         comment: data.comment,
-        segments: data.segmentIds ? {
-          set: data.segmentIds.map(segmentId => ({ id: segmentId }))
-        } : undefined,
+        status: data.status,
       },
       include: {
         segments: true,
       },
     });
 
-    return contact;
+    return { contact };
   }
 
   /**
@@ -182,48 +159,150 @@ export class ContactService {
   }
 
   /**
-   * Get contact statistics
+   * Add contact to segments
    */
-  async getContactStats(): Promise<{
-    total: number;
-    active: number;
-    inactive: number;
-    pending: number;
-  }> {
-    const [total, active, inactive, pending] = await Promise.all([
-      prisma.contact.count(),
-      prisma.contact.count({ where: { status: 'active' } }),
-      prisma.contact.count({ where: { status: 'inactive' } }),
-      prisma.contact.count({ where: { status: 'pending' } }),
-    ]);
-
-    return {
-      total,
-      active,
-      inactive,
-      pending,
-    };
-  }
-
-  /**
-   * Search contacts by phone number
-   */
-  async findContactByPhone(phone: string): Promise<any | null> {
-    const contact = await prisma.contact.findFirst({
-      where: {
-        OR: [
-          { phone },
-          { phone: phone.startsWith('+') ? phone.substring(1) : `+${phone}` },
-        ],
+  async addContactToSegments(contactId: string, segmentIds: string[]): Promise<{ contact: any }> {
+    const contact = await prisma.contact.update({
+      where: { id: contactId },
+      data: {
+        segments: {
+          connect: segmentIds.map(id => ({ id })),
+        },
       },
       include: {
         segments: true,
       },
     });
 
-    return contact;
+    return { contact };
+  }
+
+  /**
+   * Remove contact from segments
+   */
+  async removeContactFromSegments(contactId: string, segmentIds: string[]): Promise<{ contact: any }> {
+    const contact = await prisma.contact.update({
+      where: { id: contactId },
+      data: {
+        segments: {
+          disconnect: segmentIds.map(id => ({ id })),
+        },
+      },
+      include: {
+        segments: true,
+      },
+    });
+
+    return { contact };
+  }
+
+  /**
+   * Get contacts by segment
+   */
+  async getContactsBySegment(segmentId: string, page: number = 1, limit: number = 20): Promise<ContactServiceResponse> {
+    const skip = (page - 1) * limit;
+
+    const contacts = await prisma.contact.findMany({
+      where: {
+        segments: {
+          some: {
+            id: segmentId,
+          },
+        },
+      },
+      include: {
+        segments: true,
+        _count: {
+          select: {
+            conversations: true,
+            segments: true,
+          },
+        },
+      },
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    const total = await prisma.contact.count({
+      where: {
+        segments: {
+          some: {
+            id: segmentId,
+          },
+        },
+      },
+    });
+
+    return {
+      data: contacts,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1,
+      },
+    };
+  }
+
+  /**
+   * Search contacts
+   */
+  async searchContacts(query: string, page: number = 1, limit: number = 20): Promise<ContactServiceResponse> {
+    const skip = (page - 1) * limit;
+
+    const contacts = await prisma.contact.findMany({
+      where: {
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { email: { contains: query, mode: 'insensitive' } },
+          { phone: { contains: query, mode: 'insensitive' } },
+          { comment: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      include: {
+        segments: true,
+        _count: {
+          select: {
+            conversations: true,
+            segments: true,
+          },
+        },
+      },
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    const total = await prisma.contact.count({
+      where: {
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { email: { contains: query, mode: 'insensitive' } },
+          { phone: { contains: query, mode: 'insensitive' } },
+          { comment: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+    return {
+      data: contacts,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1,
+      },
+    };
   }
 }
 
-// Export singleton instance
 export const contactService = new ContactService();

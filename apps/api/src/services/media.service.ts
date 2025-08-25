@@ -1,5 +1,9 @@
 import { MediaManager, MediaType } from "@whatssuite/media-manager";
 import { prisma } from "@whatssuite/db";
+import type { 
+  MediaUploadResponse,
+  UploadMediaRequest
+} from "@whatssuite/types";
 
 export class MediaService {
   private mediaManager: MediaManager;
@@ -29,9 +33,9 @@ export class MediaService {
    * Upload media file
    */
   async uploadMedia(
-    file: Express.Multer.File,
+    file: any, // Express.Multer.File
     type: MediaType = "document"
-  ): Promise<any> {
+  ): Promise<MediaUploadResponse> {
     // WhatsApp media size limits (in bytes)
     const WHATSAPP_MEDIA_LIMITS = {
       image: 5 * 1024 * 1024, // 5MB
@@ -73,7 +77,11 @@ export class MediaService {
     });
 
     return {
-      ...result,
+      id: result.id,
+      url: result.url || '',
+      type,
+      size: file.size,
+      mimeType: file.mimetype,
       recordId: saved.id,
     };
   }
@@ -99,7 +107,10 @@ export class MediaService {
     if (asset) {
       await prisma.mediaAsset.update({
         where: { id: asset.id },
-        data: { url: result.url, sha256: result.sha256 },
+        data: {
+          url: result.url,
+          status: result.status,
+        },
       });
     }
 
@@ -112,33 +123,41 @@ export class MediaService {
   /**
    * Delete media
    */
-  async deleteMedia(id: string): Promise<any> {
-    const asset = await prisma.mediaAsset.findFirst({
-      where: { OR: [{ id }, { waMediaId: id }] },
-    });
-    
-    const mediaId = asset?.waMediaId ?? id;
+  async deleteMedia(id: string): Promise<boolean> {
+    try {
+      // Look up by DB id first; if not found assume it's a WA media id
+      const asset = await prisma.mediaAsset.findFirst({
+        where: { OR: [{ id }, { waMediaId: id }] },
+      });
+      
+      const mediaId = asset?.waMediaId ?? id;
 
-    // Delete from WhatsApp
-    const result = await this.mediaManager.delete(mediaId);
+      // Delete from WhatsApp
+      await this.mediaManager.delete(mediaId);
 
-    // Delete from database
-    if (asset) {
-      await prisma.mediaAsset.delete({ where: { id: asset.id } });
+      // Delete from database if we have a record
+      if (asset) {
+        await prisma.mediaAsset.delete({
+          where: { id: asset.id },
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting media:", error);
+      return false;
     }
-
-    return result;
   }
 
   /**
-   * Get all media assets
+   * Get media assets with pagination
    */
-  async getAllMedia(
+  async getMediaAssets(
     page: number = 1,
     limit: number = 20,
     type?: string
   ): Promise<{
-    media: any[];
+    data: any[];
     pagination: {
       page: number;
       limit: number;
@@ -150,12 +169,15 @@ export class MediaService {
   }> {
     const skip = (page - 1) * limit;
     
+    // Build where clause based on filters
     const where: any = {};
+    
     if (type) {
       where.type = type;
     }
 
-    const media = await prisma.mediaAsset.findMany({
+    // Get media assets
+    const assets = await prisma.mediaAsset.findMany({
       where,
       skip,
       take: limit,
@@ -164,10 +186,11 @@ export class MediaService {
       },
     });
 
+    // Get total count for pagination
     const total = await prisma.mediaAsset.count({ where });
 
     return {
-      media,
+      data: assets as any,
       pagination: {
         page,
         limit,
@@ -180,150 +203,226 @@ export class MediaService {
   }
 
   /**
+   * Get media asset by ID
+   */
+  async getMediaAssetById(id: string): Promise<{ asset: any }> {
+    const asset = await prisma.mediaAsset.findUnique({
+      where: { id },
+    });
+
+    return { asset };
+  }
+
+  /**
+   * Update media asset
+   */
+  async updateMediaAsset(
+    id: string,
+    data: {
+      fileName?: string;
+      status?: string;
+    }
+  ): Promise<{ asset: any }> {
+    const asset = await prisma.mediaAsset.update({
+      where: { id },
+      data,
+    });
+
+    return { asset };
+  }
+
+  /**
    * Get media statistics
    */
   async getMediaStats(): Promise<{
     total: number;
-    images: number;
-    videos: number;
-    audio: number;
-    documents: number;
-    totalSize: number;
+    byType: Record<string, number>;
+    byStatus: Record<string, number>;
   }> {
-    const stats = await prisma.mediaAsset.groupBy({
-      by: ['type'],
-      _count: {
-        id: true,
-      },
-      _sum: {
-        size: true,
-      },
+    const [total, byType, byStatus] = await Promise.all([
+      prisma.mediaAsset.count(),
+      prisma.mediaAsset.groupBy({
+        by: ['type'],
+        _count: {
+          id: true,
+        },
+      }),
+      prisma.mediaAsset.groupBy({
+        by: ['status'],
+        _count: {
+          id: true,
+        },
+      }),
+    ]);
+
+    const typeStats: Record<string, number> = {};
+    byType.forEach((item) => {
+      typeStats[item.type] = item._count.id;
     });
 
-    const typeStats: Record<string, { count: number; size: number }> = {};
-    let totalSize = 0;
-
-    stats.forEach((stat) => {
-      const count = stat._count.id;
-      const size = stat._sum.size || 0;
-      typeStats[stat.type] = { count, size };
-      totalSize += size;
+    const statusStats: Record<string, number> = {};
+    byStatus.forEach((item) => {
+      statusStats[item.status] = item._count.id;
     });
 
     return {
-      total: Object.values(typeStats).reduce((sum, stat) => sum + stat.count, 0),
-      images: typeStats['image']?.count || 0,
-      videos: typeStats['video']?.count || 0,
-      audio: typeStats['audio']?.count || 0,
-      documents: typeStats['document']?.count || 0,
-      totalSize,
+      total,
+      byType: typeStats,
+      byStatus: statusStats,
     };
   }
 
   /**
-   * Search media by filename
+   * Search media assets
    */
-  async searchMedia(query: string): Promise<any[]> {
-    const media = await prisma.mediaAsset.findMany({
+  async searchMediaAssets(
+    query: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<{
+    data: any[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
+  }> {
+    const skip = (page - 1) * limit;
+
+    const assets = await prisma.mediaAsset.findMany({
       where: {
-        fileName: {
-          contains: query,
-          mode: 'insensitive',
-        },
+        OR: [
+          { fileName: { contains: query, mode: 'insensitive' } },
+          { type: { contains: query, mode: 'insensitive' } },
+          { mimeType: { contains: query, mode: 'insensitive' } },
+        ],
       },
+      skip,
+      take: limit,
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    return media;
+    const total = await prisma.mediaAsset.count({
+      where: {
+        OR: [
+          { fileName: { contains: query, mode: 'insensitive' } },
+          { type: { contains: query, mode: 'insensitive' } },
+          { mimeType: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+    return {
+      data: assets as any,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1,
+      },
+    };
   }
 
   /**
-   * Get media by type
+   * Get media assets by type
    */
-  async getMediaByType(type: string): Promise<any[]> {
-    const media = await prisma.mediaAsset.findMany({
+  async getMediaAssetsByType(
+    type: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<{
+    data: any[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
+  }> {
+    const skip = (page - 1) * limit;
+
+    const assets = await prisma.mediaAsset.findMany({
       where: { type },
+      skip,
+      take: limit,
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    return media;
-  }
-
-  /**
-   * Update media status
-   */
-  async updateMediaStatus(id: string, status: string): Promise<any> {
-    const media = await prisma.mediaAsset.update({
-      where: { id },
-      data: { status },
+    const total = await prisma.mediaAsset.count({
+      where: { type },
     });
 
-    return media;
+    return {
+      data: assets as any,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1,
+      },
+    };
   }
 
   /**
-   * Validate file type
+   * Validate media file
    */
-  validateFileType(mimetype: string, type: MediaType): boolean {
-    const allowedTypes = {
-      image: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-      video: ['video/mp4', 'video/3gpp', 'video/avi', 'video/mov'],
-      audio: ['audio/mp3', 'audio/ogg', 'audio/wav', 'audio/aac'],
-      document: [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'text/plain',
-      ],
+  async validateMediaFile(
+    file: any,
+    type: MediaType
+  ): Promise<{
+    isValid: boolean;
+    errors: string[];
+  }> {
+    const errors: string[] = [];
+
+    // Check file size
+    const WHATSAPP_MEDIA_LIMITS = {
+      image: 5 * 1024 * 1024, // 5MB
+      video: 16 * 1024 * 1024, // 16MB
+      audio: 16 * 1024 * 1024, // 16MB
+      document: 100 * 1024 * 1024, // 100MB
     };
 
-    return allowedTypes[type].includes(mimetype);
-  }
+    const maxSize = WHATSAPP_MEDIA_LIMITS[type];
+    if (file.size > maxSize) {
+      const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(1);
+      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      errors.push(
+        `${type.charAt(0).toUpperCase() + type.slice(1)} files cannot exceed ${maxSizeMB}MB. Your file is ${fileSizeMB}MB.`
+      );
+    }
 
-  /**
-   * Get file extension from mimetype
-   */
-  getFileExtension(mimetype: string): string {
-    const extensions: Record<string, string> = {
-      'image/jpeg': '.jpg',
-      'image/png': '.png',
-      'image/gif': '.gif',
-      'image/webp': '.webp',
-      'video/mp4': '.mp4',
-      'video/3gpp': '.3gp',
-      'video/avi': '.avi',
-      'video/mov': '.mov',
-      'audio/mp3': '.mp3',
-      'audio/ogg': '.ogg',
-      'audio/wav': '.wav',
-      'audio/aac': '.aac',
-      'application/pdf': '.pdf',
-      'application/msword': '.doc',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
-      'application/vnd.ms-excel': '.xls',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
-      'text/plain': '.txt',
+    // Check MIME type
+    const validMimeTypes = {
+      image: ['image/jpeg', 'image/png', 'image/webp'],
+      video: ['video/mp4', 'video/3gpp'],
+      audio: ['audio/aac', 'audio/mp4', 'audio/mpeg', 'audio/amr', 'audio/ogg'],
+      document: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
     };
 
-    return extensions[mimetype] || '';
-  }
+    const allowedMimeTypes = validMimeTypes[type];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      errors.push(`Invalid MIME type for ${type}. Allowed: ${allowedMimeTypes.join(', ')}`);
+    }
 
-  /**
-   * Format file size
-   */
-  formatFileSize(bytes: number): string {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Bytes';
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    return {
+      isValid: errors.length === 0,
+      errors,
+    };
   }
 }
 
-// Export singleton instance
 export const mediaService = new MediaService();

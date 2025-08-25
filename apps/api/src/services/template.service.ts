@@ -1,4 +1,10 @@
 import { prisma } from "@whatssuite/db";
+import type { 
+  TemplateServiceResponse, 
+  SingleTemplateResponse,
+  CreateTemplateRequest,
+  UpdateTemplateRequest
+} from "@whatssuite/types";
 
 export class TemplateService {
   /**
@@ -9,17 +15,7 @@ export class TemplateService {
     limit: number = 20,
     search?: string,
     status?: string
-  ): Promise<{
-    data: any[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-      hasNext: boolean;
-      hasPrev: boolean;
-    };
-  }> {
+  ): Promise<TemplateServiceResponse> {
     const skip = (page - 1) * limit;
     
     // Build where clause based on filters
@@ -49,7 +45,7 @@ export class TemplateService {
     const total = await prisma.template.count({ where });
 
     return {
-      data: templates,
+      data: templates as any,
       pagination: {
         page,
         limit,
@@ -64,40 +60,33 @@ export class TemplateService {
   /**
    * Get a single template by ID
    */
-  async getTemplateById(id: string): Promise<any | null> {
+  async getTemplateById(id: string): Promise<{ template: any }> {
     const template = await prisma.template.findUnique({
       where: { id },
     });
 
-    return template;
+    return { template };
   }
 
   /**
    * Create a new template
    */
-  async createTemplate(data: {
-    name: string;
-    content: any;
-  }): Promise<any> {
+  async createTemplate(data: CreateTemplateRequest): Promise<{ template: any }> {
     const template = await prisma.template.create({
       data: {
         name: data.name,
         content: data.content,
-        status: 'PENDING',
+        status: 'pending',
       },
     });
 
-    return template;
+    return { template };
   }
 
   /**
    * Update an existing template
    */
-  async updateTemplate(id: string, data: {
-    name?: string;
-    content?: any;
-    status?: string;
-  }): Promise<any> {
+  async updateTemplate(id: string, data: UpdateTemplateRequest): Promise<{ template: any }> {
     const template = await prisma.template.update({
       where: { id },
       data: {
@@ -107,7 +96,7 @@ export class TemplateService {
       },
     });
 
-    return template;
+    return { template };
   }
 
   /**
@@ -125,99 +114,75 @@ export class TemplateService {
   }
 
   /**
-   * Sync templates with WhatsApp Business API
+   * Get templates by status
    */
-  async syncTemplates(): Promise<{ success: boolean; count: number; errors: string[] }> {
-    const errors: string[] = [];
-    let count = 0;
+  async getTemplatesByStatus(status: string, page: number = 1, limit: number = 20): Promise<TemplateServiceResponse> {
+    const skip = (page - 1) * limit;
 
-    try {
-      // Mock template data - in real implementation, this would call WhatsApp API
-      const mockTemplates = {
-        data: [
-          {
-            name: "welcome_message",
-            status: "APPROVED",
-            content: {
-              components: [
-                {
-                  type: "HEADER",
-                  format: "TEXT",
-                  text: "Welcome to our service!",
-                },
-                {
-                  type: "BODY",
-                  text: "Hello {{1}}, welcome to our platform! We're excited to have you on board.",
-                },
-              ],
-            },
-          },
-          {
-            name: "order_confirmation",
-            status: "APPROVED",
-            content: {
-              components: [
-                {
-                  type: "HEADER",
-                  format: "TEXT",
-                  text: "Order Confirmation",
-                },
-                {
-                  type: "BODY",
-                  text: "Hi {{1}}, your order #{{2}} has been confirmed and will be shipped on {{3}}.",
-                },
-              ],
-            },
-          },
+    const templates = await prisma.template.findMany({
+      where: { status },
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    const total = await prisma.template.count({
+      where: { status },
+    });
+
+    return {
+      data: templates as any,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1,
+      },
+    };
+  }
+
+  /**
+   * Search templates
+   */
+  async searchTemplates(query: string, page: number = 1, limit: number = 20): Promise<TemplateServiceResponse> {
+    const skip = (page - 1) * limit;
+
+    const templates = await prisma.template.findMany({
+      where: {
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
         ],
-      };
+      },
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
-      // Process each template
-      for (const templateData of mockTemplates.data) {
-        try {
-          // Check if template already exists
-          const existingTemplate = await prisma.template.findFirst({
-            where: { name: templateData.name },
-          });
+    const total = await prisma.template.count({
+      where: {
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+    });
 
-          if (existingTemplate) {
-            // Update existing template
-            await prisma.template.update({
-              where: { id: existingTemplate.id },
-              data: {
-                status: templateData.status,
-                content: templateData.content,
-              },
-            });
-          } else {
-            // Create new template
-            await prisma.template.create({
-              data: {
-                name: templateData.name,
-                content: templateData.content,
-                status: templateData.status,
-              },
-            });
-          }
-          count++;
-        } catch (error) {
-          errors.push(`Failed to sync template ${templateData.name}: ${error}`);
-        }
-      }
-
-      return {
-        success: errors.length === 0,
-        count,
-        errors,
-      };
-    } catch (error) {
-      errors.push(`Failed to sync templates: ${error}`);
-      return {
-        success: false,
-        count: 0,
-        errors,
-      };
-    }
+    return {
+      data: templates as any,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1,
+      },
+    };
   }
 
   /**
@@ -225,88 +190,147 @@ export class TemplateService {
    */
   async getTemplateStats(): Promise<{
     total: number;
-    approved: number;
     pending: number;
+    approved: number;
     rejected: number;
   }> {
-    const templates = await prisma.template.groupBy({
-      by: ['status'],
-      _count: {
-        id: true,
-      },
-    });
-
-    const stats: Record<string, number> = {};
-    templates.forEach((template) => {
-      stats[template.status] = template._count.id;
-    });
+    const [total, pending, approved, rejected] = await Promise.all([
+      prisma.template.count(),
+      prisma.template.count({ where: { status: 'pending' } }),
+      prisma.template.count({ where: { status: 'approved' } }),
+      prisma.template.count({ where: { status: 'rejected' } }),
+    ]);
 
     return {
-      total: Object.values(stats).reduce((sum, count) => sum + count, 0),
-      approved: stats['APPROVED'] || 0,
-      pending: stats['PENDING'] || 0,
-      rejected: stats['REJECTED'] || 0,
+      total,
+      pending,
+      approved,
+      rejected,
     };
   }
 
   /**
-   * Get approved templates only
+   * Approve a template
    */
-  async getApprovedTemplates(): Promise<any[]> {
-    const templates = await prisma.template.findMany({
-      where: { status: 'APPROVED' },
-      orderBy: {
-        name: 'asc',
+  async approveTemplate(id: string): Promise<{ template: any }> {
+    const template = await prisma.template.update({
+      where: { id },
+      data: {
+        status: 'approved',
       },
     });
 
-    return templates;
+    return { template };
+  }
+
+  /**
+   * Reject a template
+   */
+  async rejectTemplate(id: string): Promise<{ template: any }> {
+    const template = await prisma.template.update({
+      where: { id },
+      data: {
+        status: 'rejected',
+      },
+    });
+
+    return { template };
+  }
+
+  /**
+   * Duplicate a template
+   */
+  async duplicateTemplate(id: string, newName: string): Promise<{ template: any }> {
+    const originalTemplate = await prisma.template.findUnique({
+      where: { id },
+    });
+
+    if (!originalTemplate) {
+      throw new Error('Template not found');
+    }
+
+    const template = await prisma.template.create({
+      data: {
+        name: newName,
+        content: originalTemplate.content as any,
+        status: 'pending',
+      },
+    });
+
+    return { template };
+  }
+
+  /**
+   * Get templates used in campaigns
+   */
+  async getTemplatesWithCampaigns(page: number = 1, limit: number = 20): Promise<TemplateServiceResponse> {
+    const skip = (page - 1) * limit;
+
+    const templates = await prisma.template.findMany({
+      include: {
+        campaigns: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            createdAt: true,
+          },
+        },
+        _count: {
+          select: {
+            campaigns: true,
+          },
+        },
+      },
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    const total = await prisma.template.count();
+
+    return {
+      data: templates as any,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1,
+      },
+    };
   }
 
   /**
    * Validate template content
    */
-  async validateTemplate(content: any): Promise<{ valid: boolean; errors: string[] }> {
+  async validateTemplateContent(content: any): Promise<{
+    isValid: boolean;
+    errors: string[];
+  }> {
     const errors: string[] = [];
 
-    try {
-      // Basic validation
-      if (!content || typeof content !== 'object') {
-        errors.push('Template content must be an object');
-        return { valid: false, errors };
-      }
-
-      // Check for required components
-      if (!Array.isArray(content.components)) {
-        errors.push('Template must have components array');
-        return { valid: false, errors };
-      }
-
-      // Validate each component
-      content.components.forEach((component: any, index: number) => {
-        if (!component.type) {
-          errors.push(`Component ${index + 1} must have a type`);
-        }
-
-        if (component.type === 'HEADER' && !component.text) {
-          errors.push(`Header component ${index + 1} must have text`);
-        }
-
-        if (component.type === 'BODY' && !component.text) {
-          errors.push(`Body component ${index + 1} must have text`);
-        }
-      });
-
-      return {
-        valid: errors.length === 0,
-        errors,
-      };
-    } catch (error) {
-      errors.push(`Validation error: ${error}`);
-      return { valid: false, errors };
+    // Basic validation
+    if (!content) {
+      errors.push('Template content is required');
     }
+
+    if (typeof content !== 'object') {
+      errors.push('Template content must be an object');
+    }
+
+    // Add more validation logic as needed
+    // This could include checking for required WhatsApp template fields
+    // like name, language, category, components, etc.
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+    };
   }
 }
 
-// Export singleton instance
 export const templateService = new TemplateService();

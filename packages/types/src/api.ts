@@ -10,6 +10,41 @@ export interface ApiResponse<T = any> {
   error?: string;
 }
 
+// Service return types
+export interface ServiceResponse<T> {
+  data: T;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+export interface ContactServiceResponse extends ServiceResponse<Contact[]> {}
+export interface CampaignServiceResponse extends ServiceResponse<Campaign[]> {}
+export interface TemplateServiceResponse extends ServiceResponse<Template[]> {}
+export interface ConversationServiceResponse extends ServiceResponse<Conversation[]> {}
+
+// Single item service responses
+export interface SingleContactResponse {
+  contact: Contact | null;
+}
+
+export interface SingleCampaignResponse {
+  campaign: Campaign | null;
+}
+
+export interface SingleTemplateResponse {
+  template: Template | null;
+}
+
+export interface SingleConversationResponse {
+  conversation: Conversation | null;
+}
+
 // Pagination types
 export interface PaginationParams {
   page?: number;
@@ -98,24 +133,22 @@ export interface UpdateSegmentRequest {
 // Template API types
 export interface CreateTemplateRequest {
   name: string;
-  content: any; // WhatsApp template structure
+  content: any;
 }
 
 export interface UpdateTemplateRequest {
   name?: string;
   content?: any;
-  status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status?: 'draft' | 'pending' | 'approved' | 'rejected';
 }
 
 // Message API types
 export interface SendMessageRequest {
   contactId: string;
   content: string;
-  type?: 'text' | 'image' | 'document' | 'template';
-  templateName?: string;
-  templateParams?: string[];
+  type: 'text' | 'image' | 'document' | 'template';
+  templateParams?: Record<string, string>;
   mediaUrl?: string;
-  filename?: string;
 }
 
 export interface MessageResponse {
@@ -125,58 +158,56 @@ export interface MessageResponse {
   type: string;
   direction: string;
   status: string;
-  whatsappId?: string;
   timestamp: string;
+  whatsappId?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 // Conversation API types
+export interface ConversationWithMessages extends Conversation {
+  messages: Message[];
+}
+
 export interface ConversationSummary {
   id: string;
   contactId: string;
-  contact: Contact;
-  lastMessageAt: Date;
+  contact: {
+    id: string;
+    name: string;
+    phone: string;
+    email?: string | null;
+  };
+  lastMessage: {
+    content: string;
+    timestamp: string;
+  };
   unreadCount: number;
-  lastMessage: MessageResponse;
+  lastMessageAt: string;
   createdAt: string;
-  updatedAt: string;
-}
-
-export interface ConversationWithMessages extends ConversationSummary {
-  messages: MessageResponse[];
-}
-
-export interface ConversationSummary {
-  id: string;
-  contactId: string;
-  contact: Contact;
-  lastMessage: MessageResponse;
-  unreadCount: number;
   updatedAt: string;
 }
 
 // Media API types
 export interface UploadMediaRequest {
-  file: File;
-  type: string;
+  file: any; // Express.Multer.File - will be properly typed in the API layer
+  type: 'image' | 'document' | 'video' | 'audio';
 }
 
 export interface MediaUploadResponse {
   id: string;
-  waMediaId: string;
+  url: string;
   type: string;
+  size: number;
   mimeType: string;
-  fileName?: string;
-  size?: number;
-  url?: string;
-  status: string;
+  recordId?: string;
 }
 
 // Webhook types
 export interface WebhookEvent {
-  event: string;
+  type: string;
   payload: any;
+  timestamp: string;
 }
 
 // Error types
@@ -187,18 +218,20 @@ export interface ApiError {
 }
 
 // Filter types
-export interface CampaignFilters {
-  status?: string;
-  search?: string;
-}
-
 export interface ContactFilters {
-  status?: string;
   search?: string;
+  status?: string;
   segmentId?: string;
 }
 
-export interface TemplateFilters {
-  status?: string;
+export interface CampaignFilters {
   search?: string;
+  status?: string;
+  templateId?: string;
+}
+
+export interface TemplateFilters {
+  search?: string;
+  status?: string;
+  category?: string;
 }

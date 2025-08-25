@@ -1,6 +1,7 @@
 import { prisma } from "@whatssuite/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import type { User } from "@whatssuite/types";
 
 export interface AuthTokens {
   accessToken: string;
@@ -18,6 +19,18 @@ export interface RegisterData {
   name: string;
 }
 
+export interface UserWithoutPassword {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  isEmailVerified: boolean;
+  emailVerificationToken?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  refreshToken?: string | null;
+}
+
 export class AuthService {
   private readonly JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
   private readonly JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key';
@@ -27,7 +40,7 @@ export class AuthService {
   /**
    * Register a new user
    */
-  async register(data: RegisterData): Promise<{ user: any; tokens: AuthTokens }> {
+  async register(data: RegisterData): Promise<{ user: UserWithoutPassword; tokens: AuthTokens }> {
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
@@ -55,7 +68,7 @@ export class AuthService {
     // Return user without password
     const { password, ...userWithoutPassword } = user;
     return {
-      user: userWithoutPassword,
+      user: userWithoutPassword as UserWithoutPassword,
       tokens,
     };
   }
@@ -63,7 +76,7 @@ export class AuthService {
   /**
    * Login user
    */
-  async login(credentials: LoginCredentials): Promise<{ user: any; tokens: AuthTokens }> {
+  async login(credentials: LoginCredentials): Promise<{ user: UserWithoutPassword; tokens: AuthTokens }> {
     // Find user by email
     const user = await prisma.user.findUnique({
       where: { email: credentials.email },
@@ -85,7 +98,7 @@ export class AuthService {
     // Return user without password
     const { password, ...userWithoutPassword } = user;
     return {
-      user: userWithoutPassword,
+      user: userWithoutPassword as UserWithoutPassword,
       tokens,
     };
   }
@@ -98,7 +111,7 @@ export class AuthService {
       // Verify refresh token
       const decoded = jwt.verify(refreshToken, this.JWT_REFRESH_SECRET) as { userId: string };
       
-      // Check if user still exists
+      // Check if user exists
       const user = await prisma.user.findUnique({
         where: { id: decoded.userId },
       });
@@ -108,7 +121,9 @@ export class AuthService {
       }
 
       // Generate new tokens
-      return await this.generateTokens(user.id);
+      const tokens = await this.generateTokens(user.id);
+
+      return tokens;
     } catch (error) {
       throw new Error('Invalid refresh token');
     }
@@ -117,10 +132,12 @@ export class AuthService {
   /**
    * Verify access token
    */
-  async verifyToken(token: string): Promise<{ userId: string; user: any }> {
+  async verifyToken(token: string): Promise<{ userId: string; user: UserWithoutPassword }> {
     try {
+      // Verify token
       const decoded = jwt.verify(token, this.JWT_SECRET) as { userId: string };
       
+      // Get user
       const user = await prisma.user.findUnique({
         where: { id: decoded.userId },
       });
@@ -129,10 +146,11 @@ export class AuthService {
         throw new Error('User not found');
       }
 
+      // Return user without password
       const { password, ...userWithoutPassword } = user;
       return {
         userId: decoded.userId,
-        user: userWithoutPassword,
+        user: userWithoutPassword as UserWithoutPassword,
       };
     } catch (error) {
       throw new Error('Invalid token');
@@ -140,19 +158,48 @@ export class AuthService {
   }
 
   /**
-   * Logout user (invalidate refresh token)
+   * Get user profile
    */
-  async logout(userId: string): Promise<void> {
-    // In a real implementation, you might want to store invalidated tokens
-    // in Redis or database for additional security
-    // For now, we'll just return successfully
-    return;
+  async getUserProfile(userId: string): Promise<UserWithoutPassword | null> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    // Return user without password
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword as UserWithoutPassword;
   }
 
   /**
-   * Change user password
+   * Update user profile
    */
-  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+  async updateUserProfile(
+    userId: string,
+    data: { name?: string; email?: string }
+  ): Promise<UserWithoutPassword> {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+
+    // Return user without password
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword as UserWithoutPassword;
+  }
+
+  /**
+   * Change password
+   */
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<boolean> {
+    // Get user
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -173,37 +220,152 @@ export class AuthService {
     // Update password
     await prisma.user.update({
       where: { id: userId },
-      data: { password: hashedNewPassword },
+      data: {
+        password: hashedNewPassword,
+      },
     });
+
+    return true;
   }
 
   /**
-   * Get user profile
+   * Logout user
    */
-  async getUserProfile(userId: string): Promise<any | null> {
+  async logout(userId: string): Promise<boolean> {
+    try {
+      // Clear refresh token
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          refreshToken: null,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Request password reset
+   */
+  async requestPasswordReset(email: string): Promise<boolean> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      // Don't reveal if user exists or not
+      return true;
+    }
+
+    // Generate reset token
+    const resetToken = jwt.sign(
+      { userId: user.id, type: 'password-reset' },
+      this.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // In a real application, you would send this token via email
+    // For now, we'll just store it temporarily
+    console.log(`Password reset token for ${email}: ${resetToken}`);
+
+    return true;
+  }
+
+  /**
+   * Reset password with token
+   */
+  async resetPassword(token: string, newPassword: string): Promise<boolean> {
+    try {
+      // Verify token
+      const decoded = jwt.verify(token, this.JWT_SECRET) as { userId: string; type: string };
+      
+      if (decoded.type !== 'password-reset') {
+        throw new Error('Invalid token type');
+      }
+
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+      // Update password
+      await prisma.user.update({
+        where: { id: decoded.userId },
+        data: {
+          password: hashedPassword,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      throw new Error('Invalid or expired reset token');
+    }
+  }
+
+  /**
+   * Verify email
+   */
+  async verifyEmail(token: string): Promise<boolean> {
+    try {
+      // Verify token
+      const decoded = jwt.verify(token, this.JWT_SECRET) as { userId: string; type: string };
+      
+      if (decoded.type !== 'email-verification') {
+        throw new Error('Invalid token type');
+      }
+
+      // Update user
+      await prisma.user.update({
+        where: { id: decoded.userId },
+        data: {
+          isEmailVerified: true,
+          emailVerificationToken: null,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      throw new Error('Invalid or expired verification token');
+    }
+  }
+
+  /**
+   * Request email verification
+   */
+  async requestEmailVerification(userId: string): Promise<boolean> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
 
     if (!user) {
-      return null;
+      throw new Error('User not found');
     }
 
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
-  }
+    if (user.isEmailVerified) {
+      throw new Error('Email is already verified');
+    }
 
-  /**
-   * Update user profile
-   */
-  async updateUserProfile(userId: string, data: { name?: string; email?: string }): Promise<any> {
-    const user = await prisma.user.update({
+    // Generate verification token
+    const verificationToken = jwt.sign(
+      { userId: user.id, type: 'email-verification' },
+      this.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Update user with verification token
+    await prisma.user.update({
       where: { id: userId },
-      data,
+      data: {
+        emailVerificationToken: verificationToken,
+      },
     });
 
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    // In a real application, you would send this token via email
+    // For now, we'll just log it
+    console.log(`Email verification token for ${user.email}: ${verificationToken}`);
+
+    return true;
   }
 
   /**
@@ -222,52 +384,19 @@ export class AuthService {
       { expiresIn: this.REFRESH_TOKEN_EXPIRY }
     );
 
+    // Store refresh token in database
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        refreshToken,
+      },
+    });
+
     return {
       accessToken,
       refreshToken,
     };
   }
-
-  /**
-   * Validate password strength
-   */
-  validatePasswordStrength(password: string): { valid: boolean; errors: string[] } {
-    const errors: string[] = [];
-
-    if (password.length < 8) {
-      errors.push('Password must be at least 8 characters long');
-    }
-
-    if (!/[A-Z]/.test(password)) {
-      errors.push('Password must contain at least one uppercase letter');
-    }
-
-    if (!/[a-z]/.test(password)) {
-      errors.push('Password must contain at least one lowercase letter');
-    }
-
-    if (!/\d/.test(password)) {
-      errors.push('Password must contain at least one number');
-    }
-
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push('Password must contain at least one special character');
-    }
-
-    return {
-      valid: errors.length === 0,
-      errors,
-    };
-  }
-
-  /**
-   * Validate email format
-   */
-  validateEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
 }
 
-// Export singleton instance
 export const authService = new AuthService();

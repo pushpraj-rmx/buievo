@@ -1,4 +1,12 @@
 import { prisma } from "@whatssuite/db";
+import type { 
+  CampaignServiceResponse, 
+  SingleCampaignResponse,
+  CreateCampaignRequest,
+  UpdateCampaignRequest,
+  CampaignAnalytics,
+  CampaignStats
+} from "@whatssuite/types";
 
 export class CampaignService {
   /**
@@ -9,17 +17,7 @@ export class CampaignService {
     limit: number = 20,
     search?: string,
     status?: string
-  ): Promise<{
-    data: any[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-      hasNext: boolean;
-      hasPrev: boolean;
-    };
-  }> {
+  ): Promise<CampaignServiceResponse> {
     const skip = (page - 1) * limit;
     
     // Build where clause based on filters
@@ -35,16 +33,12 @@ export class CampaignService {
       where.status = status;
     }
 
-    // Get campaigns with segments and template
+    // Get campaigns with template and segments
     const campaigns = await prisma.campaign.findMany({
       where,
       include: {
-        targetSegments: {
-          include: {
-            contacts: true,
-          },
-        },
         template: true,
+        targetSegments: true,
         _count: {
           select: {
             targetSegments: true,
@@ -62,7 +56,7 @@ export class CampaignService {
     const total = await prisma.campaign.count({ where });
 
     return {
-      data: campaigns,
+      data: campaigns as any,
       pagination: {
         page,
         limit,
@@ -77,86 +71,68 @@ export class CampaignService {
   /**
    * Get a single campaign by ID
    */
-  async getCampaignById(id: string): Promise<any | null> {
+  async getCampaignById(id: string): Promise<{ campaign: any }> {
     const campaign = await prisma.campaign.findUnique({
       where: { id },
       include: {
-        targetSegments: {
-          include: {
-            contacts: true,
+        template: true,
+        targetSegments: true,
+        _count: {
+          select: {
+            targetSegments: true,
           },
         },
-        template: true,
       },
     });
 
-    return campaign;
+    return { campaign };
   }
 
   /**
    * Create a new campaign
    */
-  async createCampaign(data: {
-    name: string;
-    templateId: string;
-    targetSegmentIds: string[];
-    scheduledAt?: Date;
-  }): Promise<any> {
+  async createCampaign(data: CreateCampaignRequest): Promise<{ campaign: any }> {
     const campaign = await prisma.campaign.create({
       data: {
         name: data.name,
+        templateId: data.templateId,
         status: 'draft',
         scheduledAt: data.scheduledAt,
-        templateId: data.templateId,
         targetSegments: {
-          connect: data.targetSegmentIds.map(id => ({ id }))
+          connect: data.targetSegmentIds.map(id => ({ id })),
         },
       },
       include: {
-        targetSegments: {
-          include: {
-            contacts: true,
-          },
-        },
         template: true,
+        targetSegments: true,
       },
     });
 
-    return campaign;
+    return { campaign };
   }
 
   /**
    * Update an existing campaign
    */
-  async updateCampaign(id: string, data: {
-    name?: string;
-    templateId?: string;
-    targetSegmentIds?: string[];
-    scheduledAt?: Date;
-    status?: string;
-  }): Promise<any> {
+  async updateCampaign(id: string, data: UpdateCampaignRequest): Promise<{ campaign: any }> {
     const campaign = await prisma.campaign.update({
       where: { id },
       data: {
         name: data.name,
+        templateId: data.templateId,
         status: data.status,
         scheduledAt: data.scheduledAt,
-        templateId: data.templateId,
         targetSegments: data.targetSegmentIds ? {
-          set: data.targetSegmentIds.map(segmentId => ({ id: segmentId }))
+          set: data.targetSegmentIds.map(id => ({ id })),
         } : undefined,
       },
       include: {
-        targetSegments: {
-          include: {
-            contacts: true,
-          },
-        },
         template: true,
+        targetSegments: true,
       },
     });
 
-    return campaign;
+    return { campaign };
   }
 
   /**
@@ -174,87 +150,11 @@ export class CampaignService {
   }
 
   /**
-   * Start a campaign
+   * Get campaign analytics
    */
-  async startCampaign(id: string): Promise<any> {
-    const campaign = await prisma.campaign.update({
-      where: { id },
-      data: {
-        status: 'sending',
-        scheduledAt: new Date(), // Start immediately
-      },
-      include: {
-        targetSegments: {
-          include: {
-            contacts: true,
-          },
-        },
-        template: true,
-      },
-    });
-
-    return campaign;
-  }
-
-  /**
-   * Pause a campaign
-   */
-  async pauseCampaign(id: string): Promise<any> {
-    const campaign = await prisma.campaign.update({
-      where: { id },
-      data: {
-        status: 'draft',
-      },
-      include: {
-        targetSegments: {
-          include: {
-            contacts: true,
-          },
-        },
-        template: true,
-      },
-    });
-
-    return campaign;
-  }
-
-  /**
-   * Get campaign statistics
-   */
-  async getCampaignStats(): Promise<{
-    total: number;
-    draft: number;
-    sending: number;
-    completed: number;
-    failed: number;
-  }> {
-    const campaigns = await prisma.campaign.groupBy({
-      by: ['status'],
-      _count: {
-        id: true,
-      },
-    });
-
-    const stats: Record<string, number> = {};
-    campaigns.forEach((campaign) => {
-      stats[campaign.status] = campaign._count.id;
-    });
-
-    return {
-      total: Object.values(stats).reduce((sum, count) => sum + count, 0),
-      draft: stats['draft'] || 0,
-      sending: stats['sending'] || 0,
-      completed: stats['completed'] || 0,
-      failed: stats['failed'] || 0,
-    };
-  }
-
-  /**
-   * Get all contacts for a campaign
-   */
-  async getCampaignContacts(id: string): Promise<any[]> {
+  async getCampaignAnalytics(campaignId: string): Promise<CampaignAnalytics | null> {
     const campaign = await prisma.campaign.findUnique({
-      where: { id },
+      where: { id: campaignId },
       include: {
         targetSegments: {
           include: {
@@ -265,18 +165,129 @@ export class CampaignService {
     });
 
     if (!campaign) {
-      return [];
+      return null;
     }
 
-    // Flatten and deduplicate contacts from all segments
-    const allContacts = campaign.targetSegments.flatMap(segment => segment.contacts);
-    const uniqueContacts = allContacts.filter(
-      (contact, index, self) => index === self.findIndex(c => c.id === contact.id)
+    // Calculate analytics
+    const totalContacts = campaign.targetSegments.reduce(
+      (total, segment) => total + segment.contacts.length,
+      0
     );
 
-    return uniqueContacts;
+    return {
+      campaignId: campaign.id,
+      totalContacts,
+      sentMessages: campaign.sentCount,
+      deliveredMessages: campaign.deliveredCount,
+      failedMessages: campaign.failedCount,
+      openRate: totalContacts > 0 ? (campaign.readCount / totalContacts) * 100 : 0,
+      clickRate: totalContacts > 0 ? (campaign.clickedCount / totalContacts) * 100 : 0,
+      createdAt: campaign.createdAt,
+      updatedAt: campaign.updatedAt,
+    };
+  }
+
+  /**
+   * Get campaign statistics
+   */
+  async getCampaignStats(): Promise<CampaignStats> {
+    const [total, draft, active, paused, completed, cancelled] = await Promise.all([
+      prisma.campaign.count(),
+      prisma.campaign.count({ where: { status: 'draft' } }),
+      prisma.campaign.count({ where: { status: 'sending' } }),
+      prisma.campaign.count({ where: { status: 'scheduled' } }),
+      prisma.campaign.count({ where: { status: 'completed' } }),
+      prisma.campaign.count({ where: { status: 'failed' } }),
+    ]);
+
+    return {
+      total,
+      draft,
+      active,
+      paused,
+      completed,
+      cancelled,
+    };
+  }
+
+  /**
+   * Start a campaign
+   */
+  async startCampaign(id: string): Promise<{ campaign: any }> {
+    const campaign = await prisma.campaign.update({
+      where: { id },
+      data: {
+        status: 'sending',
+      },
+      include: {
+        template: true,
+        targetSegments: true,
+      },
+    });
+
+    return { campaign };
+  }
+
+  /**
+   * Pause a campaign
+   */
+  async pauseCampaign(id: string): Promise<{ campaign: any }> {
+    const campaign = await prisma.campaign.update({
+      where: { id },
+      data: {
+        status: 'paused',
+      },
+      include: {
+        template: true,
+        targetSegments: true,
+      },
+    });
+
+    return { campaign };
+  }
+
+  /**
+   * Complete a campaign
+   */
+  async completeCampaign(id: string): Promise<{ campaign: any }> {
+    const campaign = await prisma.campaign.update({
+      where: { id },
+      data: {
+        status: 'completed',
+      },
+      include: {
+        template: true,
+        targetSegments: true,
+      },
+    });
+
+    return { campaign };
+  }
+
+  /**
+   * Update campaign metrics
+   */
+  async updateCampaignMetrics(
+    id: string,
+    metrics: {
+      sentCount?: number;
+      deliveredCount?: number;
+      failedCount?: number;
+      readCount?: number;
+      clickedCount?: number;
+    }
+  ): Promise<{ campaign: any }> {
+    const campaign = await prisma.campaign.update({
+      where: { id },
+      data: metrics,
+      include: {
+        template: true,
+        targetSegments: true,
+      },
+    });
+
+    return { campaign };
   }
 }
 
-// Export singleton instance
 export const campaignService = new CampaignService();
