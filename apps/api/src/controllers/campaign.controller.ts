@@ -330,11 +330,11 @@ export const startCampaign = async (req: Request, res: Response) => {
 
     // Get all contacts from target segments
     const allContacts = campaign.targetSegments.flatMap(
-      (segment) => segment.contacts,
+      (segment: any) => segment.contacts,
     );
     const uniqueContacts = allContacts.filter(
-      (contact, index, self) =>
-        index === self.findIndex((c) => c.id === contact.id),
+      (contact: any, index: number, self: any[]) =>
+        index === self.findIndex((c: any) => c.id === contact.id),
     );
 
     if (uniqueContacts.length === 0) {
@@ -353,7 +353,7 @@ export const startCampaign = async (req: Request, res: Response) => {
     const jobPayload = {
       campaignId: id,
       templateName: campaign.template.name,
-      contacts: uniqueContacts.map((contact) => ({
+      contacts: uniqueContacts.map((contact: any) => ({
         id: contact.id,
         phone: contact.phone,
       })),
@@ -460,7 +460,7 @@ export const getCampaignAnalytics = async (req: Request, res: Response) => {
 
     // Calculate total target contacts
     const totalTargetContacts = campaign.targetSegments.reduce(
-      (total, segment) => total + segment._count.contacts,
+      (total: number, segment: any) => total + segment._count.contacts,
       0,
     );
 
@@ -527,7 +527,7 @@ export const getCampaignStats = async (req: Request, res: Response) => {
     });
 
     const statusBreakdown = statusCounts.reduce(
-      (acc, item) => {
+      (acc: Record<string, number>, item: any) => {
         acc[item.status] = item._count.id;
         return acc;
       },

@@ -73,6 +73,11 @@ async function processJob(jobData: string): Promise<void> {
 
     console.log("🚀 Calling wappClient.sendTemplateMessage...");
 
+    // Ensure 'to' is defined before calling sendTemplateMessage
+    if (!to) {
+      throw new Error("Phone number is not available");
+    }
+
     await wappClient.sendTemplateMessage({
       to,
       templateName,
