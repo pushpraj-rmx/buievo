@@ -1,4 +1,4 @@
-import "dotenv/config"; // 1. This MUST be the very first line
+import "dotenv/config";
 import express from "express";
 import { dbConnection } from "@whatssuite/db";
 import { redis } from "@whatssuite/redis";

@@ -99,7 +99,7 @@ router.get("/", async (req, res) => {
       version: "1.0.0",
       environment: process.env.NODE_ENV || "development",
     };
-    };
+    }
 
     res.json(config);
   } catch (error) {

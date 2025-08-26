@@ -194,7 +194,9 @@ class ConfigService {
   // Load configuration from API
   private async loadFromAPI() {
     try {
-      const response = await fetch('/api/v1/config', {
+      // Use absolute URL for server-side rendering
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${baseUrl}/api/v1/config`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -225,7 +227,9 @@ class ConfigService {
   // Save configuration to API
   private async saveToAPI() {
     try {
-      const response = await fetch('/api/v1/config', {
+      // Use absolute URL for server-side rendering
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${baseUrl}/api/v1/config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
