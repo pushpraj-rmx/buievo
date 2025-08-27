@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CONTACT_SERVICE_DATABASE_URL")
+}
+
+model Contact {
+  id           String   @id @default(cuid())
+  name         String
+  email        String?  @unique
+  phone        String   @unique
+  status       String   @default("active")
+  comment      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  segments     Segment[] @relation("ContactSegments")
+  conversations Conversation[]
+
+  @@map("contacts")
+}
+
+model Segment {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  contacts    Contact[] @relation("ContactSegments")
+
+  @@map("segments")
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  contactId String
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  contact   Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@map("conversations")
+}
+
+
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  content        String
+  type           String   @default("text") // text, image, document, etc.
+  direction      String   @default("outbound") // inbound, outbound
+  status         String   @default("sent") // sent, delivered, read, failed
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  // Relations
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}

@@ -31,6 +31,8 @@ out/
 build
 dist
 
+# Documentation files
+*.md
 
 # Debug
 npm-debug.log*

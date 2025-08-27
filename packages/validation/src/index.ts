@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type {
   CreateContactRequest,
+  UpdateContactRequest,
   CreateCampaignRequest,
   CreateTemplateRequest,
   SendMessageRequest,
@@ -163,6 +164,11 @@ export type WhatsAppMessageInput = z.infer<typeof whatsAppMessageSchema>;
 export const validateContact = (data: unknown): CreateContactRequest => {
   const result = createContactSchema.parse(data);
   return result as CreateContactRequest;
+};
+
+export const validateUpdateContact = (data: unknown): UpdateContactRequest => {
+  const result = updateContactSchema.parse(data);
+  return result as UpdateContactRequest;
 };
 
 export const validateCampaign = (data: unknown): CreateCampaignRequest => {

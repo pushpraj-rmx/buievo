@@ -8,23 +8,23 @@ import {
 
 const MESSAGE_QUEUE_CHANNEL = "message-queue";
 
-// This job payload can be simplified if the 'to' field is always fetched from the DB
+// Simplified job payload - only phone number needed
 interface JobPayload {
-  contactId?: string;
-  phoneNumber?: string;
-  templateName: string;
+  phoneNumber: string; // Required - the phone number to send to
+  message?: string; // For text messages
+  templateName?: string; // For template messages
   params?: string[];
   buttonParams?: string[];
-  imageUrl?: string; // Add support for image URL
-  documentUrl?: string; // Add support for document URL
-  filename?: string; // Add support for filename
+  imageUrl?: string;
+  documentUrl?: string;
+  filename?: string;
 }
 
 async function processJob(jobData: string): Promise<void> {
   try {
     const {
-      contactId,
       phoneNumber,
+      message,
       templateName,
       params,
       buttonParams,
@@ -33,32 +33,21 @@ async function processJob(jobData: string): Promise<void> {
       filename,
     }: JobPayload = JSON.parse(jobData);
 
-    let to: string | undefined;
-
-    if (contactId) {
-      console.log(`Processing job for contactId: ${contactId}`);
-      const contact = await prisma.contact.findUnique({
-        where: { id: contactId },
-        select: { phone: true },
-      });
-      if (!contact || !contact.phone) {
-        throw new Error(
-          `Contact or phone not found for contactId: ${contactId}`,
-        );
-      }
-      to = contact.phone;
-    } else if (phoneNumber) {
-      console.log(`Processing job for phoneNumber: ${phoneNumber}`);
-      to = phoneNumber;
-    } else {
-      throw new Error("No contactId or phoneNumber provided in job");
+    if (!phoneNumber) {
+      throw new Error("Phone number is required in job payload");
     }
+
+    console.log(`Processing job for phoneNumber: ${phoneNumber}`);
+
+    // Normalize phone number format
+    let normalizedPhone = phoneNumber.startsWith("+") ? phoneNumber : `+${phoneNumber}`;
 
     console.log(
       "Parsed job data:",
       JSON.stringify(
         {
-          to,
+          to: normalizedPhone,
+          message,
           templateName,
           params,
           buttonParams,
@@ -71,26 +60,29 @@ async function processJob(jobData: string): Promise<void> {
       ),
     );
 
-    console.log("🚀 Calling wappClient.sendTemplateMessage...");
-
-    // Ensure 'to' is defined before calling sendTemplateMessage
-    if (!to) {
-      throw new Error("Phone number is not available");
+    // Send text message if message is provided, otherwise send template
+    if (message) {
+      console.log("🚀 Calling wappClient.sendTextMessage...");
+      await wappClient.sendTextMessage({
+        to: normalizedPhone,
+        text: message,
+      });
+      console.log(`✅ Text message sent successfully to ${normalizedPhone}`);
+    } else if (templateName) {
+      console.log("🚀 Calling wappClient.sendTemplateMessage...");
+      await wappClient.sendTemplateMessage({
+        to: normalizedPhone,
+        templateName,
+        bodyParams: params,
+        buttonParams,
+        imageUrl,
+        documentUrl,
+        filename,
+      });
+      console.log(`✅ Template message sent successfully to ${normalizedPhone} using template ${templateName}`);
+    } else {
+      throw new Error("Either message or templateName must be provided");
     }
-
-    await wappClient.sendTemplateMessage({
-      to,
-      templateName,
-      bodyParams: params,
-      buttonParams,
-      imageUrl,
-      documentUrl,
-      filename,
-    });
-
-    console.log(
-      `✅ Message sent successfully to ${to} using template ${templateName}`,
-    );
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Failed to process job:", error.message);

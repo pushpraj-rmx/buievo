@@ -274,6 +274,8 @@ export default function MediaPage() {
                       {r.mimeType?.startsWith("image/") ? (
                         <Image
                           src={`/api/v1/media/${encodeURIComponent(r.id)}/file`}
+                          width={100}
+                          height={100}
                           alt={r.fileName || r.waMediaId}
                           className="h-10 w-10 object-cover rounded"
                         />
@@ -337,17 +339,9 @@ export default function MediaPage() {
                                     src={`/api/v1/media/${encodeURIComponent(r.id)}/file`}
                                     alt={r.fileName || r.waMediaId}
                                     className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-lg"
-                                    width={1000}
-                                    height={1000}
+                                    width={'1000'}
+                                    height={'1000'}
                                   />
-                                </div>
-                                <div className="bg-muted rounded p-3">
-                                  {/* <h4 className="font-semibold mb-2">
-                                    Media Details:
-                                  </h4>
-                                  <pre className="text-xs overflow-auto max-h-[200px]">
-                                    {JSON.stringify(selected, null, 2)}
-                                  </pre> */}
                                 </div>
                               </div>
                             ) : (

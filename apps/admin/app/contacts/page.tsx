@@ -50,7 +50,6 @@ import {
   Eye,
   Users,
   Tag,
-  Filter,
 } from "lucide-react";
 
 interface Contact {
@@ -276,7 +275,6 @@ export default function WhatsAppContactsPage() {
       }
 
       toast.success("Segment created successfully");
-      setSegmentDialogOpen(false);
       setSegmentForm({ name: "" });
       fetchSegments();
     } catch (error) {
@@ -309,7 +307,6 @@ export default function WhatsAppContactsPage() {
       }
 
       toast.success("Segment updated successfully");
-      setSegmentDialogOpen(false);
       setEditingSegment(null);
       setSegmentForm({ name: "" });
       fetchSegments();
@@ -467,100 +464,242 @@ export default function WhatsAppContactsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="space-y-4">
         <div>
           <h1 className="text-3xl font-bold">Contacts</h1>
           <p className="text-muted-foreground">
             Manage your WhatsApp contacts and segments
           </p>
         </div>
-        <div className="flex gap-2">
-          <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Upload className="w-4 h-4 mr-2" />
-                Import
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Import Contacts</DialogTitle>
-                <DialogDescription>
-                  Paste CSV data with columns: Name, Email, Phone, Status,
-                  Comment
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <Textarea
-                  placeholder="Name,Email,Phone,Status,Comment&#10;John Doe,john@example.com,+1234567890,active,Test contact"
-                  value={importData}
-                  onChange={(e) => setImportData(e.target.value)}
-                  rows={10}
-                />
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setImportDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleBulkImport} disabled={importLoading}>
-                  {importLoading && (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  )}
+        
+        {/* Search, Filters, and Actions Row */}
+        <div className="flex items-center gap-4">
+          {/* Search */}
+          <div className="flex-1 max-w-md">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by name, email, or phone..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          
+          {/* Status Filter */}
+          <div className="w-40">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Segment Filter */}
+          <div className="w-48">
+            <Select value={segmentFilter} onValueChange={setSegmentFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Segments" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Segments</SelectItem>
+                {segments.map((segment) => (
+                  <SelectItem key={segment.id} value={segment.id}>
+                    <div className="flex items-center gap-2">
+                      <Tag className="w-3 h-3" />
+                      {segment.name}
+                      <Badge variant="secondary" className="ml-auto text-xs">
+                        {segment._count?.contacts || 0}
+                      </Badge>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Upload className="w-4 h-4 mr-2" />
                   Import
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-
-          <Dialog open={segmentDialogOpen} onOpenChange={setSegmentDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Tag className="w-4 h-4 mr-2" />
-                Segments
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {editingSegment ? "Edit Segment" : "Create Segment"}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="segmentName">Segment Name</Label>
-                  <Input
-                    id="segmentName"
-                    value={segmentForm.name}
-                    onChange={(e) => setSegmentForm({ name: e.target.value })}
-                    placeholder="Enter segment name"
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Import Contacts</DialogTitle>
+                  <DialogDescription>
+                    Paste CSV data with columns: Name, Email, Phone, Status,
+                    Comment
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Textarea
+                    placeholder="Name,Email,Phone,Status,Comment&#10;John Doe,john@example.com,+1234567890,active,Test contact"
+                    value={importData}
+                    onChange={(e) => setImportData(e.target.value)}
+                    rows={10}
                   />
                 </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setImportDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleBulkImport} disabled={importLoading}>
+                    {importLoading && (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    )}
+                    Import
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Button variant="outline" size="sm" onClick={handleExport}>
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+
+            <Dialog open={segmentDialogOpen} onOpenChange={setSegmentDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Tag className="w-4 h-4 mr-2" />
+                  Segments
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Tag className="w-5 h-5" />
+                  Segments Overview ({segments.length})
+                </DialogTitle>
+                <DialogDescription>
+                  Manage your contact segments for better organization
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {/* Create/Edit Segment Form */}
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-medium mb-4">
+                    {editingSegment ? "Edit Segment" : "Create New Segment"}
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="segmentName">Segment Name</Label>
+                      <Input
+                        id="segmentName"
+                        value={segmentForm.name}
+                        onChange={(e) => setSegmentForm({ name: e.target.value })}
+                        placeholder="Enter segment name"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={
+                          editingSegment ? handleUpdateSegment : handleCreateSegment
+                        }
+                        disabled={segmentCreateLoading || segmentUpdateLoading}
+                      >
+                        {(segmentCreateLoading || segmentUpdateLoading) && (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        )}
+                        {editingSegment ? "Update" : "Create"}
+                      </Button>
+                      {editingSegment && (
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setEditingSegment(null);
+                            setSegmentForm({ name: "" });
+                          }}
+                        >
+                          Cancel Edit
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Segments List */}
+                <div>
+                  <h3 className="font-medium mb-4">Existing Segments</h3>
+                  {segments.length === 0 ? (
+                    <div className="text-center py-8 border rounded-lg">
+                      <Tag className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-medium mb-2">No segments yet</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Create your first segment to organize your contacts
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {segments.map((segment) => (
+                        <div
+                          key={segment.id}
+                          className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow"
+                        >
+                          <div className="flex-1">
+                            <h3 className="font-medium text-sm">{segment.name}</h3>
+                            <p className="text-xs text-muted-foreground">
+                              {segment._count?.contacts || 0} contacts
+                            </p>
+                          </div>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditSegmentDialog(segment)}
+                              disabled={segmentUpdateLoading}
+                              className="h-8 w-8 p-0"
+                            >
+                              {segmentUpdateLoading && (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              )}
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteSegment(segment.id)}
+                              disabled={segmentDeleteLoading === segment.id}
+                              className="h-8 w-8 p-0"
+                            >
+                              {segmentDeleteLoading === segment.id && (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              )}
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
+
               <DialogFooter>
                 <Button
                   variant="outline"
-                  onClick={() => setSegmentDialogOpen(false)}
+                  onClick={() => {
+                    setSegmentDialogOpen(false);
+                    setEditingSegment(null);
+                    setSegmentForm({ name: "" });
+                  }}
                 >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={
-                    editingSegment ? handleUpdateSegment : handleCreateSegment
-                  }
-                  disabled={segmentCreateLoading || segmentUpdateLoading}
-                >
-                  {(segmentCreateLoading || segmentUpdateLoading) && (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  )}
-                  {editingSegment ? "Update" : "Create"}
+                  Close
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -744,139 +883,11 @@ export default function WhatsAppContactsPage() {
           </Dialog>
         </div>
       </div>
+    </div>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            Filters
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Label htmlFor="search">Search</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="search"
-                  placeholder="Search by name, email, or phone..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="status">Status</Label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="segment">Segment</Label>
-              <Select value={segmentFilter} onValueChange={setSegmentFilter}>
-                <SelectTrigger className="min-w-[150px]">
-                  <SelectValue placeholder="All Segments" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Segments</SelectItem>
-                  {segments.map((segment) => (
-                    <SelectItem key={segment.id} value={segment.id}>
-                      <div className="flex items-center gap-2">
-                        <Tag className="w-3 h-3" />
-                        {segment.name}
-                        <Badge variant="secondary" className="ml-auto text-xs">
-                          {segment._count?.contacts || 0}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Segments Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Tag className="w-5 h-5" />
-            Segments Overview ({segments.length})
-          </CardTitle>
-          <CardDescription>
-            Manage your contact segments for better organization
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {segments.length === 0 ? (
-            <div className="text-center py-8">
-              <Tag className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">No segments yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Create your first segment to organize your contacts
-              </p>
-              <Button onClick={() => setSegmentDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Segment
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {segments.map((segment) => (
-                <div
-                  key={segment.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow"
-                >
-                  <div className="flex-1">
-                    <h3 className="font-medium text-sm">{segment.name}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      {segment._count?.contacts || 0} contacts
-                    </p>
-                  </div>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openEditSegmentDialog(segment)}
-                      disabled={segmentUpdateLoading}
-                      className="h-8 w-8 p-0"
-                    >
-                      {segmentUpdateLoading && (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      )}
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteSegment(segment.id)}
-                      disabled={segmentDeleteLoading === segment.id}
-                      className="h-8 w-8 p-0"
-                    >
-                      {segmentDeleteLoading === segment.id && (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      )}
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+
+
 
       {/* Contacts Table */}
       <Card>

@@ -37,6 +37,7 @@ import {
   IconDatabase,
 } from "@tabler/icons-react";
 import { toast } from "sonner";
+import { useThemeSync } from "@/hooks/use-theme-sync";
 
 export default function SettingsPage() {
   const {
@@ -50,6 +51,7 @@ export default function SettingsPage() {
     updateAdvancedStorageConfig,
     testWhatsAppConnection,
   } = useConfig();
+  const { theme, setTheme } = useThemeSync();
 
   const [whatsappConfig, setWhatsappConfig] = useState(config.whatsapp);
   const [storageConfig, setStorageConfig] = useState(config.storage);
@@ -643,13 +645,14 @@ export default function SettingsPage() {
               <div>
                 <Label htmlFor="themeMode">Theme Mode</Label>
                 <Select
-                  value={themeConfig.mode}
-                  onValueChange={(value) =>
+                  value={theme || themeConfig.mode}
+                  onValueChange={(value) => {
+                    setTheme(value);
                     setThemeConfig({
                       ...themeConfig,
-                      mode: value as "light" | "dark" | "system",
-                    })
-                  }
+                      mode: value as "light" | "dark",
+                    });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -657,11 +660,10 @@ export default function SettingsPage() {
                   <SelectContent>
                     <SelectItem value="light">Light</SelectItem>
                     <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Choose your preferred theme mode
+                  Choose your preferred theme mode. Changes are applied immediately.
                 </p>
               </div>
 
@@ -715,8 +717,11 @@ export default function SettingsPage() {
                   className="flex items-center gap-2"
                 >
                   <IconSettings className="h-4 w-4" />
-                  Save Configuration
+                  Save Color Configuration
                 </Button>
+                <p className="text-sm text-muted-foreground">
+                  Theme mode changes are applied immediately. Color changes require saving.
+                </p>
               </div>
             </CardContent>
           </Card>

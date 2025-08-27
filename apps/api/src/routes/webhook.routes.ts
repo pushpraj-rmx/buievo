@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import {
   handleWebhook,
   testReceiveMessage,
+  testSendMessage,
   debugWebhook,
 } from "../controllers/webhook.controller";
 import { webhookLogger, generateRequestId } from "../utils/logger";
@@ -81,6 +82,7 @@ router.post("/", handleWebhook);
 router.get("/", handleWebhook); // For webhook verification
 router.get("/status", getWebhookStatus); // Webhook status endpoint
 router.post("/test", testReceiveMessage); // Test endpoint for simulating incoming messages
+router.post("/send", testSendMessage); // Test endpoint for sending messages using phone numbers
 router.post("/debug", debugWebhook); // Debug endpoint for step-by-step webhook processing
 
 export default router;

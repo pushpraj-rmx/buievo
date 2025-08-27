@@ -11,19 +11,20 @@ import {
   IconFileWord,
   IconFolder,
   IconHelp,
-  IconInnerShadowTop,
   IconReport,
   IconSearch,
   IconSettings,
   IconUsers,
   IconBrandWhatsapp,
   IconMessageCircle,
+  IconAddressBook,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
+import { Logo } from "@/components/ui/logo";
 import {
   Sidebar,
   SidebarContent,
@@ -45,6 +46,11 @@ const data = {
       title: "Dashboard",
       url: "/dashboard",
       icon: IconDashboard,
+    },
+    {
+      title: "Contacts",
+      url: "/contacts",
+      icon: IconAddressBook,
     },
     {
       title: "WhatsApp",
@@ -127,6 +133,11 @@ const data = {
       icon: IconSettings,
     },
     {
+      title: "Theme Demo",
+      url: "/theme-demo",
+      icon: IconFileWord,
+    },
+    {
       title: "Get Help",
       url: "#",
       icon: IconHelp,
@@ -167,8 +178,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <Logo size={20} showText={true} textClassName="text-base font-semibold" />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

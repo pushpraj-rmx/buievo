@@ -129,18 +129,38 @@ export interface WhatsAppWebhookEntry {
   changes: WhatsAppWebhookChange[];
 }
 
+// All available WABA webhook fields as per Meta documentation
+export type WABAWebhookField = 
+  | 'messages'
+  | 'account_alerts'
+  | 'account_review_update'
+  | 'account_update'
+  | 'business_capability_update'
+  | 'message_template_components_update'
+  | 'message_template_quality_update'
+  | 'message_template_status_update'
+  | 'phone_number_name_update'
+  | 'phone_number_quality_update'
+  | 'security'
+  | 'template_category_update';
+
 export interface WhatsAppWebhookChange {
   value: {
-    messaging_product: 'whatsapp';
-    metadata: {
+    messaging_product?: 'whatsapp';
+    metadata?: {
       display_phone_number: string;
       phone_number_id: string;
     };
     contacts?: WhatsAppWebhookContact[];
     messages?: WhatsAppWebhookMessage[];
     statuses?: WhatsAppWebhookStatus[];
+    // Field-specific values
+    decision?: string;
+    requested_verified_name?: string;
+    rejection_reason?: string | null;
+    // Add other field-specific properties as needed
   };
-  field: 'messages';
+  field: WABAWebhookField;
 }
 
 export interface WhatsAppWebhookContact {

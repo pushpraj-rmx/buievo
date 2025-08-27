@@ -1,0 +1,30 @@
+import { Router } from "express";
+import { SegmentController } from "../controllers/segment.controller";
+
+const router = Router();
+
+// Get all segments
+router.get("/", SegmentController.getSegments);
+
+// Get single segment by ID
+router.get("/:id", SegmentController.getSegment);
+
+// Create new segment
+router.post("/", SegmentController.createSegment);
+
+// Update segment
+router.put("/:id", SegmentController.updateSegment);
+
+// Delete segment
+router.delete("/:id", SegmentController.deleteSegment);
+
+// Get segment statistics
+router.get("/stats", SegmentController.getSegmentStats);
+
+// Add contacts to segment
+router.post("/:id/contacts", SegmentController.addContactsToSegment);
+
+// Remove contacts from segment
+router.delete("/:id/contacts", SegmentController.removeContactsFromSegment);
+
+export { router as segmentRoutes };

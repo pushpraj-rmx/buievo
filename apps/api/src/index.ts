@@ -4,11 +4,13 @@ import cors from "cors";
 import authRoutes from "./routes/auth.routes";
 import healthRoutes from "./routes/health.routes";
 import contactRoutes from "./routes/contact.routes";
+import segmentRoutes from "./routes/segment.routes";
 import mediaRoutes from "./routes/media.routes";
 import templateRoutes from "./routes/template.routes";
 import campaignRoutes from "./routes/campaign.routes";
 import conversationRoutes from "./routes/conversation.routes";
 import webhookRoutes from "./routes/webhook.routes";
+import wabaRoutes from "./routes/waba.routes";
 import configRoutes from "./routes/config.routes";
 import { redis } from "@whatssuite/redis"; // Import redis here
 
@@ -41,11 +43,13 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/contacts", contactRoutes);
+app.use("/api/v1/segments", segmentRoutes);
 app.use("/api/v1/media", mediaRoutes);
 app.use("/api/v1/templates", templateRoutes);
 app.use("/api/v1/campaigns", campaignRoutes);
 app.use("/api/v1/conversations", conversationRoutes);
 app.use("/api/v1/webhook", webhookRoutes);
+app.use("/api/v1/waba", wabaRoutes);
 app.use("/api/v1/config", configRoutes);
 
 startServer().catch((error) => {

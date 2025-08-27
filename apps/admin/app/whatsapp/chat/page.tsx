@@ -495,7 +495,7 @@ export default function WhatsAppChatPage() {
                 asChild
                 className="bg-[#00a884] hover:bg-[#008f72] text-white"
               >
-                <Link href="/whatsapp/contacts">
+                <Link href="/contacts">
                   <Users className="w-4 h-4 mr-2" />
                   Go to Contacts
                 </Link>
@@ -845,7 +845,7 @@ export default function WhatsAppChatPage() {
                     asChild
                     className="bg-[#00a884] hover:bg-[#008f72] text-white"
                   >
-                    <Link href="/whatsapp/contacts">
+                    <Link href="/contacts">
                       <Plus className="w-4 h-4 mr-2" />
                       Add Contacts
                     </Link>

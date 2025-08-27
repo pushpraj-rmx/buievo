@@ -134,6 +134,9 @@ export const createContact = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Name and phone are required" });
     }
 
+    // Convert empty email string to null
+    const emailValue = email === "" ? null : email;
+
     // Check if phone already exists
     const existingContact = await prisma.contact.findUnique({
       where: { phone },
@@ -149,7 +152,7 @@ export const createContact = async (req: Request, res: Response) => {
     const contact = await prisma.contact.create({
       data: {
         name,
-        email,
+        email: emailValue,
         phone,
         status,
         comment,
@@ -176,6 +179,9 @@ export const updateContact = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { name, email, phone, status, comment, segmentIds } = req.body;
+
+    // Convert empty email string to null
+    const emailValue = email === "" ? null : email;
 
     // Check if contact exists
     const existingContact = await prisma.contact.findUnique({
@@ -204,7 +210,7 @@ export const updateContact = async (req: Request, res: Response) => {
       where: { id },
       data: {
         name,
-        email,
+        email: emailValue,
         phone,
         status,
         comment,
@@ -277,6 +283,9 @@ export const bulkImportContacts = async (req: Request, res: Response) => {
           continue;
         }
 
+        // Convert empty email string to null
+        const emailValue = email === "" ? null : email;
+
         // Check if phone already exists
         const existingContact = await prisma.contact.findUnique({
           where: { phone },
@@ -291,7 +300,7 @@ export const bulkImportContacts = async (req: Request, res: Response) => {
         await prisma.contact.create({
           data: {
             name,
-            email,
+            email: emailValue,
             phone,
             status,
             comment,

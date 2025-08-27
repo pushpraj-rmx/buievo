@@ -45,7 +45,7 @@ export interface WorkerAreaConfig {
 }
 
 export interface ThemeConfig {
-  mode: 'light' | 'dark' | 'system';
+  mode: 'light' | 'dark';
   primaryColor: string;
   accentColor: string;
 }
@@ -138,7 +138,7 @@ export const defaultConfig: AppConfig = {
     clearAfterDays: 7,
   },
   theme: {
-    mode: 'system',
+    mode: 'light',
     primaryColor: '#3b82f6',
     accentColor: '#8b5cf6',
   },

@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Logo } from "@/components/ui/logo";
 import { WorkerAreaToggle } from "./worker-area-toggle";
+import { ThemeToggle } from "./theme-toggle";
 
 interface SiteHeaderProps {
   workerAreaOpen: boolean;
@@ -20,8 +22,10 @@ export function SiteHeader({
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-base font-medium">WhatsSuite Admin</h1>
+        <Logo size={20} className="mr-2" />
+        <h1 className="text-base font-medium">Whatssuite Admin</h1>
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
           <WorkerAreaToggle
             isOpen={workerAreaOpen}
             onToggle={onWorkerAreaToggle}

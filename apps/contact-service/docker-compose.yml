@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  contact-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=production
+      - CONTACT_SERVICE_PORT=3003
+      - CONTACT_SERVICE_DATABASE_URL=postgresql://postgres:password@postgres:5432/contact_service
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3002}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    depends_on:
+      - postgres
+    networks:
+      - whatssuite-network
+    restart: unless-stopped
+    command: sh -c "npx prisma migrate deploy && npx prisma generate && npm start"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=contact_service
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - whatssuite-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  whatssuite-network:
+    driver: bridge

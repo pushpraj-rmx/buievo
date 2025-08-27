@@ -7,6 +7,7 @@ import {
   IconNotification,
   IconUserCircle,
 } from "@tabler/icons-react";
+import { Moon, Sun } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -24,6 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useThemeSync } from "@/hooks/use-theme-sync";
 
 export function NavUser({
   user,
@@ -35,6 +37,7 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const { theme, setTheme } = useThemeSync();
 
   return (
     <SidebarMenu>
@@ -91,6 +94,17 @@ export function NavUser({
               <DropdownMenuItem>
                 <IconNotification />
                 Notifications
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => setTheme("light")}>
+                <Sun className="mr-2 h-4 w-4" />
+                <span>Light Theme</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <Moon className="mr-2 h-4 w-4" />
+                <span>Dark Theme</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

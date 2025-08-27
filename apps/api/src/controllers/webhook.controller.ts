@@ -12,7 +12,10 @@ import type {
   WhatsAppWebhookStatus,
   ApiResponse 
 } from "@whatssuite/types";
+import { redis } from "@whatssuite/redis";
+const MESSAGE_QUEUE_CHANNEL = "message-queue";
 
+// This is the main function that handles incoming webhooks from Meta.
 export const handleWebhook = async (req: Request, res: Response) => {
   const requestId = generateRequestId();
   const logger = createRequestLogger(requestId, "WEBHOOK");
@@ -20,133 +23,154 @@ export const handleWebhook = async (req: Request, res: Response) => {
   logger.info("Webhook request received", {
     method: req.method,
     url: req.url,
-    headers: {
-      "user-agent": req.headers["user-agent"],
-      "content-type": req.headers["content-type"],
-      "content-length": req.headers["content-length"],
-    },
     query: req.query,
-    bodySize: req.body ? JSON.stringify(req.body).length : 0,
   });
 
-  try {
-    // Handle webhook verification (GET request)
-    if (
-      req.method === "GET" &&
-      req.query["hub.mode"] === "subscribe" &&
-      req.query["hub.verify_token"]
-    ) {
-      logger.info("Processing webhook verification request", {
-        mode: req.query["hub.mode"],
-        verifyToken: req.query["hub.verify_token"],
-        challenge: req.query["hub.challenge"],
-      });
+  // Handle webhook verification for initial setup with Meta.
+  if (
+    req.method === "GET" &&
+    req.query["hub.mode"] === "subscribe" &&
+    req.query["hub.verify_token"]
+  ) {
+    logger.info("Processing webhook verification request");
+    const verifyToken = process.env.WEBHOOK_VERIFY_TOKEN;
 
-      const verifyToken = process.env.WEBHOOK_VERIFY_TOKEN;
-      const challenge = req.query["hub.challenge"];
-
-      if (req.query["hub.verify_token"] === verifyToken) {
-        logger.info("Webhook verification successful", { challenge });
-        webhookMonitor.setVerificationStatus("verified");
-        res.status(200).send(challenge);
-        return;
-      } else {
-        logger.warn("Webhook verification failed - invalid token", {
-          providedToken: req.query["hub.verify_token"],
-          expectedToken: verifyToken ? "***" : "NOT_SET",
-        });
-        res.status(403).send("Forbidden");
-        return;
-      }
+    if (req.query["hub.verify_token"] === verifyToken) {
+      logger.info("Webhook verification successful");
+      webhookMonitor.setVerificationStatus("verified");
+      res.status(200).send(req.query["hub.challenge"]);
+    } else {
+      logger.warn("Webhook verification failed - invalid token");
+      res.status(403).send("Forbidden");
     }
+    return;
+  }
 
-    // Handle incoming messages and status updates (POST request)
-    if (req.method === "POST") {
+  // Handle incoming messages and status updates.
+  if (req.method === "POST") {
+    // CRITICAL: Acknowledge the webhook immediately with a 200 OK.
+    // Meta requires a fast response, otherwise it will timeout and resend the webhook.
+    res.status(200).send("OK");
+
+    // Now, process the webhook payload asynchronously.
+    try {
       const { body } = req;
-
-      // Record webhook received
       webhookMonitor.recordWebhookReceived();
-      logger.info("Webhook received and recorded", {
-        object: body.object,
-        entryCount: body.entry?.length || 0,
-      });
-
-      logger.info("Processing POST webhook", {
+      logger.info("Webhook received and recorded, processing will now start.", {
         object: body.object,
         entryCount: body.entry?.length || 0,
       });
 
       if (body.object === "whatsapp_business_account") {
         for (const entry of body.entry) {
-          logger.debug("Processing webhook entry", {
-            id: entry.id,
-            time: entry.time,
-            changesCount: entry.changes?.length || 0,
-          });
-
           for (const change of entry.changes) {
-            logger.debug("Processing webhook change", {
-              field: change.field,
-              value: {
-                messagingProduct: change.value.messaging_product,
-                metadata: change.value.metadata,
-                messagesCount: change.value.messages?.length || 0,
-                statusesCount: change.value.statuses?.length || 0,
-              },
-            });
+            logger.info(`Processing webhook field: ${change.field}`);
+            
+            // Handle different webhook field types
+            switch (change.field) {
+              case 'messages':
+                if (change.value.messages) {
+                  logger.info(`Processing ${change.value.messages.length} incoming message(s).`);
+                  for (const message of change.value.messages) {
+                    (async () => {
+                      await handleIncomingMessage(message, logger);
+                    })().catch(e => logger.error("Error processing message in background", { error: e }));
+                  }
+                }
+                break;
 
-            if (change.value.messages) {
-              logger.info("Processing incoming messages", {
-                count: change.value.messages.length,
-                messages: change.value.messages.map((m: WhatsAppWebhookMessage) => ({
-                  id: m.id,
-                  from: m.from,
-                  type: m.type,
-                  hasText: !!m.text,
-                })),
-              });
+              case 'statuses':
+                if (change.value.statuses) {
+                  logger.info(`Processing ${change.value.statuses.length} status update(s).`);
+                  for (const status of change.value.statuses) {
+                    (async () => {
+                      await handleStatusUpdate(status, logger);
+                    })().catch(e => logger.error("Error processing status in background", { error: e }));
+                  }
+                }
+                break;
 
-              // Handle incoming messages
-              for (const message of change.value.messages) {
-                logger.info("Starting to process message", {
-                  messageId: message.id,
-                  from: message.from,
-                  type: message.type,
-                  fullMessage: JSON.stringify(message),
-                });
-                await handleIncomingMessage(message, logger);
-              }
-            }
+              case 'account_alerts':
+                logger.info("Processing account alerts", { value: change.value });
+                // Handle account alerts
+                break;
 
-            if (change.value.statuses) {
-              logger.info("Processing status updates", {
-                count: change.value.statuses.length,
-              });
+              case 'account_review_update':
+                logger.info("Processing account review update", { value: change.value });
+                // Handle account review updates
+                break;
 
-              // Handle message status updates
-              for (const status of change.value.statuses) {
-                await handleStatusUpdate(status, logger);
-              }
+              case 'account_update':
+                logger.info("Processing account update", { value: change.value });
+                // Handle account updates
+                break;
+
+              case 'business_capability_update':
+                logger.info("Processing business capability update", { value: change.value });
+                // Handle business capability updates
+                break;
+
+              case 'message_template_components_update':
+                logger.info("Processing template components update", { value: change.value });
+                // Handle template component updates
+                break;
+
+              case 'message_template_quality_update':
+                logger.info("Processing template quality update", { value: change.value });
+                // Handle template quality updates
+                break;
+
+              case 'message_template_status_update':
+                logger.info("Processing template status update", { value: change.value });
+                // Handle template status updates
+                break;
+
+              case 'phone_number_name_update':
+                logger.info("Processing phone number name update", { value: change.value });
+                // Handle phone number name updates
+                break;
+
+              case 'phone_number_quality_update':
+                logger.info("Processing phone number quality update", { value: change.value });
+                // Handle phone number quality updates
+                break;
+
+              case 'security':
+                logger.info("Processing security update", { value: change.value });
+                // Handle security updates
+                break;
+
+              case 'template_category_update':
+                logger.info("Processing template category update", { value: change.value });
+                // Handle template category updates
+                break;
+
+              default:
+                logger.warn(`Unhandled webhook field: ${change.field}`, { value: change.value });
+                break;
             }
           }
         }
       } else {
         logger.warn("Unknown webhook object type", { object: body.object });
       }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error("Webhook processing failed", {
+        error: errorMessage,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      webhookMonitor.recordWebhookError(errorMessage);
+      // Note: We don't send a 500 response here because we've already sent a 200.
+      // The error is logged for debugging.
     }
-
-    logger.info("Webhook processing completed successfully");
-    res.status(200).send("OK");
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logger.error("Webhook processing failed", {
-      error: errorMessage,
-      stack: error instanceof Error ? error.stack : undefined,
-    });
-    webhookMonitor.recordWebhookError(errorMessage);
-    res.status(500).send("Internal Server Error");
+    return; // End the function here since response is already sent.
   }
+
+  // If the method is not GET or POST, it's not supported.
+  res.status(405).send("Method Not Allowed");
 };
+
 
 // Test endpoint to simulate receiving a message
 export const testReceiveMessage = async (req: Request, res: Response) => {
@@ -343,199 +367,139 @@ export const debugWebhook = async (req: Request, res: Response) => {
   }
 };
 
+// Simple test endpoint using only phone numbers
+export const testSendMessage = async (req: Request, res: Response) => {
+  const requestId = generateRequestId();
+  const logger = createRequestLogger(requestId, "TEST_SEND");
+
+  logger.info("Test send message request", {
+    body: req.body,
+    headers: req.headers,
+  });
+
+  try {
+    const { phoneNumber, message } = req.body;
+
+    if (!phoneNumber || !message) {
+      logger.warn("Test send message - missing required fields", {
+        phoneNumber: !!phoneNumber,
+        message: !!message,
+      });
+      return res
+        .status(400)
+        .json({ error: "phoneNumber and message are required" });
+    }
+
+    // Normalize phone number
+    const normalizedPhone = phoneNumber.startsWith("+") ? phoneNumber : `+${phoneNumber}`;
+
+    logger.info("Sending test message", {
+      phoneNumber: normalizedPhone,
+      message,
+    });
+
+    // Send message directly using phone number
+    const jobPayload = {
+      phoneNumber: normalizedPhone,
+      message: message, // Send as text message instead of template
+    };
+
+    // Publish to Redis channel
+    await redis.publish(MESSAGE_QUEUE_CHANNEL, JSON.stringify(jobPayload));
+
+    logger.info("Test message queued successfully");
+    res.json({ 
+      success: true, 
+      message: "Message queued for sending",
+      phoneNumber: normalizedPhone 
+    });
+  } catch (error) {
+    logger.error("Test send message failed", {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 async function handleIncomingMessage(message: WhatsAppWebhookMessage, logger: any) {
   logger.info("Processing incoming message", {
     whatsappId: message.id,
     from: message.from,
     type: message.type,
-    timestamp: message.timestamp,
-    hasText: !!message.text,
-    hasImage: !!message.image,
-    hasDocument: !!message.document,
   });
 
   try {
     const { from, id, timestamp, type, text, image, document } = message;
 
-    logger.info("Message data extracted", {
-      from,
-      id,
-      timestamp,
-      type,
-      hasText: !!text,
-      hasImage: !!image,
-      hasDocument: !!document,
-    });
-
     // Normalize phone number for consistent contact lookup
-    let normalizedPhone = from;
+    let normalizedPhone = from.startsWith("+") ? from.substring(1) : from;
 
-    // Remove + prefix if present
-    if (normalizedPhone.startsWith("+")) {
-      normalizedPhone = normalizedPhone.substring(1);
+    // Specific logic for Indian numbers if needed, can be expanded
+    if (normalizedPhone.length === 10 && !normalizedPhone.startsWith("91")) {
+      normalizedPhone = `91${normalizedPhone}`;
     }
-
-    // Handle country code - ensure consistent format
-    let phoneWithCountryCode = normalizedPhone;
-
-    // If it's exactly 10 digits, add country code 91
-    if (normalizedPhone.length === 10) {
-      phoneWithCountryCode = `91${normalizedPhone}`;
-    }
-    // If it's 12 digits and starts with 91, keep as is
-    else if (
-      normalizedPhone.length === 12 &&
-      normalizedPhone.startsWith("91")
-    ) {
-      phoneWithCountryCode = normalizedPhone;
-    }
-    // If it's 11 digits and starts with 91, keep as is
-    else if (
-      normalizedPhone.length === 11 &&
-      normalizedPhone.startsWith("91")
-    ) {
-      phoneWithCountryCode = normalizedPhone;
-    }
-
-    // Add + prefix for consistency with existing contacts
-    const phoneWithPlus = `+${phoneWithCountryCode}`;
-    const phoneWithoutPlus = phoneWithCountryCode;
+    
+    const phoneWithPlus = `+${normalizedPhone}`;
 
     logger.info("Phone number normalization", {
       original: from,
       normalized: normalizedPhone,
-      withPlus: phoneWithPlus,
-      withoutPlus: phoneWithoutPlus,
+      final: phoneWithPlus,
     });
 
-    // Find existing contact with either format
-    let contact = await prisma.contact.findFirst({
-      where: {
-        OR: [
-          { phone: phoneWithPlus },
-          { phone: phoneWithoutPlus },
-          { phone: from }, // Also check original format
-        ],
+    // Find or create the contact
+    let contact = await prisma.contact.upsert({
+      where: { phone: phoneWithPlus },
+      update: { phone: phoneWithPlus }, // Ensure consistent format
+      create: {
+        name: `WhatsApp User (${phoneWithPlus})`,
+        phone: phoneWithPlus,
+        status: "active",
       },
     });
 
-    if (!contact) {
-      logger.info("Creating new contact", { phone: phoneWithPlus });
+    logger.info("Contact found or created", { contactId: contact.id });
 
-      // Create contact with + prefix for consistency
-      contact = await prisma.contact.create({
-        data: {
-          name: `WhatsApp User (${phoneWithPlus})`,
-          phone: phoneWithPlus,
-          status: "active",
-        },
-      });
-      logger.info("Contact created successfully", {
-        contactId: contact.id,
-        name: contact.name,
-        phone: contact.phone,
-      });
-    } else {
-      logger.info("Found existing contact", {
-        contactId: contact.id,
-        name: contact.name,
-        phone: contact.phone,
-        originalPhone: from,
-      });
-
-      // Update phone number to consistent format if different
-      if (contact.phone !== phoneWithPlus) {
-        logger.info("Updating contact phone number to consistent format", {
-          oldPhone: contact.phone,
-          newPhone: phoneWithPlus,
-        });
-
-        contact = await prisma.contact.update({
-          where: { id: contact.id },
-          data: { phone: phoneWithPlus },
-        });
-      }
-    }
-
-    // Find or create conversation
+    // Find or create the conversation
     let conversation = await prisma.conversation.findFirst({
       where: { contactId: contact.id },
     });
 
     if (!conversation) {
       logger.info("Creating new conversation", { contactId: contact.id });
-
       conversation = await prisma.conversation.create({
         data: { contactId: contact.id },
       });
-      logger.info("Conversation created successfully", {
-        conversationId: conversation.id,
-        contactId: conversation.contactId,
-      });
-    } else {
-      logger.debug("Found existing conversation", {
-        conversationId: conversation.id,
-        contactId: conversation.contactId,
-      });
     }
 
-    // Determine message content and type
-    let content = "";
-    let messageType = "text";
-
-    if (type === "text" && text) {
-      content = text.body;
-      logger.debug("Processing text message", {
-        content: content.substring(0, 100),
-      });
-    } else if (type === "image" && image) {
-      content = image.caption || "Image";
-      messageType = "image";
-      logger.debug("Processing image message", {
-        caption: image.caption,
-        mimeType: image.mime_type,
-        sha256: image.sha256,
-        id: image.id,
-      });
-    } else if (type === "document" && document) {
-      content = document.caption || document.filename || "Document";
-      messageType = "document";
-      logger.debug("Processing document message", {
-        filename: document.filename,
-        caption: document.caption,
-        mimeType: document.mime_type,
-        sha256: document.sha256,
-        id: document.id,
-      });
-    } else {
-      content = `[${type} message]`;
-      messageType = type;
-      logger.debug("Processing unknown message type", { type, content });
-    }
-
-    // Check if message already exists to handle duplicate webhooks
-    logger.info("Checking for existing message", { whatsappId: id });
-
-    let dbMessage = await prisma.message.findUnique({
+    // Check for duplicate messages to prevent reprocessing
+    const existingMessage = await prisma.message.findUnique({
       where: { whatsappId: id },
     });
 
-    if (dbMessage) {
-      logger.info("Message already exists, skipping duplicate", {
-        whatsappId: id,
-        dbMessageId: dbMessage.id,
-      });
-    } else {
-      logger.info("Creating new message in database", {
-        whatsappId: id,
-        from,
-        content: content.substring(0, 100),
-        type: messageType,
-        conversationId: conversation.id,
-      });
+    if (existingMessage) {
+      logger.warn("Duplicate message received, skipping.", { whatsappId: id });
+      return;
+    }
 
-      // Store the message
-      dbMessage = await prisma.message.create({
+    // Determine message content
+    let content = "";
+    let messageType = type;
+
+    if (type === "text" && text) {
+      content = text.body;
+    } else if (type === "image" && image) {
+      content = image.caption || "[Image]";
+    } else if (type === "document" && document) {
+      content = document.caption || document.filename || "[Document]";
+    } else {
+      content = `[Unsupported message type: ${type}]`;
+    }
+
+    // Create the message and update the conversation in a transaction
+    await prisma.$transaction([
+      prisma.message.create({
         data: {
           whatsappId: id,
           from,
@@ -547,59 +511,29 @@ async function handleIncomingMessage(message: WhatsAppWebhookMessage, logger: an
           direction: "inbound",
           conversationId: conversation.id,
         },
-      });
-
-      logger.info("Message stored in database successfully", {
-        dbMessageId: dbMessage.id,
-        whatsappId: dbMessage.whatsappId,
-        type: dbMessage.type,
-        direction: dbMessage.direction,
-        status: dbMessage.status,
-      });
-
-      // Update conversation's last message timestamp and increment unread count
-      await prisma.conversation.update({
+      }),
+      prisma.conversation.update({
         where: { id: conversation.id },
         data: {
           lastMessageAt: new Date(parseInt(timestamp) * 1000),
-          unreadCount: {
-            increment: 1,
-          },
+          unreadCount: { increment: 1 },
         },
-      });
+      }),
+    ]);
 
-      logger.info("Conversation updated", {
-        conversationId: conversation.id,
-        lastMessageAt: new Date(parseInt(timestamp) * 1000),
-        unreadCountIncremented: true,
-      });
-    }
-
-    logger.info("Incoming message processing completed", {
-      dbMessageId: dbMessage.id,
+    logger.info("Incoming message processed and stored successfully", {
       whatsappId: id,
-      from,
-      type: messageType,
+      contactId: contact.id,
+      conversationId: conversation.id,
     });
+
   } catch (error) {
     logger.error("Failed to process incoming message", {
       whatsappId: message.id,
-      from: message.from,
       error: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
     });
-
-    // Record the error in webhook monitor
-    webhookMonitor.recordWebhookError(
-      `Message processing failed: ${error instanceof Error ? error.message : String(error)}`,
-    );
-
-    // Also log to console for immediate visibility
-    console.error("WEBHOOK ERROR:", {
-      whatsappId: message.id,
-      from: message.from,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    webhookMonitor.recordWebhookError(`Message processing failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -607,15 +541,12 @@ async function handleStatusUpdate(status: WhatsAppWebhookStatus, logger: any) {
   logger.info("Processing status update", {
     whatsappId: status.id,
     status: status.status,
-    timestamp: status.timestamp,
-    recipientId: status.recipient_id,
   });
 
   try {
     const { id, status: messageStatus, timestamp } = status;
 
-    // Find message by WhatsApp ID and update status
-    const updateResult = await prisma.message.updateMany({
+    const result = await prisma.message.updateMany({
       where: { whatsappId: id },
       data: {
         status: messageStatus,
@@ -623,20 +554,18 @@ async function handleStatusUpdate(status: WhatsAppWebhookStatus, logger: any) {
       },
     });
 
-    logger.info("Status update processed", {
-      whatsappId: id,
-      newStatus: messageStatus,
-      recordsUpdated: updateResult.count,
-      timestamp: new Date(parseInt(timestamp) * 1000),
-    });
-
-    if (updateResult.count === 0) {
+    if (result.count > 0) {
+      logger.info("Message status updated successfully", {
+        whatsappId: id,
+        newStatus: messageStatus,
+      });
+    } else {
       logger.warn("No message found for status update", { whatsappId: id });
     }
+
   } catch (error) {
     logger.error("Failed to process status update", {
       whatsappId: status.id,
-      status: status.status,
       error: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
     });

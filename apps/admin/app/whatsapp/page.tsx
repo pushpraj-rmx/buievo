@@ -47,15 +47,7 @@ export default function WhatsAppPage() {
       bgColor: "bg-green-50",
       comingSoon: false,
     },
-    {
-      title: "Contacts",
-      description: "Manage your contact lists and segments",
-      icon: Users,
-      href: "/whatsapp/contacts",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
-      comingSoon: false,
-    },
+
     {
       title: "Analytics",
       description: "View campaign performance and delivery reports",
