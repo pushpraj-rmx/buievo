@@ -225,8 +225,8 @@ export function validateEnvironment(): string[] {
   const requiredEnvVars = [
     'REDIS_URL',
     'DATABASE_URL',
-    'WHATSAPP_API_URL',
-    'WHATSAPP_API_TOKEN',
+    'PHONE_NUMBER_ID',
+    'ACCESS_TOKEN',
   ];
 
   for (const envVar of requiredEnvVars) {
@@ -252,14 +252,6 @@ export function validateEnvironment(): string[] {
     }
   }
 
-  if (process.env.WHATSAPP_API_URL) {
-    try {
-      new URL(process.env.WHATSAPP_API_URL);
-    } catch {
-      errors.push('Invalid WHATSAPP_API_URL format');
-    }
-  }
-
   return errors;
 }
 
@@ -269,8 +261,8 @@ export function getEnvironmentConfig(): EnvironmentConfig {
     NODE_ENV: process.env.NODE_ENV || 'development',
     REDIS_URL: process.env.REDIS_URL || '',
     DATABASE_URL: process.env.DATABASE_URL || '',
-    WHATSAPP_API_URL: process.env.WHATSAPP_API_URL || '',
-    WHATSAPP_API_TOKEN: process.env.WHATSAPP_API_TOKEN || '',
+    PHONE_NUMBER_ID: process.env.PHONE_NUMBER_ID || '',
+    ACCESS_TOKEN: process.env.ACCESS_TOKEN || '',
     WORKER_MAX_CONCURRENT_JOBS: process.env.WORKER_MAX_CONCURRENT_JOBS,
     WORKER_JOB_TIMEOUT: process.env.WORKER_JOB_TIMEOUT,
     WORKER_RETRY_DELAY: process.env.WORKER_RETRY_DELAY,

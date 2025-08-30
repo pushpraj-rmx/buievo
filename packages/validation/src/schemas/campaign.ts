@@ -5,10 +5,7 @@ import {
   nameSchema, 
   descriptionSchema, 
   uuidSchema,
-  statusSchema,
   paginationSchema,
-  filterParamsSchema,
-  searchParamsSchema,
   dateSchema,
   futureDateSchema
 } from "./base";

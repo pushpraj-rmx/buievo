@@ -152,8 +152,8 @@ export interface EnvironmentConfig {
   NODE_ENV: string;
   REDIS_URL: string;
   DATABASE_URL: string;
-  WHATSAPP_API_URL: string;
-  WHATSAPP_API_TOKEN: string;
+  PHONE_NUMBER_ID: string;
+  ACCESS_TOKEN: string;
   WORKER_MAX_CONCURRENT_JOBS?: string;
   WORKER_JOB_TIMEOUT?: string;
   WORKER_RETRY_DELAY?: string;

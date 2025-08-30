@@ -159,7 +159,7 @@ export default function WhatsAppTemplatesPage() {
       } else {
         setValidationResult(null);
       }
-    } catch (error) {
+    } catch {
       setValidationResult(null);
     } finally {
       setValidating(false);
@@ -317,7 +317,7 @@ export default function WhatsAppTemplatesPage() {
         const json = await res.json();
         toast.error(json.message || "Failed to duplicate template");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to duplicate template");
     } finally {
       setDuplicateLoading(null);

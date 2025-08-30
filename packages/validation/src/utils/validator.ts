@@ -12,12 +12,12 @@ export class ValidationResultBuilder {
   private errors: ValidationError[] = [];
   private warnings: ValidationWarning[] = [];
 
-  addError(field: string, message: string, code: string, value?: any): this {
+  addError(field: string, message: string, code: string, value?: unknown): this {
     this.errors.push({ field, message, code, value });
     return this;
   }
 
-  addWarning(field: string, message: string, code: string, value?: any): this {
+  addWarning(field: string, message: string, code: string, value?: unknown): this {
     this.warnings.push({ field, message, code, value });
     return this;
   }
@@ -60,7 +60,7 @@ export function validateWithSchema<T>(
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
-        value: (err as any).received,
+        value: (err as { received: unknown }).received,
       }));
       return { success: false, errors };
     }
@@ -100,7 +100,7 @@ export function validatePartial<T>(
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
-        value: (err as any).received,
+        value: (err as { received: unknown }).received,
       }));
       return { success: false, errors };
     }
@@ -130,7 +130,7 @@ export async function validateAsync<T>(
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
-        value: (err as any).received,
+        value: (err as { received: unknown }).received,
       }));
       return { success: false, errors };
     }
@@ -164,7 +164,7 @@ export function validateWithMessages<T>(
           field,
           message: customMessage,
           code: err.code,
-          value: (err as any).received,
+          value: (err as { received: unknown }).received,
         };
       });
       return { success: false, errors };
@@ -221,7 +221,7 @@ export function validateBatch<T>(
 export function validateWithContext<T>(
   schema: z.ZodSchema<T>,
   data: unknown,
-  context: Record<string, any>
+  context: Record<string, unknown>
 ): { success: true; data: T } | { success: false; errors: ValidationError[] } {
   try {
     // Create a context-aware schema
@@ -238,7 +238,7 @@ export function validateWithContext<T>(
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
-        value: (err as any).received,
+        value: (err as { received: unknown }).received,
       }));
       return { success: false, errors };
     }
@@ -326,7 +326,7 @@ export function formatValidationWarnings(warnings: ValidationWarning[]): string 
 export function validationResultToResponse(
   result: ValidationResult,
   statusCode: number = 400
-): { statusCode: number; body: any } {
+): { statusCode: number; body: unknown } {
   return {
     statusCode,
     body: {

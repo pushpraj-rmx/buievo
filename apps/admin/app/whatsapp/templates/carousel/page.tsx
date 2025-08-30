@@ -25,8 +25,7 @@ import {
   AlertTriangle, 
   Info, 
   Upload,
-  Trash2,
-  Copy
+  Trash2
 } from "lucide-react";
 
 type CarouselCard = {
@@ -140,7 +139,7 @@ export default function CarouselTemplatePage() {
       } else {
         setValidationResult(null);
       }
-    } catch (error) {
+    } catch {
       setValidationResult(null);
     } finally {
       setValidating(false);
@@ -163,7 +162,7 @@ export default function CarouselTemplatePage() {
         toast.error(error.message || "Failed to upload media");
         return null;
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to upload media");
       return null;
     }
