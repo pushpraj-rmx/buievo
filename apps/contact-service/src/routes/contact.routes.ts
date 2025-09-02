@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router, type IRouter } from "express";
 import { ContactController } from "../controllers/contact.controller";
 
-const router = Router();
+const router: IRouter = Router();
 
 // Get all contacts with pagination and filters
 router.get("/", ContactController.getContacts);

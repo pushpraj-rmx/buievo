@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router, type IRouter } from "express";
 import { PrismaClient } from "@prisma/client";
 
-const router = Router();
+const router: IRouter = Router();
 const prisma = new PrismaClient();
 
 // Basic health check
@@ -46,7 +46,7 @@ router.get("/ready", async (req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.json({ status: "ready" });
-  } catch (error) {
+  } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
     res.status(503).json({ status: "not ready" });
   }
 });

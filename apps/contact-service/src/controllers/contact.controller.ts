@@ -30,6 +30,11 @@ export class ContactController {
   static async getContact(req: Request, res: Response) {
     try {
       const { id } = req.params;
+      
+      if (!id) {
+        throw createError("Contact ID is required", 400);
+      }
+      
       const contact = await contactService.getContactById(id);
       
       if (!contact) {
@@ -62,6 +67,10 @@ export class ContactController {
       const { id } = req.params;
       const updateData = req.body;
       
+      if (!id) {
+        throw createError("Contact ID is required", 400);
+      }
+      
       const contact = await contactService.updateContact(id, updateData);
       
       if (!contact) {
@@ -79,6 +88,11 @@ export class ContactController {
   static async deleteContact(req: Request, res: Response) {
     try {
       const { id } = req.params;
+      
+      if (!id) {
+        throw createError("Contact ID is required", 400);
+      }
+      
       const result = await contactService.deleteContact(id);
       
       if (!result) {

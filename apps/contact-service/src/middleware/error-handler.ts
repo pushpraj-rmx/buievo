@@ -10,7 +10,7 @@ export const errorHandler = (
   err: AppError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction // eslint-disable-line @typescript-eslint/no-unused-vars
 ) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
@@ -26,7 +26,15 @@ export const errorHandler = (
   });
 
   // Don't leak error details in production
-  const errorResponse = {
+  const errorResponse: {
+    error: {
+      message: string;
+      statusCode: number;
+      timestamp: string;
+      path: string;
+      stack?: string;
+    };
+  } = {
     error: {
       message: statusCode === 500 ? "Internal Server Error" : message,
       statusCode,
@@ -37,10 +45,7 @@ export const errorHandler = (
 
   // Add stack trace in development
   if (process.env.NODE_ENV === "development") {
-    errorResponse.error = {
-      ...errorResponse.error,
-      stack: err.stack,
-    };
+    errorResponse.error.stack = err.stack;
   }
 
   res.status(statusCode).json(errorResponse);

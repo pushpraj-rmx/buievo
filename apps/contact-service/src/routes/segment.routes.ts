@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router, type IRouter } from "express";
 import { SegmentController } from "../controllers/segment.controller";
 
-const router = Router();
+const router: IRouter = Router();
 
 // Get all segments
 router.get("/", SegmentController.getSegments);

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
   FileText,
-  Users,
   BarChart3,
   MessageCircle,
 } from "lucide-react";

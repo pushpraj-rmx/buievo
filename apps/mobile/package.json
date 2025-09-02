@@ -12,6 +12,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~5.0.4",
     "@whatssuite/types": "workspace:*",
     "expo": "~53.0.22",
     "expo-constants": "~17.0.0",

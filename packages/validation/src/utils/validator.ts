@@ -91,7 +91,7 @@ export function validatePartial<T>(
   partial: boolean = true
 ): { success: true; data: Partial<T> } | { success: false; errors: ValidationError[] } {
   try {
-    const partialSchema = partial ? (schema as any).partial() : schema;
+    const partialSchema = partial ? (schema as any).partial() : schema; // eslint-disable-line @typescript-eslint/no-explicit-any
     const result = partialSchema.parse(data);
     return { success: true, data: result };
   } catch (error) {

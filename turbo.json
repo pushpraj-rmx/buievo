@@ -5,10 +5,13 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["NODE_ENV", "LOG_LEVEL"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "web-build/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["NODE_ENV", "LOG_LEVEL"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]

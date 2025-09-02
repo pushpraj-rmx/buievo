@@ -29,7 +29,19 @@ export class ContactService {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {};
+    const where: {
+      OR?: Array<{
+        name?: { contains: string; mode: "insensitive" };
+        email?: { contains: string; mode: "insensitive" };
+        phone?: { contains: string; mode: "insensitive" };
+      }>;
+      status?: string;
+      segments?: {
+        some: {
+          id: string;
+        };
+      };
+    } = {};
     
     if (search) {
       where.OR = [
@@ -129,13 +141,7 @@ export class ContactService {
           name: validatedData.name,
           email: emailValue,
           phone: validatedData.phone,
-          status: validatedData.status || "active",
           comment: validatedData.comment,
-          segments: validatedData.segmentIds
-            ? {
-                connect: validatedData.segmentIds.map((id) => ({ id })),
-              }
-            : undefined,
         },
         include: {
           segments: true,
@@ -177,12 +183,6 @@ export class ContactService {
           phone: validatedData.phone,
           status: validatedData.status,
           comment: validatedData.comment,
-          segments: validatedData.segmentIds
-            ? {
-                set: [], // Clear existing segments
-                connect: validatedData.segmentIds.map((id) => ({ id })),
-              }
-            : undefined,
         },
         include: {
           segments: true,
@@ -221,7 +221,13 @@ export class ContactService {
   }
 
   // Bulk import contacts
-  async bulkImportContacts(contacts: any[], segmentIds?: string[]) {
+  async bulkImportContacts(contacts: Array<{
+    name: string;
+    email?: string;
+    phone: string;
+    status?: string;
+    comment?: string;
+  }>, segmentIds?: string[]) {
     const results = {
       created: 0,
       errors: [] as string[],
@@ -276,7 +282,14 @@ export class ContactService {
     const { format, segmentId, status } = options;
 
     // Build where clause
-    const where: any = {};
+    const where: {
+      status?: string;
+      segments?: {
+        some: {
+          id: string;
+        };
+      };
+    } = {};
     
     if (status && status !== "all") {
       where.status = status;
@@ -359,7 +372,15 @@ export class ContactService {
   }
 
   // Generate CSV from contacts
-  private generateCSV(contacts: any[]): string {
+  private generateCSV(contacts: Array<{
+    name: string;
+    email: string | null;
+    phone: string;
+    status: string;
+    comment: string | null;
+    segments: Array<{ name: string }>;
+    createdAt: Date;
+  }>): string {
     const headers = ["Name", "Email", "Phone", "Status", "Comment", "Segments", "Created At"];
     
     const rows = contacts.map((contact) => [
@@ -368,7 +389,7 @@ export class ContactService {
       contact.phone,
       contact.status,
       contact.comment || "",
-      contact.segments.map((s: any) => s.name).join("; "),
+      contact.segments.map((s: { name: string }) => s.name).join("; "),
       new Date(contact.createdAt).toLocaleDateString(),
     ]);
 

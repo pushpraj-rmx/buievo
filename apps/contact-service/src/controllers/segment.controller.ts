@@ -21,6 +21,11 @@ export class SegmentController {
   static async getSegment(req: Request, res: Response) {
     try {
       const { id } = req.params;
+      
+      if (!id) {
+        throw createError("Segment ID is required", 400);
+      }
+      
       const segment = await segmentService.getSegmentById(id);
       
       if (!segment) {
@@ -53,6 +58,10 @@ export class SegmentController {
       const { id } = req.params;
       const updateData = req.body;
       
+      if (!id) {
+        throw createError("Segment ID is required", 400);
+      }
+      
       const segment = await segmentService.updateSegment(id, updateData);
       
       if (!segment) {
@@ -70,6 +79,11 @@ export class SegmentController {
   static async deleteSegment(req: Request, res: Response) {
     try {
       const { id } = req.params;
+      
+      if (!id) {
+        throw createError("Segment ID is required", 400);
+      }
+      
       const result = await segmentService.deleteSegment(id);
       
       if (!result) {
@@ -100,6 +114,10 @@ export class SegmentController {
       const { id } = req.params;
       const { contactIds } = req.body;
       
+      if (!id) {
+        throw createError("Segment ID is required", 400);
+      }
+      
       if (!Array.isArray(contactIds)) {
         throw createError("contactIds must be an array", 400);
       }
@@ -117,6 +135,10 @@ export class SegmentController {
     try {
       const { id } = req.params;
       const { contactIds } = req.body;
+      
+      if (!id) {
+        throw createError("Segment ID is required", 400);
+      }
       
       if (!Array.isArray(contactIds)) {
         throw createError("contactIds must be an array", 400);

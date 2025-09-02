@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -12,7 +12,7 @@ import { logger } from "./utils/logger";
 // Load environment variables
 dotenv.config();
 
-const app = express();
+const app: Application = express();
 const PORT = process.env.CONTACT_SERVICE_PORT || 3003;
 
 // Middleware

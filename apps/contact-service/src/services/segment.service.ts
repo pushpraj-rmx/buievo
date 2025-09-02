@@ -52,7 +52,10 @@ export class SegmentService {
   }
 
   // Create new segment
-  async createSegment(data: any) {
+  async createSegment(data: {
+    name: string;
+    description?: string;
+  }) {
     try {
       // Validate input
       const validatedData = createSegmentSchema.parse(data);
@@ -90,7 +93,10 @@ export class SegmentService {
   }
 
   // Update segment
-  async updateSegment(id: string, data: any) {
+  async updateSegment(id: string, data: {
+    name?: string;
+    description?: string;
+  }) {
     try {
       // Validate input
       const validatedData = updateSegmentSchema.parse(data);
@@ -191,14 +197,13 @@ export class SegmentService {
         },
       },
       orderBy: {
-        _count: {
-          contacts: "desc",
-        },
+        name: "asc",
       },
     });
 
     const totalSegments = segments.length;
-    const totalContacts = segments.reduce((sum, segment) => sum + segment._count.contacts, 0);
+    // Calculate total contacts by querying separately
+    const totalContacts = await prisma.contact.count();
     const averageContactsPerSegment = totalSegments > 0 ? totalContacts / totalSegments : 0;
 
     return {
