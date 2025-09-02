@@ -127,10 +127,10 @@ This guide will help you deploy your WhatsSuite development version to a live se
 
 Once deployed, your services will be available at:
 
-- **Admin Dashboard**: `http://your-dev-server-ip:3002`
-- **Web Client**: `http://your-dev-server-ip:3000`
-- **API**: `http://your-dev-server-ip:3001`
-- **WhatsApp Service**: `http://your-dev-server-ip:3003`
+- **Admin Dashboard**: `http://your-dev-server-ip:3006`
+- **Web Client**: `http://your-dev-server-ip:3004`
+- **API**: `http://your-dev-server-ip:3005`
+- **WhatsApp Service**: `http://your-dev-server-ip:3007`
 
 ## 🔄 Development Workflow
 

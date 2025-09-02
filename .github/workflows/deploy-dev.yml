@@ -84,7 +84,7 @@ jobs:
         run: |
           echo "🎉 Development deployment completed successfully!"
           echo "📱 Services deployed:"
-          echo "   • Admin Dashboard: http://${{ secrets.VPS_HOST }}:3002"
-          echo "   • Web Client: http://${{ secrets.VPS_HOST }}:3000"
-          echo "   • API: http://${{ secrets.VPS_HOST }}:3001"
-          echo "   • WhatsApp Service: http://${{ secrets.VPS_HOST }}:3003"
+          echo "   • Admin Dashboard: http://${{ secrets.VPS_HOST }}:3006"
+          echo "   • Web Client: http://${{ secrets.VPS_HOST }}:3004"
+          echo "   • API: http://${{ secrets.VPS_HOST }}:3005"
+          echo "   • WhatsApp Service: http://${{ secrets.VPS_HOST }}:3007"
