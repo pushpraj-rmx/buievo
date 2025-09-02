@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 PROJECT_DIR="/opt/whatssuite-dev"
-GITHUB_REPO="your-username/whatssuite"  # Replace with your actual repo
+GITHUB_REPO="pushpraj-rmx/whatssuite"  # Your actual repository
 BRANCH="development"
 
 # Function to print colored output

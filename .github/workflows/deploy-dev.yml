@@ -20,7 +20,7 @@ jobs:
       - name: 🔑 Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
       - name: 🐳 Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -46,7 +46,7 @@ jobs:
       - name: 🚀 Deploy to Development Server
         run: |
           # Connect to your development server and deploy
-          ssh ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_HOST }} << 'EOF'
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             echo "🚀 Starting development deployment..."
             
             # Navigate to project directory
@@ -84,7 +84,7 @@ jobs:
         run: |
           echo "🎉 Development deployment completed successfully!"
           echo "📱 Services deployed:"
-          echo "   • Admin Dashboard: http://${{ secrets.DEV_DOMAIN }}:3002"
-          echo "   • Web Client: http://${{ secrets.DEV_DOMAIN }}:3000"
-          echo "   • API: http://${{ secrets.DEV_DOMAIN }}:3001"
-          echo "   • WhatsApp Service: http://${{ secrets.DEV_DOMAIN }}:3003"
+          echo "   • Admin Dashboard: http://${{ secrets.VPS_HOST }}:3002"
+          echo "   • Web Client: http://${{ secrets.VPS_HOST }}:3000"
+          echo "   • API: http://${{ secrets.VPS_HOST }}:3001"
+          echo "   • WhatsApp Service: http://${{ secrets.VPS_HOST }}:3003"
