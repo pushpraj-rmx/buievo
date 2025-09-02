@@ -235,3 +235,4 @@ export interface TemplateFilters {
   status?: string;
   category?: string;
 }
+

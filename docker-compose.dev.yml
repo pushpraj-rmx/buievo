@@ -1,136 +1,125 @@
 version: "3.8"
 
 services:
-  # Database
-  postgres:
+  postgres-dev:
     image: postgres:15-alpine
+    container_name: whatssuite_postgres_dev
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-whatssuite_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-slc6a5hlstlruFarenow}
-      POSTGRES_DB: ${POSTGRES_DB:-whatssuite}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./packages/db/prisma/migrations:/docker-entrypoint-initdb.d
+      POSTGRES_USER: ${POSTGRES_USER:-whatssuite_dev}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-whatssuite_dev}
     ports:
-      - "5432:5432"
+      - "5433:5432" # Different port to avoid conflicts
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-whatssuite_user} -d ${POSTGRES_DB:-whatssuite}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-whatssuite_dev} -d ${POSTGRES_DB:-whatssuite_dev}" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Redis for caching and queues
-  redis:
+  redis-dev:
     image: redis:7-alpine
+    container_name: whatssuite_redis_dev
     ports:
-      - "6379:6379"
+      - "6380:6379" # Different port to avoid conflicts
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # API Service
-  api:
+  api-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
-      target: api-dev
+      target: api
+    container_name: whatssuite_api_dev
     ports:
-      - "3001:3001"
+      - "3005:3005" # Different port
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://${POSTGRES_USER:-whatssuite_user}:${POSTGRES_PASSWORD:-slc6a5hlstlruFarenow}@postgres:5432/${POSTGRES_DB:-whatssuite}?schema=public
-      REDIS_URL: redis://redis:6379
-      PORT: 3001
-      # WhatsApp API credentials (from your existing .env)
-      PHONE_NUMBER_ID: ${PHONE_NUMBER_ID:-688539181002379}
-      ACCESS_TOKEN: ${ACCESS_TOKEN:-EAANy0uTZAlZAABPGVZC8LFYaZAj26nESEETRPD81CtIQmVccd1sUv0ZAW8cHMpZBF2oAg1CZBvIA72ZCBua05Hl3H5L0stfG6gv4YA1LO03j793Gd0hRtpIHpn8yb8sy8yF4YZBZAWSZBYbXOb1uV0FrPo6i1RusixCPM3LC5pvG7YX3NP8uOjkUGx6ti1DEGNFKQZDZD}
-      WABA_ID: ${WABA_ID:-1197846617229225}
-      WEBHOOK_VERIFY_TOKEN: ${WEBHOOK_VERIFY_TOKEN:-dd1818d035591543e99d6b6863d9a8f8abe24f37c737eee56c6c65585408a839}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-whatssuite_dev}:${POSTGRES_PASSWORD:-dev_password}@postgres-dev:5432/${POSTGRES_DB:-whatssuite_dev}?schema=public
+      REDIS_URL: redis://redis-dev:6379
+      PORT: 3005
+      PHONE_NUMBER_ID: ${PHONE_NUMBER_ID}
+      ACCESS_TOKEN: ${ACCESS_TOKEN}
+      WABA_ID: ${WABA_ID}
+      WEBHOOK_VERIFY_TOKEN: ${WEBHOOK_VERIFY_TOKEN}
       META_API_VERSION: ${META_API_VERSION:-v21.0}
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/apps/api/node_modules
     depends_on:
-      postgres:
+      postgres-dev:
         condition: service_healthy
-      redis:
+      redis-dev:
         condition: service_healthy
     restart: unless-stopped
-    command: ["pnpm", "--filter", "@whatssuite/api", "dev"]
+    volumes:
+      - ./apps/api:/app/apps/api
+      - ./packages:/app/packages
 
-  # WhatsApp Service
-  wapp-service:
+  wapp-service-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
-      target: wapp-service-dev
+      target: wapp-service
+    container_name: whatssuite_wapp_dev
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://${POSTGRES_USER:-whatssuite_user}:${POSTGRES_PASSWORD:-slc6a5hlstlruFarenow}@postgres:5432/${POSTGRES_DB:-whatssuite}?schema=public
-      REDIS_URL: redis://redis:6379
-      # WhatsApp API credentials
-      PHONE_NUMBER_ID: ${PHONE_NUMBER_ID:-688539181002379}
-      ACCESS_TOKEN: ${ACCESS_TOKEN:-EAANy0uTZAlZAABPGVZC8LFYaZAj26nESEETRPD81CtIQmVccd1sUv0ZAW8cHMpZBF2oAg1CZBvIA72ZCBua05Hl3H5L0stfG6gv4YA1LO03j793Gd0hRtpIHpn8yb8sy8yF4YZBZAWSZBYbXOb1uV0FrPo6i1RusixCPM3LC5pvG7YX3NP8uOjkUGx6ti1DEGNFKQZDZD}
-      WABA_ID: ${WABA_ID:-1197846617229225}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-whatssuite_dev}:${POSTGRES_PASSWORD:-dev_password}@postgres-dev:5432/${POSTGRES_DB:-whatssuite_dev}?schema=public
+      REDIS_URL: redis://redis-dev:6379
+      PHONE_NUMBER_ID: ${PHONE_NUMBER_ID}
+      ACCESS_TOKEN: ${ACCESS_TOKEN}
+      WABA_ID: ${WABA_ID}
       META_API_VERSION: ${META_API_VERSION:-v21.0}
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/apps/wapp-service/node_modules
     depends_on:
-      postgres:
+      postgres-dev:
         condition: service_healthy
-      redis:
+      redis-dev:
         condition: service_healthy
     restart: unless-stopped
-    command: ["pnpm", "--filter", "@whatssuite/wapp-service", "dev"]
+    volumes:
+      - ./apps/wapp-service:/app/apps/wapp-service
+      - ./packages:/app/packages
 
-  # Admin Dashboard
-  admin:
+  web-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
-      target: admin-dev
+      target: web
+    container_name: whatssuite_web_dev
     ports:
-      - "3002:3002"
+      - "3004:3004" # Different port
     environment:
       NODE_ENV: development
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/apps/admin/node_modules
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3005}
     depends_on:
-      api:
+      api-dev:
         condition: service_started
     restart: unless-stopped
-    command: ["pnpm", "--filter", "@whatssuite/admin", "dev", "--port", "3002"]
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
 
-  # Web Client
-  web:
+  admin-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
-      target: web-dev
+      target: admin
+    container_name: whatssuite_admin_dev
     ports:
-      - "3000:3000"
+      - "3003:3003" # Different port
     environment:
       NODE_ENV: development
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/apps/web/node_modules
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3005}
     depends_on:
-      api:
+      api-dev:
         condition: service_started
     restart: unless-stopped
-    command: ["pnpm", "--filter", "@whatssuite/web", "dev", "--port", "3000"]
+    volumes:
+      - ./apps/admin:/app/apps/admin
+      - ./packages:/app/packages
 
 volumes:
-  postgres_data:
+  postgres_dev_data:

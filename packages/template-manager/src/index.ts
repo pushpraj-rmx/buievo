@@ -1,3 +1,55 @@
+// Template Manager Package
+// Main entry point for WhatsApp Business API template management
+
+// Export new modular components
+export { createConfig, getValidationConfig, getMediaConfig } from './config.js';
+export type { 
+  TemplateManagerConfig, 
+  TemplateValidationConfig, 
+  MediaConfig, 
+  ConfigOptions 
+} from './config.js';
+
+export { 
+  TemplateManagerError,
+  TemplateConfigError,
+  TemplateValidationError,
+  TemplateApiError,
+  TemplateRateLimitError,
+  TemplateAuthError,
+  TemplateMediaError,
+  TemplateNotFoundError,
+  TemplateExistsError,
+  TemplateApprovalError,
+  TemplateNetworkError,
+  TemplateTimeoutError,
+  createErrorFromApiResponse,
+  createErrorFromNetworkError,
+  isRetryableError,
+  ERROR_CODES,
+} from './errors.js';
+export type { 
+  TemplateErrorDetails, 
+  MediaErrorDetails, 
+  ErrorCode 
+} from './errors.js';
+
+export { createLogger, TemplateLogger } from './logger.js';
+export type { 
+  LogLevel, 
+  LoggerOptions, 
+  LogContext 
+} from './logger.js';
+
+export { TemplateHttpClient } from './http-client.js';
+export type { 
+  HttpClientOptions, 
+  RateLimitInfo 
+} from './http-client.js';
+
+
+
+// Legacy imports for backward compatibility
 import "dotenv/config";
 import path from "path";
 import axios, { AxiosError } from "axios";
@@ -6,6 +58,7 @@ import axios, { AxiosError } from "axios";
 import { config } from "dotenv";
 config({ path: path.resolve(process.cwd(), "../../.env") });
 
+// Legacy interfaces for backward compatibility
 export interface TemplateButton {
   type: "QUICK_REPLY" | "URL" | "PHONE_NUMBER" | "COPY_CODE";
   text?: string;
@@ -76,6 +129,7 @@ export interface MediaAsset {
   size: number;
 }
 
+// Legacy TemplateManager class for backward compatibility
 export class TemplateManager {
   private readonly baseUrl: string;
   private readonly accessToken: string;
@@ -407,42 +461,27 @@ export class TemplateManager {
           if (component.cards) {
             preview += `🎠 CAROUSEL (${component.cards.length} cards):\n`;
             component.cards.forEach((card, cardIndex) => {
-              preview += `  📦 Card ${cardIndex + 1}:\n`;
+              preview += `  Card ${cardIndex + 1}:\n`;
               card.components.forEach((cardComponent) => {
                 switch (cardComponent.type) {
                   case "HEADER":
-                    preview += `    📷 Header: ${cardComponent.format || "IMAGE"}\n`;
+                    preview += `    📋 HEADER: ${cardComponent.format}\n`;
                     break;
                   case "BODY":
                     if (cardComponent.text) {
-                      let cardBodyText = cardComponent.text;
-                      Object.entries(variables).forEach(([key, value]) => {
-                        cardBodyText = cardBodyText.replace(new RegExp(key, 'g'), value);
-                      });
-                      preview += `    💬 Body: ${cardBodyText}\n`;
+                      preview += `    💬 BODY: ${cardComponent.text}\n`;
                     }
                     break;
                   case "FOOTER":
                     if (cardComponent.text) {
-                      let cardFooterText = cardComponent.text;
-                      Object.entries(variables).forEach(([key, value]) => {
-                        cardFooterText = cardFooterText.replace(new RegExp(key, 'g'), value);
-                      });
-                      preview += `    📝 Footer: ${cardFooterText}\n`;
+                      preview += `    📝 FOOTER: ${cardComponent.text}\n`;
                     }
                     break;
                   case "BUTTONS":
                     if (cardComponent.buttons) {
-                      preview += `    🔘 Buttons:\n`;
-                      cardComponent.buttons.forEach((button, index) => {
-                        preview += `      ${index + 1}. [${button.type}] ${button.text}`;
-                        if (button.type === "URL" && button.url) {
-                          preview += ` → ${button.url}`;
-                        }
-                        if (button.type === "PHONE_NUMBER" && button.phone_number) {
-                          preview += ` → ${button.phone_number}`;
-                        }
-                        preview += `\n`;
+                      preview += `    🔘 BUTTONS:\n`;
+                      cardComponent.buttons.forEach((button, buttonIndex) => {
+                        preview += `      ${buttonIndex + 1}. [${button.type}] ${button.text}\n`;
                       });
                     }
                     break;

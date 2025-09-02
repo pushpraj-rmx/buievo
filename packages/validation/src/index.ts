@@ -1,3 +1,22 @@
+// Validation schemas for WhatsSuite
+// Comprehensive validation system with Zod schemas
+
+// Base schemas
+export * from './schemas/base';
+
+// Authentication and authorization schemas
+export * from './schemas/auth';
+
+// Contact schemas
+export * from './schemas/contact';
+
+// Campaign schemas
+export * from './schemas/campaign';
+
+// Validation utilities
+export * from './utils/validator';
+
+// Legacy exports for backward compatibility
 import { z } from "zod";
 import type {
   CreateContactRequest,
@@ -9,7 +28,7 @@ import type {
   WhatsAppMessagePayload
 } from "@whatssuite/types";
 
-// Base validation schemas
+// Base validation schemas (legacy)
 export const phoneNumberSchema = z
   .string()
   .regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format")
@@ -30,7 +49,7 @@ export const paginationSchema = z.object({
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
-// Contact validation schemas
+// Contact validation schemas (legacy)
 export const createContactSchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name too long"),
   email: emailSchema,
@@ -42,7 +61,7 @@ export const createContactSchema = z.object({
 
 export const updateContactSchema = createContactSchema.partial();
 
-// Campaign validation schemas
+// Campaign validation schemas (legacy)
 export const createCampaignSchema = z.object({
   name: z.string().min(1, "Campaign name is required").max(100, "Campaign name too long"),
   description: z.string().max(500, "Description too long").optional(),
@@ -55,7 +74,7 @@ export const createCampaignSchema = z.object({
 
 export const updateCampaignSchema = createCampaignSchema.partial();
 
-// Template validation schemas
+// Template validation schemas (legacy)
 export const createTemplateSchema = z.object({
   name: z.string().min(1, "Template name is required").max(100, "Template name too long"),
   category: z.enum(["MARKETING", "UTILITY", "AUTHENTICATION"]),
@@ -72,7 +91,7 @@ export const createTemplateSchema = z.object({
 
 export const updateTemplateSchema = createTemplateSchema.partial();
 
-// Message validation schemas
+// Message validation schemas (legacy)
 export const sendMessageSchema = z.object({
   to: z.string().min(1, "Recipient is required"),
   contactId: z.string().uuid("Invalid contact ID"),
@@ -84,7 +103,7 @@ export const sendMessageSchema = z.object({
   filename: z.string().optional(),
 });
 
-// Segment validation schemas
+// Segment validation schemas (legacy)
 export const createSegmentSchema = z.object({
   name: z.string().min(1, "Segment name is required").max(100, "Segment name too long"),
   description: z.string().max(500, "Description too long").optional(),
@@ -100,7 +119,7 @@ export const createSegmentSchema = z.object({
 
 export const updateSegmentSchema = createSegmentSchema.partial();
 
-// Media validation schemas
+// Media validation schemas (legacy)
 export const uploadMediaSchema = z.object({
   file: z.instanceof(File, { message: "File is required" }),
   type: z.enum(["image", "document", "video", "audio"]),
@@ -108,7 +127,7 @@ export const uploadMediaSchema = z.object({
   filename: z.string().optional(),
 });
 
-// WhatsApp validation schemas
+// WhatsApp validation schemas (legacy)
 export const whatsAppMessageSchema = z.object({
   messaging_product: z.literal("whatsapp"),
   to: phoneNumberSchema,
@@ -146,7 +165,7 @@ export const whatsAppMessageSchema = z.object({
   }).optional(),
 });
 
-// Type exports for use in other packages
+// Type exports for use in other packages (legacy)
 export type CreateContactInput = z.infer<typeof createContactSchema>;
 export type UpdateContactInput = z.infer<typeof updateContactSchema>;
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
@@ -160,7 +179,7 @@ export type UploadMediaInput = z.infer<typeof uploadMediaSchema>;
 export type PaginationInput = z.infer<typeof paginationSchema>;
 export type WhatsAppMessageInput = z.infer<typeof whatsAppMessageSchema>;
 
-// Validation functions
+// Validation functions (legacy)
 export const validateContact = (data: unknown): CreateContactRequest => {
   const result = createContactSchema.parse(data);
   return result as CreateContactRequest;

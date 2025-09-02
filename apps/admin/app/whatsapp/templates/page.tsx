@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useEffect, useState, useCallback } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +38,19 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Plus, FileText, Eye, RefreshCw, Trash2, Copy, CheckCircle, AlertTriangle, Info, Copy as CopyIcon } from "lucide-react";
+import {
+  Loader2,
+  Plus,
+  FileText,
+  Eye,
+  RefreshCw,
+  Trash2,
+  Copy,
+  CheckCircle,
+  AlertTriangle,
+  Info,
+  Copy as CopyIcon,
+} from "lucide-react";
 
 type TemplateRow = {
   name: string;
@@ -94,7 +112,8 @@ export default function WhatsAppTemplatesPage() {
   const [duplicateLoading, setDuplicateLoading] = useState<string | null>(null);
   const [loadMoreLoading, setLoadMoreLoading] = useState(false);
   const [validating, setValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const [validationResult, setValidationResult] =
+    useState<ValidationResult | null>(null);
   const [showPreview, setShowPreview] = useState(false);
 
   const [selected, setSelected] = useState<TemplateDbData | null>(null);
@@ -102,20 +121,7 @@ export default function WhatsAppTemplatesPage() {
   // WhatsApp templates are always in English (en_US)
   const LANGUAGE = "en_US";
 
-  // Debounced validation
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (name.trim() || bodyText.trim()) {
-        validateTemplate();
-      } else {
-        setValidationResult(null);
-      }
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, [name, category, headerText, bodyText, footerText]);
-
-  async function validateTemplate() {
+  const validateTemplate = useCallback(async () => {
     if (!name.trim() || !bodyText.trim()) {
       setValidationResult(null);
       return;
@@ -127,7 +133,11 @@ export default function WhatsAppTemplatesPage() {
 
       // Add header if provided
       if (headerText.trim()) {
-        components.push({ type: "HEADER", format: "TEXT", text: headerText.trim() });
+        components.push({
+          type: "HEADER",
+          format: "TEXT",
+          text: headerText.trim(),
+        });
       }
 
       // Add body (required)
@@ -143,7 +153,7 @@ export default function WhatsAppTemplatesPage() {
         language: LANGUAGE,
         category,
         description: description.trim() || undefined,
-        tags: tags.trim() ? tags.split(',').map(t => t.trim()) : undefined,
+        tags: tags.trim() ? tags.split(",").map((t) => t.trim()) : undefined,
         components,
       };
 
@@ -152,21 +162,34 @@ export default function WhatsAppTemplatesPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      
+
       if (res.ok) {
         const result = await res.json();
         setValidationResult(result);
       } else {
         setValidationResult(null);
       }
-    } catch (error) {
+    } catch {
       setValidationResult(null);
     } finally {
       setValidating(false);
     }
-  }
+  }, [name, bodyText, headerText, footerText, category, tags, description]);
 
-  async function createTemplate() {
+  // Debounced validation
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (name.trim() || bodyText.trim()) {
+        validateTemplate();
+      } else {
+        setValidationResult(null);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [name, category, headerText, bodyText, footerText, validateTemplate]);
+
+  const createTemplate = useCallback(async () => {
     if (!name.trim()) {
       toast.error("Template name is required");
       return;
@@ -188,7 +211,11 @@ export default function WhatsAppTemplatesPage() {
 
       // Add header if provided
       if (headerText.trim()) {
-        components.push({ type: "HEADER", format: "TEXT", text: headerText.trim() });
+        components.push({
+          type: "HEADER",
+          format: "TEXT",
+          text: headerText.trim(),
+        });
       }
 
       // Add body (required)
@@ -204,7 +231,7 @@ export default function WhatsAppTemplatesPage() {
         language: LANGUAGE,
         category,
         description: description.trim() || undefined,
-        tags: tags.trim() ? tags.split(',').map(t => t.trim()) : undefined,
+        tags: tags.trim() ? tags.split(",").map((t) => t.trim()) : undefined,
         components,
       };
 
@@ -239,18 +266,27 @@ export default function WhatsAppTemplatesPage() {
     } finally {
       setCreating(false);
     }
-  }
+  }, [
+    name,
+    bodyText,
+    headerText,
+    footerText,
+    category,
+    description,
+    tags,
+    validationResult,
+  ]);
 
   async function refresh(name: string) {
     setRefreshLoading(name);
     try {
       const res = await fetch(
-        `/api/v1/templates/${encodeURIComponent(name)}/status`,
+        `/api/v1/templates/${encodeURIComponent(name)}/status`
       );
       const json = await res.json();
       if (res.ok) {
         setRows((r) =>
-          r.map((t) => (t.name === name ? { ...t, status: json.status } : t)),
+          r.map((t) => (t.name === name ? { ...t, status: json.status } : t))
         );
         toast.success("Template status updated");
       } else {
@@ -272,7 +308,7 @@ export default function WhatsAppTemplatesPage() {
           name: x.name,
           status: x.status,
           category: x.content?.category,
-        })),
+        }))
       );
     } finally {
       setListLoading(false);
@@ -298,17 +334,23 @@ export default function WhatsAppTemplatesPage() {
   }
 
   async function duplicateTemplate(templateName: string) {
-    const newName = prompt(`Enter a new name for "${templateName}":`, `${templateName}_copy`);
+    const newName = prompt(
+      `Enter a new name for "${templateName}":`,
+      `${templateName}_copy`
+    );
     if (!newName || newName.trim() === "") return;
 
     setDuplicateLoading(templateName);
     try {
-      const res = await fetch(`/api/v1/templates/${encodeURIComponent(templateName)}/duplicate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newName: newName.trim() }),
-      });
-      
+      const res = await fetch(
+        `/api/v1/templates/${encodeURIComponent(templateName)}/duplicate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ newName: newName.trim() }),
+        }
+      );
+
       if (res.ok) {
         toast.success(`Template "${templateName}" duplicated as "${newName}"`);
         // Refresh the list to show the new template
@@ -317,7 +359,7 @@ export default function WhatsAppTemplatesPage() {
         const json = await res.json();
         toast.error(json.message || "Failed to duplicate template");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to duplicate template");
     } finally {
       setDuplicateLoading(null);
@@ -370,7 +412,7 @@ export default function WhatsAppTemplatesPage() {
               <Select
                 value={category}
                 onValueChange={(
-                  value: "MARKETING" | "UTILITY" | "AUTHENTICATION",
+                  value: "MARKETING" | "UTILITY" | "AUTHENTICATION"
                 ) => setCategory(value)}
               >
                 <SelectTrigger id="template-category" className="mt-1">
@@ -388,7 +430,9 @@ export default function WhatsAppTemplatesPage() {
           {/* Description and Tags */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="template-description">Description (Optional)</Label>
+              <Label htmlFor="template-description">
+                Description (Optional)
+              </Label>
               <Input
                 id="template-description"
                 value={description}
@@ -464,23 +508,33 @@ export default function WhatsAppTemplatesPage() {
           {validating && (
             <Alert>
               <Loader2 className="h-4 w-4 animate-spin" />
-              <AlertDescription>
-                Validating template...
-              </AlertDescription>
+              <AlertDescription>Validating template...</AlertDescription>
             </Alert>
           )}
 
           {validationResult && (
             <div className="space-y-4">
               {/* Validation Status */}
-              <Alert className={validationResult.isValid ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
+              <Alert
+                className={
+                  validationResult.isValid
+                    ? "border-green-200 bg-green-50"
+                    : "border-red-200 bg-red-50"
+                }
+              >
                 {validationResult.isValid ? (
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 ) : (
                   <AlertTriangle className="h-4 w-4 text-red-600" />
                 )}
-                <AlertDescription className={validationResult.isValid ? "text-green-800" : "text-red-800"}>
-                  {validationResult.isValid ? "Template is valid" : "Template has validation errors"}
+                <AlertDescription
+                  className={
+                    validationResult.isValid ? "text-green-800" : "text-red-800"
+                  }
+                >
+                  {validationResult.isValid
+                    ? "Template is valid"
+                    : "Template has validation errors"}
                 </AlertDescription>
               </Alert>
 
@@ -522,7 +576,11 @@ export default function WhatsAppTemplatesPage() {
                     <div className="font-medium mb-2">Variables detected:</div>
                     <div className="flex flex-wrap gap-2">
                       {validationResult.variables.map((variable, index) => (
-                        <Badge key={index} variant="outline" className="bg-white">
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="bg-white"
+                        >
                           {variable}
                         </Badge>
                       ))}
@@ -554,11 +612,16 @@ export default function WhatsAppTemplatesPage() {
 
           {/* Submit Button */}
           <div className="flex justify-end">
-                          <Button
-                onClick={createTemplate}
-                disabled={creating || !name.trim() || !bodyText.trim() || (validationResult ? !validationResult.isValid : false)}
-                className="min-w-[200px]"
-              >
+            <Button
+              onClick={createTemplate}
+              disabled={
+                creating ||
+                !name.trim() ||
+                !bodyText.trim() ||
+                (validationResult ? !validationResult.isValid : false)
+              }
+              className="min-w-[200px]"
+            >
               {creating ? (
                 <>
                   <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -590,12 +653,17 @@ export default function WhatsAppTemplatesPage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-medium mb-2">Sample Variables:</h4>
                   <div className="space-y-2">
-                    {Object.entries(validationResult.sampleVariables).map(([key, value]) => (
-                      <div key={key} className="flex justify-between items-center bg-white p-2 rounded border">
-                        <span className="font-mono text-sm">{key}</span>
-                        <span className="text-sm text-gray-600">{value}</span>
-                      </div>
-                    ))}
+                    {Object.entries(validationResult.sampleVariables).map(
+                      ([key, value]) => (
+                        <div
+                          key={key}
+                          className="flex justify-between items-center bg-white p-2 rounded border"
+                        >
+                          <span className="font-mono text-sm">{key}</span>
+                          <span className="text-sm text-gray-600">{value}</span>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}
@@ -638,18 +706,29 @@ export default function WhatsAppTemplatesPage() {
           {rows.length > 0 && (
             <div className="flex gap-4 mt-4">
               <div className="flex items-center gap-2">
-                <Badge variant="default" className="bg-green-100 text-green-800">
-                  ✅ {rows.filter(r => r.status === "APPROVED").length} Approved
+                <Badge
+                  variant="default"
+                  className="bg-green-100 text-green-800"
+                >
+                  ✅ {rows.filter((r) => r.status === "APPROVED").length}{" "}
+                  Approved
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                  ⏳ {rows.filter(r => r.status === "PENDING").length} Pending
+                <Badge
+                  variant="secondary"
+                  className="bg-yellow-100 text-yellow-800"
+                >
+                  ⏳ {rows.filter((r) => r.status === "PENDING").length} Pending
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="destructive" className="bg-red-100 text-red-800">
-                  ❌ {rows.filter(r => r.status === "REJECTED").length} Rejected
+                <Badge
+                  variant="destructive"
+                  className="bg-red-100 text-red-800"
+                >
+                  ❌ {rows.filter((r) => r.status === "REJECTED").length}{" "}
+                  Rejected
                 </Badge>
               </div>
             </div>
@@ -732,7 +811,7 @@ export default function WhatsAppTemplatesPage() {
                                 setViewLoading(r.name);
                                 try {
                                   const res = await fetch(
-                                    `/api/v1/templates/${encodeURIComponent(r.name)}/db`,
+                                    `/api/v1/templates/${encodeURIComponent(r.name)}/db`
                                   );
                                   if (res.ok) {
                                     const json = await res.json();
@@ -752,62 +831,68 @@ export default function WhatsAppTemplatesPage() {
                               )}
                             </Button>
                           </DialogTrigger>
-                        <DialogContent className="max-w-4xl">
-                          <DialogHeader>
-                            <DialogTitle className="flex items-center gap-2">
-                              <FileText className="w-5 h-5" />
-                              Template: {r.name}
-                            </DialogTitle>
-                          </DialogHeader>
-                          {selected ? (
-                            <div className="space-y-6">
-                              <div className="bg-muted rounded-lg p-6">
-                                <h4 className="font-semibold mb-4 flex items-center gap-2">
-                                  <Eye className="w-4 h-4" />
-                                  Template Preview
-                                </h4>
-                                <div className="space-y-4">
-                                  {selected.content?.components?.map(
-                                    (comp: TemplateComponent, idx: number) => (
-                                      <div
-                                        key={idx}
-                                        className="border-l-4 border-blue-500 pl-4 py-2"
-                                      >
-                                        <div className="font-medium text-blue-600 mb-1">
-                                          {comp.type}
+                          <DialogContent className="max-w-4xl">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                <FileText className="w-5 h-5" />
+                                Template: {r.name}
+                              </DialogTitle>
+                            </DialogHeader>
+                            {selected ? (
+                              <div className="space-y-6">
+                                <div className="bg-muted rounded-lg p-6">
+                                  <h4 className="font-semibold mb-4 flex items-center gap-2">
+                                    <Eye className="w-4 h-4" />
+                                    Template Preview
+                                  </h4>
+                                  <div className="space-y-4">
+                                    {selected.content?.components?.map(
+                                      (
+                                        comp: TemplateComponent,
+                                        idx: number
+                                      ) => (
+                                        <div
+                                          key={idx}
+                                          className="border-l-4 border-blue-500 pl-4 py-2"
+                                        >
+                                          <div className="font-medium text-blue-600 mb-1">
+                                            {comp.type}
+                                          </div>
+                                          <div className="text-gray-700 bg-white rounded p-3">
+                                            {comp.text || "No content"}
+                                          </div>
                                         </div>
-                                        <div className="text-gray-700 bg-white rounded p-3">
-                                          {comp.text || "No content"}
-                                        </div>
-                                      </div>
-                                    ),
-                                  )}
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="bg-muted rounded-lg p-4">
+                                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                                    <Copy className="w-4 h-4" />
+                                    Template Data
+                                  </h4>
+                                  <div className="bg-white rounded border p-3">
+                                    <pre className="text-xs overflow-auto max-h-[300px]">
+                                      {JSON.stringify(selected, null, 2)}
+                                    </pre>
+                                  </div>
                                 </div>
                               </div>
-                              <div className="bg-muted rounded-lg p-4">
-                                <h4 className="font-semibold mb-3 flex items-center gap-2">
-                                  <Copy className="w-4 h-4" />
-                                  Template Data
-                                </h4>
-                                <div className="bg-white rounded border p-3">
-                                  <pre className="text-xs overflow-auto max-h-[300px]">
-                                    {JSON.stringify(selected, null, 2)}
-                                  </pre>
-                                </div>
+                            ) : (
+                              <div className="flex justify-center p-8">
+                                <Loader2 className="w-8 h-8 animate-spin" />
                               </div>
-                            </div>
-                          ) : (
-                            <div className="flex justify-center p-8">
-                              <Loader2 className="w-8 h-8 animate-spin" />
-                            </div>
-                          )}
-                          <DialogFooter>
-                            <Button variant="outline" onClick={() => setSelected(null)}>
-                              Close
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                            )}
+                            <DialogFooter>
+                              <Button
+                                variant="outline"
+                                onClick={() => setSelected(null)}
+                              >
+                                Close
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -837,19 +922,23 @@ export default function WhatsAppTemplatesPage() {
                           size="sm"
                           disabled={deleteLoading === r.name}
                           onClick={async () => {
-                            if (!confirm(`Are you sure you want to delete template "${r.name}"?`)) {
+                            if (
+                              !confirm(
+                                `Are you sure you want to delete template "${r.name}"?`
+                              )
+                            ) {
                               return;
                             }
                             setDeleteLoading(r.name);
                             try {
                               const res = await fetch(
                                 `/api/v1/templates/${encodeURIComponent(r.name)}`,
-                                { method: "DELETE" },
+                                { method: "DELETE" }
                               );
                               if (res.ok) {
                                 toast.success("Template deleted");
                                 setRows((prev) =>
-                                  prev.filter((x) => x.name !== r.name),
+                                  prev.filter((x) => x.name !== r.name)
                                 );
                               } else {
                                 const j = await res.json().catch(() => ({}));
@@ -865,10 +954,10 @@ export default function WhatsAppTemplatesPage() {
                           ) : (
                             <Trash2 className="w-4 h-4" />
                           )}
-                                                 </Button>
-                       </div>
-                      </TableCell>
-                    </TableRow>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>
@@ -884,7 +973,7 @@ export default function WhatsAppTemplatesPage() {
               setLoadMoreLoading(true);
               try {
                 const res = await fetch(
-                  `/api/v1/templates/db?take=50&skip=${rows.length}`,
+                  `/api/v1/templates/db?take=50&skip=${rows.length}`
                 );
                 if (!res.ok) return;
                 const json: TemplateDbData[] = await res.json();

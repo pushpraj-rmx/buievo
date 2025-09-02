@@ -1,27 +1,75 @@
-import "dotenv/config";
-import path from "path";
-import axios, { isAxiosError } from "axios";
+// WhatsApp Client Package
+// Main entry point for WhatsApp Business API client
 
-// Load environment variables from the project root
-import { config } from "dotenv";
-config({ path: path.resolve(process.cwd(), "../../.env") });
+// Export the main client class and factory function
+export { WhatsAppClient, createWhatsAppClient } from './client';
+export type { 
+  WhatsAppClientInterface 
+} from './client';
 
-import type {
+// Export configuration types and utilities
+export { createWhatsAppConfig, validateWhatsAppConfig } from './config';
+export type { WhatsAppConfig, WhatsAppClientOptions } from './config';
+
+// Export error classes
+export {
+  WhatsAppError,
+  WhatsAppConfigError,
+  WhatsAppValidationError,
+  WhatsAppApiError,
+  WhatsAppRateLimitError,
+  WhatsAppAuthenticationError,
+  WhatsAppNetworkError,
+  WhatsAppTimeoutError,
+  createErrorFromResponse,
+  isRetryableStatusCode,
+  ERROR_CODES,
+} from './errors';
+export type { ErrorCode } from './errors';
+
+// Export logger
+export { WhatsAppLogger, logger } from './logger';
+export type { LogLevel, LoggerOptions } from './logger';
+
+// Export validation utilities
+export {
+  validatePhoneNumber,
+  validateTextMessage,
+  validateTemplateName,
+  validateUrl,
+  validateTemplateParameters,
+  validateTextMessageArgs,
+  validateTemplateMessageArgs,
+  validateInput,
+} from './validation';
+export type { ValidationResult } from './validation';
+
+// Export HTTP client
+export { WhatsAppHttpClient } from './http-client';
+export type { HttpClientOptions } from './http-client';
+
+// Re-export types from @whatssuite/types for convenience
+export type {
   WhatsAppMessagePayload,
   WhatsAppApiResponse,
+  WhatsAppMessageComponent,
   WhatsAppTemplate,
-  WhatsAppTemplateComponent,
-  WhatsAppMessageComponent
+  WhatsAppTemplateComponent
 } from "@whatssuite/types";
 
+// Legacy exports for backward compatibility
+import { WhatsAppClient } from './client';
+import type { WhatsAppApiResponse } from "@whatssuite/types";
+
+// Legacy interface for backward compatibility
 export interface SendTemplateMessageArgs {
   to: string;
   templateName: string;
   bodyParams?: string[];
   buttonParams?: string[];
-  imageUrl?: string; // Add support for image URL in templates
-  documentUrl?: string; // Add support for document URL in templates (PDFs, etc.)
-  filename?: string; // Optional filename for documents
+  imageUrl?: string;
+  documentUrl?: string;
+  filename?: string;
 }
 
 export interface SendTextMessageArgs {
@@ -29,235 +77,18 @@ export interface SendTextMessageArgs {
   text: string;
 }
 
-// Use the shared WhatsApp types
-export type WhatsAppSuccessResponse = WhatsAppApiResponse;
-
+// Legacy client object for backward compatibility
 export const wappClient = {
-  async sendTextMessage(
-    args: SendTextMessageArgs,
-  ): Promise<WhatsAppSuccessResponse> {
-    console.log(
-      "wappClient.sendTextMessage received args:",
-      JSON.stringify(args, null, 2),
-    );
-
-    const { to, text } = args;
-    const { PHONE_NUMBER_ID, ACCESS_TOKEN } = process.env;
-    const apiVersion = process.env.META_API_VERSION || "v21.0";
-    const url = `https://graph.facebook.com/${apiVersion}/${PHONE_NUMBER_ID}/messages`;
-
-    if (!PHONE_NUMBER_ID || !ACCESS_TOKEN) {
-      throw new Error("WhatsApp environment variables are not set!");
-    }
-
-    console.log("🔧 Configuration:");
-    console.log("  - API Version:", apiVersion);
-    console.log(
-      "  - Phone Number ID:",
-      PHONE_NUMBER_ID ? `${PHONE_NUMBER_ID.substring(0, 4)}...` : "NOT SET",
-    );
-    console.log(
-      "  - Access Token:",
-      ACCESS_TOKEN ? `${ACCESS_TOKEN.substring(0, 10)}...` : "NOT SET",
-    );
-    console.log("  - API URL:", url);
-
-    const payload: WhatsAppMessagePayload = {
-      messaging_product: "whatsapp",
-      to,
-      type: "text",
-      text: {
-        body: text,
-      },
-    };
-
-    console.log("Constructed Payload:", JSON.stringify(payload, null, 2));
-
-    try {
-      const response = await axios.post<WhatsAppSuccessResponse>(url, payload, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      console.log(
-        `✅ Text message sent successfully to ${to} (Status: ${response.status})`,
-      );
-      return response.data;
-    } catch (error) {
-      if (isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data?.error?.message || error.message;
-        console.error(
-          `❌ Failed to send text message to ${to} (Status: ${error.response?.status}):`,
-          errorMessage,
-        );
-
-        console.error(
-          "🔍 Full Meta API Error Response:",
-          JSON.stringify(error.response?.data, null, 2),
-        );
-        console.error("🔍 HTTP Status:", error.response?.status);
-        console.error("🔍 Error Headers:", error.response?.headers);
-        console.error("📤 Sent Payload:", JSON.stringify(payload, null, 2));
-      } else {
-        console.error("📤 Sent Payload:", JSON.stringify(payload, null, 2));
-        console.error(`❌ An unexpected error occurred:`, error);
-      }
-      throw error;
-    }
+  async sendTextMessage(args: SendTextMessageArgs): Promise<WhatsAppApiResponse> {
+    const client = new WhatsAppClient();
+    return client.sendTextMessage(args);
   },
 
-  async sendTemplateMessage(
-    args: SendTemplateMessageArgs,
-  ): Promise<WhatsAppSuccessResponse> {
-    // --- Log the raw arguments received by the function ---
-    console.log(
-      "wappClient.sendTemplateMessage received args:",
-      JSON.stringify(args, null, 2),
-    );
-
-    const {
-      to,
-      templateName,
-      bodyParams = [],
-      buttonParams = [],
-      imageUrl,
-      documentUrl,
-      filename,
-    } = args;
-    const { PHONE_NUMBER_ID, ACCESS_TOKEN } = process.env;
-    const apiVersion = process.env.META_API_VERSION || "v21.0";
-    const url = `https://graph.facebook.com/${apiVersion}/${PHONE_NUMBER_ID}/messages`;
-
-    if (!PHONE_NUMBER_ID || !ACCESS_TOKEN) {
-      throw new Error("WhatsApp environment variables are not set!");
-    }
-
-    // Log configuration details for debugging (without exposing sensitive data)
-    console.log("🔧 Configuration:");
-    console.log("  - API Version:", apiVersion);
-    console.log(
-      "  - Phone Number ID:",
-      PHONE_NUMBER_ID ? `${PHONE_NUMBER_ID.substring(0, 4)}...` : "NOT SET",
-    );
-    console.log(
-      "  - Access Token:",
-      ACCESS_TOKEN ? `${ACCESS_TOKEN.substring(0, 10)}...` : "NOT SET",
-    );
-    console.log("  - API URL:", url);
-
-    const components: WhatsAppMessageComponent[] = [];
-
-    // Add image component if imageUrl is provided
-    if (imageUrl) {
-      components.push({
-        type: "HEADER",
-        parameters: [
-          {
-            type: "image",
-            image: {
-              link: imageUrl,
-            },
-          },
-        ],
-      });
-    }
-
-    // Add document component if documentUrl is provided
-    if (documentUrl) {
-      components.push({
-        type: "HEADER",
-        parameters: [
-          {
-            type: "document",
-            document: {
-              link: documentUrl,
-              ...(filename && { filename }),
-            },
-          },
-        ],
-      });
-    }
-
-    // Add body parameters
-    if (bodyParams.length > 0) {
-      components.push({
-        type: "BODY",
-        parameters: bodyParams.map((param) => ({
-          type: "text",
-          text: param,
-        })),
-      });
-    }
-
-    // Add button parameters (for dynamic URLs)
-    buttonParams.forEach((param, index) => {
-      components.push({
-        type: "BUTTONS",
-        sub_type: "url",
-        index, // index must match button index in the template
-        parameters: [
-          {
-            type: "text",
-            text: param,
-          },
-        ],
-      });
-    });
-
-    const payload = {
-      messaging_product: "whatsapp" as const,
-      to,
-      type: "template" as const,
-      template: {
-        name: templateName,
-        language: { code: "en_US" },
-        components,
-      },
-    };
-
-    // --- Log the payload for debugging ---
-    console.log("Constructed Payload:", JSON.stringify(payload, null, 2));
-
-    try {
-      const response = await axios.post<WhatsAppSuccessResponse>(url, payload, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      console.log(
-        `✅ Message sent successfully to ${to} (Status: ${response.status})`,
-      );
-      return response.data;
-    } catch (error) {
-      if (isAxiosError(error)) {
-        const errorMessage =
-          error.response?.data?.error?.message || error.message;
-        console.error(
-          `❌ Failed to send message to ${to} (Status: ${error.response?.status}):`,
-          errorMessage,
-        );
-
-        // Log the full Meta API error response for debugging
-        console.error(
-          "🔍 Full Meta API Error Response:",
-          JSON.stringify(error.response?.data, null, 2),
-        );
-        console.error("🔍 HTTP Status:", error.response?.status);
-        console.error("🔍 Error Headers:", error.response?.headers);
-
-        // log the full payload for debugging
-        console.error("📤 Sent Payload:", JSON.stringify(payload, null, 2));
-      } else {
-        // log the full payload for debugging
-        console.error("📤 Sent Payload:", JSON.stringify(payload, null, 2));
-        console.error(`❌ An unexpected error occurred:`, error);
-      }
-      throw error;
-    }
+  async sendTemplateMessage(args: SendTemplateMessageArgs): Promise<WhatsAppApiResponse> {
+    const client = new WhatsAppClient();
+    return client.sendTemplateMessage(args);
   },
 };
+
+// Legacy type alias for backward compatibility
+export type WhatsAppSuccessResponse = WhatsAppApiResponse;
