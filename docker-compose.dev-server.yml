@@ -38,7 +38,7 @@ services:
 
   # API Service
   api:
-    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:dev
+    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:latest
     container_name: whatssuite-dev-api
     build:
       context: .
@@ -72,7 +72,7 @@ services:
 
   # WhatsApp Service
   wapp-service:
-    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:dev
+    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:latest
     container_name: whatssuite-dev-wapp-service
     build:
       context: .
@@ -105,7 +105,7 @@ services:
 
   # Admin Dashboard
   admin:
-    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:dev
+    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:latest
     container_name: whatssuite-dev-admin
     build:
       context: .
@@ -130,7 +130,7 @@ services:
 
   # Web Client
   web:
-    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:dev
+    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:latest
     container_name: whatssuite-dev-web
     build:
       context: .
