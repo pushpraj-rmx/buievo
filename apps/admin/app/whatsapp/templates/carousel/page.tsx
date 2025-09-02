@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useEffect, useState, useCallback } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,16 +22,16 @@ import {
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Loader2, 
-  Plus, 
-  FileText, 
-  Eye, 
-  CheckCircle, 
-  AlertTriangle, 
-  Info, 
+import {
+  Loader2,
+  Plus,
+  FileText,
+  Eye,
+  CheckCircle,
+  AlertTriangle,
+  Info,
   Upload,
-  Trash2
+  Trash2,
 } from "lucide-react";
 
 type CarouselCard = {
@@ -60,7 +66,8 @@ export default function CarouselTemplatePage() {
   const [cards, setCards] = useState<CarouselCard[]>([]);
   const [creating, setCreating] = useState(false);
   const [validating, setValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const [validationResult, setValidationResult] =
+    useState<ValidationResult | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [uploadingMedia, setUploadingMedia] = useState<string | null>(null);
 
@@ -68,20 +75,7 @@ export default function CarouselTemplatePage() {
   const LANGUAGE = "en_US";
   const CATEGORY = "MARKETING" as const;
 
-  // Debounced validation
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (name.trim() || bodyText.trim() || cards.length > 0) {
-        validateTemplate();
-      } else {
-        setValidationResult(null);
-      }
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, [name, bodyText, cards]);
-
-  async function validateTemplate() {
+  const validateTemplate = useCallback(async () => {
     if (!name.trim() || !bodyText.trim() || cards.length < 2) {
       setValidationResult(null);
       return;
@@ -96,19 +90,25 @@ export default function CarouselTemplatePage() {
         },
         {
           type: "CAROUSEL" as const,
-          cards: cards.map(card => ({
+          cards: cards.map((card) => ({
             components: [
               {
                 type: "HEADER" as const,
                 format: card.headerFormat,
-                example: card.headerAssetHandle ? {
-                  header_handle: [card.headerAssetHandle]
-                } : undefined,
+                example: card.headerAssetHandle
+                  ? {
+                      header_handle: [card.headerAssetHandle],
+                    }
+                  : undefined,
               },
-              ...(card.bodyText ? [{
-                type: "BODY" as const,
-                text: card.bodyText,
-              }] : []),
+              ...(card.bodyText
+                ? [
+                    {
+                      type: "BODY" as const,
+                      text: card.bodyText,
+                    },
+                  ]
+                : []),
               {
                 type: "BUTTONS" as const,
                 buttons: card.buttons,
@@ -123,7 +123,7 @@ export default function CarouselTemplatePage() {
         language: LANGUAGE,
         category: CATEGORY,
         description: description.trim() || undefined,
-        tags: tags.trim() ? tags.split(',').map(t => t.trim()) : undefined,
+        tags: tags.trim() ? tags.split(",").map((t) => t.trim()) : undefined,
         components,
       };
 
@@ -132,7 +132,7 @@ export default function CarouselTemplatePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      
+
       if (res.ok) {
         const result = await res.json();
         setValidationResult(result);
@@ -144,16 +144,32 @@ export default function CarouselTemplatePage() {
     } finally {
       setValidating(false);
     }
-  }
+  }, [name, bodyText, cards, tags, description]);
 
-  async function uploadMedia(fileUrl: string, type: "image" | "video"): Promise<string | null> {
+  // Debounced validation
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (name.trim() || bodyText.trim() || cards.length > 0) {
+        validateTemplate();
+      } else {
+        setValidationResult(null);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [name, bodyText, cards, validateTemplate]);
+
+  async function uploadMedia(
+    fileUrl: string,
+    type: "image" | "video"
+  ): Promise<string | null> {
     try {
       const res = await fetch("/api/v1/templates/media", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileUrl, type }),
       });
-      
+
       if (res.ok) {
         const result = await res.json();
         return result.handle;
@@ -168,7 +184,7 @@ export default function CarouselTemplatePage() {
     }
   }
 
-  async function createTemplate() {
+  const createTemplate = useCallback(async () => {
     if (!name.trim()) {
       toast.error("Template name is required");
       return;
@@ -198,19 +214,25 @@ export default function CarouselTemplatePage() {
         },
         {
           type: "CAROUSEL" as const,
-          cards: cards.map(card => ({
+          cards: cards.map((card) => ({
             components: [
               {
                 type: "HEADER" as const,
                 format: card.headerFormat,
-                example: card.headerAssetHandle ? {
-                  header_handle: [card.headerAssetHandle]
-                } : undefined,
+                example: card.headerAssetHandle
+                  ? {
+                      header_handle: [card.headerAssetHandle],
+                    }
+                  : undefined,
               },
-              ...(card.bodyText ? [{
-                type: "BODY" as const,
-                text: card.bodyText,
-              }] : []),
+              ...(card.bodyText
+                ? [
+                    {
+                      type: "BODY" as const,
+                      text: card.bodyText,
+                    },
+                  ]
+                : []),
               {
                 type: "BUTTONS" as const,
                 buttons: card.buttons,
@@ -225,7 +247,7 @@ export default function CarouselTemplatePage() {
         language: LANGUAGE,
         category: CATEGORY,
         description: description.trim() || undefined,
-        tags: tags.trim() ? tags.split(',').map(t => t.trim()) : undefined,
+        tags: tags.trim() ? tags.split(",").map((t) => t.trim()) : undefined,
         components,
       };
 
@@ -234,10 +256,10 @@ export default function CarouselTemplatePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      
+
       if (res.ok) {
         toast.success("Carousel template submitted for approval");
-        
+
         // Clear form
         setName("");
         setDescription("");
@@ -252,7 +274,7 @@ export default function CarouselTemplatePage() {
     } finally {
       setCreating(false);
     }
-  }
+  }, [name, bodyText, cards, description, tags, validationResult]);
 
   function addCard() {
     const newCard: CarouselCard = {
@@ -276,27 +298,37 @@ export default function CarouselTemplatePage() {
   }
 
   function removeCard(cardId: string) {
-    setCards(cards.filter(card => card.id !== cardId));
+    setCards(cards.filter((card) => card.id !== cardId));
   }
 
   function updateCard(cardId: string, updates: Partial<CarouselCard>) {
-    setCards(cards.map(card => 
-      card.id === cardId ? { ...card, ...updates } : card
-    ));
+    setCards(
+      cards.map((card) => (card.id === cardId ? { ...card, ...updates } : card))
+    );
   }
 
-  function updateCardButton(cardId: string, buttonIndex: number, updates: Partial<CarouselCard['buttons'][0]>) {
-    setCards(cards.map(card => {
-      if (card.id === cardId) {
-        const newButtons = [...card.buttons];
-        newButtons[buttonIndex] = { ...newButtons[buttonIndex], ...updates };
-        return { ...card, buttons: newButtons };
-      }
-      return card;
-    }));
+  function updateCardButton(
+    cardId: string,
+    buttonIndex: number,
+    updates: Partial<CarouselCard["buttons"][0]>
+  ) {
+    setCards(
+      cards.map((card) => {
+        if (card.id === cardId) {
+          const newButtons = [...card.buttons];
+          newButtons[buttonIndex] = { ...newButtons[buttonIndex], ...updates };
+          return { ...card, buttons: newButtons };
+        }
+        return card;
+      })
+    );
   }
 
-  async function handleMediaUpload(cardId: string, fileUrl: string, type: "image" | "video") {
+  async function handleMediaUpload(
+    cardId: string,
+    fileUrl: string,
+    type: "image" | "video"
+  ) {
     setUploadingMedia(cardId);
     try {
       const handle = await uploadMedia(fileUrl, type);
@@ -363,7 +395,9 @@ export default function CarouselTemplatePage() {
           {/* Description and Tags */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="template-description">Description (Optional)</Label>
+              <Label htmlFor="template-description">
+                Description (Optional)
+              </Label>
               <Input
                 id="template-description"
                 value={description}
@@ -398,7 +432,8 @@ export default function CarouselTemplatePage() {
               className="mt-1 min-h-[100px]"
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Main message content. Use &#123;&#123;1&#125;&#125;, &#123;&#123;2&#125;&#125;, etc. for variables
+              Main message content. Use &#123;&#123;1&#125;&#125;,
+              &#123;&#123;2&#125;&#125;, etc. for variables
             </p>
           </div>
         </CardContent>
@@ -414,7 +449,8 @@ export default function CarouselTemplatePage() {
                 Carousel Cards ({cards.length}/10)
               </CardTitle>
               <CardDescription>
-                Add 2-10 cards to your carousel. Each card must have a header image/video and buttons.
+                Add 2-10 cards to your carousel. Each card must have a header
+                image/video and buttons.
               </CardDescription>
             </div>
             <Button
@@ -462,7 +498,7 @@ export default function CarouselTemplatePage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Select
                       value={card.headerFormat}
-                      onValueChange={(value: "IMAGE" | "VIDEO") => 
+                      onValueChange={(value: "IMAGE" | "VIDEO") =>
                         updateCard(card.id, { headerFormat: value })
                       }
                     >
@@ -478,13 +514,25 @@ export default function CarouselTemplatePage() {
                       <Input
                         placeholder="Media URL (https://example.com/image.jpg)"
                         value={card.headerAssetUrl}
-                        onChange={(e) => updateCard(card.id, { headerAssetUrl: e.target.value })}
+                        onChange={(e) =>
+                          updateCard(card.id, {
+                            headerAssetUrl: e.target.value,
+                          })
+                        }
                       />
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleMediaUpload(card.id, card.headerAssetUrl, card.headerFormat.toLowerCase() as "image" | "video")}
-                        disabled={!card.headerAssetUrl || uploadingMedia === card.id}
+                        onClick={() =>
+                          handleMediaUpload(
+                            card.id,
+                            card.headerAssetUrl,
+                            card.headerFormat.toLowerCase() as "image" | "video"
+                          )
+                        }
+                        disabled={
+                          !card.headerAssetUrl || uploadingMedia === card.id
+                        }
                       >
                         {uploadingMedia === card.id ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -496,7 +544,10 @@ export default function CarouselTemplatePage() {
                     </div>
                   </div>
                   {card.headerAssetHandle && (
-                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-700"
+                    >
                       ✓ Media uploaded
                     </Badge>
                   )}
@@ -507,12 +558,15 @@ export default function CarouselTemplatePage() {
                   <Label>Card Body Text (Optional)</Label>
                   <Textarea
                     value={card.bodyText}
-                    onChange={(e) => updateCard(card.id, { bodyText: e.target.value })}
+                    onChange={(e) =>
+                      updateCard(card.id, { bodyText: e.target.value })
+                    }
                     placeholder="Product description or additional information"
                     className="mt-1"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    If you add body text to one card, all cards must have body text
+                    If you add body text to one card, all cards must have body
+                    text
                   </p>
                 </div>
 
@@ -520,20 +574,31 @@ export default function CarouselTemplatePage() {
                 <div className="space-y-2">
                   <Label>Buttons * (1-2 buttons required)</Label>
                   {card.buttons.map((button, buttonIndex) => (
-                    <div key={buttonIndex} className="border rounded p-3 space-y-2">
+                    <div
+                      key={buttonIndex}
+                      className="border rounded p-3 space-y-2"
+                    >
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Button {buttonIndex + 1}</span>
+                        <span className="text-sm font-medium">
+                          Button {buttonIndex + 1}
+                        </span>
                         <Select
                           value={button.type}
-                          onValueChange={(value: "QUICK_REPLY" | "URL" | "PHONE_NUMBER") => 
-                            updateCardButton(card.id, buttonIndex, { type: value })
+                          onValueChange={(
+                            value: "QUICK_REPLY" | "URL" | "PHONE_NUMBER"
+                          ) =>
+                            updateCardButton(card.id, buttonIndex, {
+                              type: value,
+                            })
                           }
                         >
                           <SelectTrigger className="w-32">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="QUICK_REPLY">Quick Reply</SelectItem>
+                            <SelectItem value="QUICK_REPLY">
+                              Quick Reply
+                            </SelectItem>
                             <SelectItem value="URL">URL</SelectItem>
                             <SelectItem value="PHONE_NUMBER">Phone</SelectItem>
                           </SelectContent>
@@ -542,21 +607,33 @@ export default function CarouselTemplatePage() {
                       <Input
                         placeholder="Button text (max 25 characters)"
                         value={button.text}
-                        onChange={(e) => updateCardButton(card.id, buttonIndex, { text: e.target.value })}
+                        onChange={(e) =>
+                          updateCardButton(card.id, buttonIndex, {
+                            text: e.target.value,
+                          })
+                        }
                         maxLength={25}
                       />
                       {button.type === "URL" && (
                         <Input
                           placeholder="URL (supports {{1}} variable)"
                           value={button.url || ""}
-                          onChange={(e) => updateCardButton(card.id, buttonIndex, { url: e.target.value })}
+                          onChange={(e) =>
+                            updateCardButton(card.id, buttonIndex, {
+                              url: e.target.value,
+                            })
+                          }
                         />
                       )}
                       {button.type === "PHONE_NUMBER" && (
                         <Input
                           placeholder="Phone number (e.g., +1234567890)"
                           value={button.phone_number || ""}
-                          onChange={(e) => updateCardButton(card.id, buttonIndex, { phone_number: e.target.value })}
+                          onChange={(e) =>
+                            updateCardButton(card.id, buttonIndex, {
+                              phone_number: e.target.value,
+                            })
+                          }
                         />
                       )}
                     </div>
@@ -572,23 +649,33 @@ export default function CarouselTemplatePage() {
       {validating && (
         <Alert>
           <Loader2 className="h-4 w-4 animate-spin" />
-          <AlertDescription>
-            Validating carousel template...
-          </AlertDescription>
+          <AlertDescription>Validating carousel template...</AlertDescription>
         </Alert>
       )}
 
       {validationResult && (
         <div className="space-y-4">
           {/* Validation Status */}
-          <Alert className={validationResult.isValid ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
+          <Alert
+            className={
+              validationResult.isValid
+                ? "border-green-200 bg-green-50"
+                : "border-red-200 bg-red-50"
+            }
+          >
             {validationResult.isValid ? (
               <CheckCircle className="h-4 w-4 text-green-600" />
             ) : (
               <AlertTriangle className="h-4 w-4 text-red-600" />
             )}
-            <AlertDescription className={validationResult.isValid ? "text-green-800" : "text-red-800"}>
-              {validationResult.isValid ? "Carousel template is valid" : "Carousel template has validation errors"}
+            <AlertDescription
+              className={
+                validationResult.isValid ? "text-green-800" : "text-red-800"
+              }
+            >
+              {validationResult.isValid
+                ? "Carousel template is valid"
+                : "Carousel template has validation errors"}
             </AlertDescription>
           </Alert>
 
@@ -664,7 +751,13 @@ export default function CarouselTemplatePage() {
       <div className="flex justify-end">
         <Button
           onClick={createTemplate}
-          disabled={creating || !name.trim() || !bodyText.trim() || cards.length < 2 || (validationResult ? !validationResult.isValid : false)}
+          disabled={
+            creating ||
+            !name.trim() ||
+            !bodyText.trim() ||
+            cards.length < 2 ||
+            (validationResult ? !validationResult.isValid : false)
+          }
           className="min-w-[200px]"
         >
           {creating ? (
@@ -699,12 +792,17 @@ export default function CarouselTemplatePage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-medium mb-2">Sample Variables:</h4>
                   <div className="space-y-2">
-                    {Object.entries(validationResult.sampleVariables).map(([key, value]) => (
-                      <div key={key} className="flex justify-between items-center bg-white p-2 rounded border">
-                        <span className="font-mono text-sm">{key}</span>
-                        <span className="text-sm text-gray-600">{value}</span>
-                      </div>
-                    ))}
+                    {Object.entries(validationResult.sampleVariables).map(
+                      ([key, value]) => (
+                        <div
+                          key={key}
+                          className="flex justify-between items-center bg-white p-2 rounded border"
+                        >
+                          <span className="font-mono text-sm">{key}</span>
+                          <span className="text-sm text-gray-600">{value}</span>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}

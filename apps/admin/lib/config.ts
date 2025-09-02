@@ -184,8 +184,11 @@ class ConfigService {
         }
       }
 
-      // Then try to load from API
-      await this.loadFromAPI();
+      // Then try to load from API (only on client side)
+      if (typeof window !== 'undefined') {
+        await this.loadFromAPI();
+        this.saveToLocalStorage();
+      }
     } catch (error) {
       console.warn('Failed to load configuration:', error);
     }
@@ -194,6 +197,11 @@ class ConfigService {
   // Load configuration from API
   private async loadFromAPI() {
     try {
+      // Skip API loading during build time
+      if (typeof window === 'undefined') {
+        return;
+      }
+
       // Use absolute URL for server-side rendering
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const response = await fetch(`${baseUrl}/api/v1/config`, {
@@ -206,7 +214,6 @@ class ConfigService {
       if (response.ok) {
         const apiConfig = await response.json();
         this.config = { ...this.config, ...apiConfig };
-        this.saveToLocalStorage();
       }
     } catch (error) {
       console.warn('Failed to load configuration from API:', error);
@@ -227,6 +234,11 @@ class ConfigService {
   // Save configuration to API
   private async saveToAPI() {
     try {
+      // Skip API saving during build time
+      if (typeof window === 'undefined') {
+        return;
+      }
+
       // Use absolute URL for server-side rendering
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const response = await fetch(`${baseUrl}/api/v1/config`, {

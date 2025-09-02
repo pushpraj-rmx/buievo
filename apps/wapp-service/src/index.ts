@@ -309,6 +309,10 @@ async function startWorker(): Promise<void> {
   });
 
   try {
+    // Connect to Redis first
+    await redis.connect();
+    logger.info('✅ Redis connected successfully');
+    
     // Initial health check
     const isHealthy = await performHealthCheck();
     if (!isHealthy) {
