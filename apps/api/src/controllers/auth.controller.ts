@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body; // Assuming email and password are sent in the request body

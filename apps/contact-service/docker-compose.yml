@@ -16,7 +16,7 @@ services:
     depends_on:
       - postgres
     networks:
-      - whatssuite-network
+      - buievo-network
     restart: unless-stopped
     command: sh -c "npx prisma migrate deploy && npx prisma generate && npm start"
     healthcheck:
@@ -37,12 +37,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - whatssuite-network
+      - buievo-network
     restart: unless-stopped
 
 volumes:
   postgres_data:
 
 networks:
-  whatssuite-network:
+  buievo-network:
     driver: bridge

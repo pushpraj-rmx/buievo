@@ -23,7 +23,7 @@ export function SiteHeader({
           className="mx-2 data-[orientation=vertical]:h-4"
         />
         <Logo size={20} className="mr-2" />
-        <h1 className="text-base font-medium">Whatssuite Admin</h1>
+        <h1 className="text-base font-medium">buievo Admin</h1>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
           <WorkerAreaToggle

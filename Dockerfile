@@ -15,7 +15,7 @@ RUN pnpm install --frozen-lockfile --prod=false
 # --- END FIX ---
 
 # Generate Prisma client
-RUN ["pnpm", "--filter", "@whatssuite/db", "exec", "prisma", "generate"]
+RUN ["pnpm", "--filter", "@buievo/db", "exec", "prisma", "generate"]
 
 # Build all apps and packages in the monorepo
 RUN pnpm build

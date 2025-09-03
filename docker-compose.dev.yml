@@ -3,25 +3,25 @@ version: "3.8"
 services:
   postgres-dev:
     image: postgres:15-alpine
-    container_name: whatssuite_postgres_dev
+    container_name: buievo_postgres_dev
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-whatssuite_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-buievo_dev}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password}
-      POSTGRES_DB: ${POSTGRES_DB:-whatssuite_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-buievo_dev}
     ports:
       - "5433:5432" # Different port to avoid conflicts
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-whatssuite_dev} -d ${POSTGRES_DB:-whatssuite_dev}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-buievo_dev} -d ${POSTGRES_DB:-buievo_dev}" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis-dev:
     image: redis:7-alpine
-    container_name: whatssuite_redis_dev
+    container_name: buievo_redis_dev
     ports:
       - "6380:6379" # Different port to avoid conflicts
     restart: unless-stopped
@@ -36,12 +36,12 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: api
-    container_name: whatssuite_api_dev
+    container_name: buievo_api_dev
     ports:
       - "3005:3005" # Different port
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://${POSTGRES_USER:-whatssuite_dev}:${POSTGRES_PASSWORD:-dev_password}@postgres-dev:5432/${POSTGRES_DB:-whatssuite_dev}?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-buievo_dev}:${POSTGRES_PASSWORD:-dev_password}@postgres-dev:5432/${POSTGRES_DB:-buievo_dev}?schema=public
       REDIS_URL: redis://redis-dev:6379
       PORT: 3005
       PHONE_NUMBER_ID: ${PHONE_NUMBER_ID}
@@ -64,10 +64,10 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: wapp-service
-    container_name: whatssuite_wapp_dev
+    container_name: buievo_wapp_dev
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://${POSTGRES_USER:-whatssuite_dev}:${POSTGRES_PASSWORD:-dev_password}@postgres-dev:5432/${POSTGRES_DB:-whatssuite_dev}?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-buievo_dev}:${POSTGRES_PASSWORD:-dev_password}@postgres-dev:5432/${POSTGRES_DB:-buievo_dev}?schema=public
       REDIS_URL: redis://redis-dev:6379
       PHONE_NUMBER_ID: ${PHONE_NUMBER_ID}
       ACCESS_TOKEN: ${ACCESS_TOKEN}
@@ -88,7 +88,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: web
-    container_name: whatssuite_web_dev
+    container_name: buievo_web_dev
     ports:
       - "3004:3004" # Different port
     environment:
@@ -107,7 +107,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: admin
-    container_name: whatssuite_admin_dev
+    container_name: buievo_admin_dev
     ports:
       - "3003:3003" # Different port
     environment:

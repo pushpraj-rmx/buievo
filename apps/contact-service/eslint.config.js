@@ -1,4 +1,4 @@
-import { config as baseConfig } from "@whatssuite/eslint-config/base";
+import { config as baseConfig } from "@buievo/eslint-config/base";
 
 export default [
   ...baseConfig,

@@ -50,7 +50,7 @@ jobs:
             echo "🚀 Starting development deployment..."
             
             # Navigate to project directory
-            cd /opt/whatssuite-dev
+            cd /opt/buievo-dev
             
             # Pull latest changes
             git pull origin development
@@ -65,7 +65,7 @@ jobs:
             docker-compose up -d --build
             
             # Run database migrations
-            docker-compose exec -T api pnpm --filter @whatssuite/db exec prisma migrate deploy
+            docker-compose exec -T api pnpm --filter @buievo/db exec prisma migrate deploy
             
             # Health check
             echo "⏳ Waiting for services to be ready..."

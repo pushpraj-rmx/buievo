@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { createError } from "../middleware/error-handler";
 import { logger } from "../utils/logger";
-import { validateContact, validateUpdateContact } from "@whatssuite/validation";
-import type { CreateContactRequest, UpdateContactRequest } from "@whatssuite/types";
+import { validateContact, validateUpdateContact } from "@buievo/validation";
+import type { CreateContactRequest, UpdateContactRequest } from "@buievo/types";
 
 const prisma = new PrismaClient();
 

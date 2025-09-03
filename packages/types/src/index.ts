@@ -1,4 +1,4 @@
-// WhatsSuite Type Definitions
+// buievo Type Definitions
 // Export all type definitions from this package
 
 // Database types

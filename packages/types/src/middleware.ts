@@ -1,6 +1,6 @@
-// Middleware types for WhatsSuite Express.js application
+// Middleware types for buievo Express.js application
 
-// Middleware types for WhatsSuite Express.js application
+// Middleware types for buievo Express.js application
 // Note: Express types are optional dependencies
 
 import type { BaseError, AuthenticationError, AuthorizationError } from './errors';

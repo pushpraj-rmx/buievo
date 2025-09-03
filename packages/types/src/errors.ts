@@ -1,4 +1,4 @@
-// Error handling types for WhatsSuite
+// Error handling types for buievo
 
 // Base error interface
 export interface BaseError {

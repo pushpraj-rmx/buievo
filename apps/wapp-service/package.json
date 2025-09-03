@@ -1,5 +1,5 @@
 {
-  "name": "@whatssuite/wapp-service",
+  "name": "@buievo/wapp-service",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,10 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@whatssuite/db": "workspace:*",
-    "@whatssuite/redis": "workspace:*",
-    "@whatssuite/types": "workspace:*",
-    "@whatssuite/wapp-client": "workspace:*",
+    "@buievo/db": "workspace:*",
+    "@buievo/redis": "workspace:*",
+    "@buievo/types": "workspace:*",
+    "@buievo/wapp-client": "workspace:*",
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "redis-client": "^0.3.5"

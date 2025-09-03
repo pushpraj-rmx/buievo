@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Whatssuite",
+  title: "buievo",
   description: "WhatsApp Business Suite",
   icons: {
     icon: '/favicon.svg',

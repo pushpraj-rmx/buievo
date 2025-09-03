@@ -28,7 +28,7 @@ import type {
   TemplateFilters,
   CampaignAnalytics,
   CampaignStats
-} from '@whatssuite/types';
+} from '@buievo/types';
 
 // Re-export shared types
 export type {

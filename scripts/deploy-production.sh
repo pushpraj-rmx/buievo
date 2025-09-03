@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# WhatsSuite Production Deployment Script
+# buievo Production Deployment Script
 # This script deploys your code to production Docker containers
 
 set -e
 
-echo "🚀 Deploying WhatsSuite to Production..."
+echo "🚀 Deploying buievo to Production..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -15,7 +15,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-PROJECT_DIR="/opt/whatssuite"
+PROJECT_DIR="/opt/buievo"
 DOCKER_COMPOSE_FILE="docker-compose.yml"
 
 # Check if we're running as root or with sudo
@@ -81,7 +81,7 @@ fi
 
 # Run database migrations
 echo -e "${BLUE}🗄️  Running database migrations...${NC}"
-if docker-compose exec -T api pnpm --filter @whatssuite/db exec prisma migrate deploy; then
+if docker-compose exec -T api pnpm --filter @buievo/db exec prisma migrate deploy; then
     echo -e "${GREEN}✅ Database migrations completed${NC}"
 else
     echo -e "${YELLOW}⚠️  Database migrations failed or no new migrations${NC}"
@@ -114,5 +114,5 @@ echo ""
 echo -e "${BLUE}📊 Service Status:${NC}"
 docker-compose ps
 echo ""
-echo -e "${YELLOW}🚀 WhatsSuite is now live in production!${NC}"
+echo -e "${YELLOW}🚀 buievo is now live in production!${NC}"
 

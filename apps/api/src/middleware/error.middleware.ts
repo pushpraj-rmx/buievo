@@ -10,7 +10,7 @@ import type {
   AuthenticationError, 
   AuthorizationError,
   InternalServerError 
-} from '@whatssuite/types';
+} from '@buievo/types';
 
 export interface ErrorResponse {
   success: false;

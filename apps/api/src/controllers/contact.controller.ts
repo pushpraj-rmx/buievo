@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { prisma } from "@whatssuite/db";
-import { redis } from "@whatssuite/redis";
+import { prisma } from "@buievo/db";
+import { redis } from "@buievo/redis";
 import type { 
   Contact, 
   ContactFilters, 
@@ -9,7 +9,7 @@ import type {
   UpdateContactRequest,
   ContactWithSegments,
   ApiResponse 
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 // Get all contacts with pagination and filtering
 export const getContacts = async (req: Request, res: Response) => {

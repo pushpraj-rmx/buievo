@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 import {
   webhookLogger,
   generateRequestId,
@@ -11,8 +11,8 @@ import type {
   WhatsAppWebhookMessage,
   WhatsAppWebhookStatus,
   ApiResponse 
-} from "@whatssuite/types";
-import { redis } from "@whatssuite/redis";
+} from "@buievo/types";
+import { redis } from "@buievo/redis";
 const MESSAGE_QUEUE_CHANNEL = "message-queue";
 
 // This is the main function that handles incoming webhooks from Meta.

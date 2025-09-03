@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# WhatsSuite Webhook Deployment Script
+# buievo Webhook Deployment Script
 # This script is triggered by GitHub webhooks to automatically deploy
 
 set -e
@@ -15,8 +15,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-PROJECT_DIR="/opt/whatssuite"
-LOG_FILE="/var/log/whatssuite-deploy.log"
+PROJECT_DIR="/opt/buievo"
+LOG_FILE="/var/log/buievo-deploy.log"
 WEBHOOK_SECRET="${WEBHOOK_SECRET:-your_webhook_secret_here}"
 
 # Log function
@@ -77,7 +77,7 @@ fi
 
 # Run database migrations
 log "🗄️  Running database migrations..."
-if docker-compose exec -T api pnpm --filter @whatssuite/db exec prisma migrate deploy; then
+if docker-compose exec -T api pnpm --filter @buievo/db exec prisma migrate deploy; then
     log "✅ Database migrations completed"
 else
     log "⚠️  Database migrations failed or no new migrations"

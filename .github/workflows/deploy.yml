@@ -22,7 +22,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             # Navigate to project directory or clone if it doesn't exist
-            cd ~/whatssuite || git clone git@github.com:pushpraj-rmx/whatssuite.git ~/whatssuite && cd ~/whatssuite
+            cd ~/buievo || git clone git@github.com:pushpraj-rmx/buievo.git ~/buievo && cd ~/buievo
 
             # Pull the latest code
             git pull origin main

@@ -1,4 +1,4 @@
-// Campaign validation schemas for WhatsSuite
+// Campaign validation schemas for buievo
 
 import { z } from "zod";
 import { 

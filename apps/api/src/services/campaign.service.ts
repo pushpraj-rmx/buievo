@@ -1,4 +1,4 @@
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 import type { 
   CampaignServiceResponse, 
   SingleCampaignResponse,
@@ -6,7 +6,7 @@ import type {
   UpdateCampaignRequest,
   CampaignAnalytics,
   CampaignStats
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 export class CampaignService {
   /**

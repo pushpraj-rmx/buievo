@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Whatssuite Admin",
+  title: "buievo Admin",
   description: "WhatsApp Business Suite Administration Panel",
   icons: {
     icon: '/favicon.svg',

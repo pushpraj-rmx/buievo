@@ -1,7 +1,7 @@
 {
-  "name": "@whatssuite/validation",
+  "name": "@buievo/validation",
   "version": "1.0.0",
-  "description": "Validation schemas for WhatsSuite",
+  "description": "Validation schemas for buievo",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["validation", "schemas", "whatssuite"],
+  "keywords": ["validation", "schemas", "buievo"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -18,6 +18,6 @@
   },
   "dependencies": {
     "zod": "^3.23.8",
-    "@whatssuite/types": "workspace:*"
+    "@buievo/types": "workspace:*"
   }
 }

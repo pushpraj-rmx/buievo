@@ -1,5 +1,5 @@
 {
-  "name": "@whatssuite/contact-service",
+  "name": "@buievo/contact-service",
   "version": "1.0.0",
   "description": "Contact Management Microservice",
   "type": "module",
@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
-    "@whatssuite/types": "workspace:*",
-    "@whatssuite/validation": "workspace:*",
+    "@buievo/types": "workspace:*",
+    "@buievo/validation": "workspace:*",
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "helmet": "^7.1.0",
@@ -42,8 +42,8 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.10.0",
-    "@whatssuite/eslint-config": "workspace:*",
-    "@whatssuite/typescript-config": "workspace:*",
+    "@buievo/eslint-config": "workspace:*",
+    "@buievo/typescript-config": "workspace:*",
     "eslint": "^9.31.0",
     "prisma": "^5.22.0",
     "tsx": "^4.6.0",
@@ -55,6 +55,6 @@
     "whatsapp",
     "crm"
   ],
-  "author": "Whatssuite Team",
+  "author": "buievo Team",
   "license": "MIT"
 }

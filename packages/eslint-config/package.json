@@ -1,5 +1,5 @@
 {
-  "name": "@whatssuite/eslint-config",
+  "name": "@buievo/eslint-config",
   "version": "0.0.0",
   "type": "module",
   "private": true,

@@ -1,10 +1,10 @@
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 import type { 
   ConversationServiceResponse, 
   SingleConversationResponse,
   ConversationWithMessages,
   ConversationSummary
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 export class ConversationService {
   /**

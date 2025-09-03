@@ -1,4 +1,4 @@
-// Utility types for WhatsSuite
+// Utility types for buievo
 
 // Generic utility types
 export type Nullable<T> = T | null;

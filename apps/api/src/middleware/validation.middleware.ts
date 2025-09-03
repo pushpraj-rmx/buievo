@@ -3,7 +3,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { z, ZodSchema, ZodError } from 'zod';
-import type { ValidationError } from '@whatssuite/types';
+import type { ValidationError } from '@buievo/types';
 
 export interface ValidationOptions {
   body?: ZodSchema;

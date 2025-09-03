@@ -1,5 +1,5 @@
 {
-  "extends": "@whatssuite/typescript-config/nextjs.json",
+  "extends": "@buievo/typescript-config/nextjs.json",
   "compilerOptions": {
     "plugins": [
       {

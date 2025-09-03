@@ -1,4 +1,4 @@
-// Base validation schemas for WhatsSuite
+// Base validation schemas for buievo
 
 import { z } from "zod";
 

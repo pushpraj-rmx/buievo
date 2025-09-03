@@ -138,7 +138,7 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../../packages/types
       class-variance-authority:
@@ -244,25 +244,25 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.10
         version: 9.0.10
-      '@whatssuite/db':
+      '@buievo/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@whatssuite/media-manager':
+      '@buievo/media-manager':
         specifier: workspace:*
         version: link:../../packages/media-manager
-      '@whatssuite/redis':
+      '@buievo/redis':
         specifier: workspace:*
         version: link:../../packages/redis
-      '@whatssuite/template-manager':
+      '@buievo/template-manager':
         specifier: workspace:*
         version: link:../../packages/template-manager
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@whatssuite/validation':
+      '@buievo/validation':
         specifier: workspace:*
         version: link:../../packages/validation
-      '@whatssuite/wapp-client':
+      '@buievo/wapp-client':
         specifier: workspace:*
         version: link:../../packages/wapp-client
       axios:
@@ -320,10 +320,10 @@ importers:
       '@prisma/client':
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@whatssuite/validation':
+      '@buievo/validation':
         specifier: workspace:*
         version: link:../../packages/validation
       bcryptjs:
@@ -384,10 +384,10 @@ importers:
       '@types/node':
         specifier: ^20.10.0
         version: 20.19.9
-      '@whatssuite/eslint-config':
+      '@buievo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@whatssuite/typescript-config':
+      '@buievo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       eslint:
@@ -408,7 +408,7 @@ importers:
       '@expo/metro-runtime':
         specifier: ~5.0.4
         version: 5.0.4(react-native@0.79.5(@babel/core@7.28.3)(@types/react@19.0.14)(react@19.0.0))
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../../packages/types
       expo:
@@ -469,16 +469,16 @@ importers:
 
   apps/wapp-service:
     dependencies:
-      '@whatssuite/db':
+      '@buievo/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@whatssuite/redis':
+      '@buievo/redis':
         specifier: workspace:*
         version: link:../../packages/redis
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@whatssuite/wapp-client':
+      '@buievo/wapp-client':
         specifier: workspace:*
         version: link:../../packages/wapp-client
       axios:
@@ -539,7 +539,7 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.1.11
         version: 4.1.11
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../../packages/types
       class-variance-authority:
@@ -591,10 +591,10 @@ importers:
       '@types/react-dom':
         specifier: 19.1.1
         version: 19.1.1(@types/react@19.1.0)
-      '@whatssuite/eslint-config':
+      '@buievo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@whatssuite/typescript-config':
+      '@buievo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       eslint:
@@ -655,7 +655,7 @@ importers:
 
   packages/media-manager:
     dependencies:
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../types
       axios:
@@ -665,10 +665,10 @@ importers:
         specifier: ^4.0.0
         version: 4.0.4
     devDependencies:
-      '@whatssuite/eslint-config':
+      '@buievo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@whatssuite/typescript-config':
+      '@buievo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       eslint:
@@ -683,7 +683,7 @@ importers:
 
   packages/redis:
     dependencies:
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../types
       redis:
@@ -693,10 +693,10 @@ importers:
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
-      '@whatssuite/eslint-config':
+      '@buievo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@whatssuite/typescript-config':
+      '@buievo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       eslint:
@@ -711,7 +711,7 @@ importers:
 
   packages/template-manager:
     dependencies:
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../types
       axios:
@@ -724,10 +724,10 @@ importers:
         specifier: ^4.0.0
         version: 4.0.4
     devDependencies:
-      '@whatssuite/eslint-config':
+      '@buievo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@whatssuite/typescript-config':
+      '@buievo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       eslint:
@@ -750,7 +750,7 @@ importers:
 
   packages/validation:
     dependencies:
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../types
       zod:
@@ -766,7 +766,7 @@ importers:
 
   packages/wapp-client:
     dependencies:
-      '@whatssuite/types':
+      '@buievo/types':
         specifier: workspace:*
         version: link:../types
       axios:

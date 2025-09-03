@@ -1,4 +1,4 @@
-// Configuration types for WhatsSuite
+// Configuration types for buievo
 
 // Environment configuration
 export interface EnvironmentConfig {

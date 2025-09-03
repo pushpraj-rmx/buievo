@@ -1,4 +1,4 @@
-// Event types for WhatsSuite
+// Event types for buievo
 
 // Base event interface
 export interface BaseEvent {
@@ -441,7 +441,7 @@ export interface EventReplay {
 }
 
 // Event types union
-export type WhatsSuiteEvent =
+export type buievoEvent =
   | UserCreatedEvent
   | UserUpdatedEvent
   | UserDeletedEvent

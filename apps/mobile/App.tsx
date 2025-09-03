@@ -90,7 +90,7 @@ export default function App() {
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <Bot size={24} color="#1a1a1a" />
-          <Text style={styles.headerTitle}>Whatssuite</Text>
+          <Text style={styles.headerTitle}>buievo</Text>
         </View>
         <Text style={styles.headerSubtitle}>WhatsApp Business Suite</Text>
       </View>

@@ -4,10 +4,10 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:17-alpine
-    container_name: whatssuite-dev-postgres
+    container_name: buievo-dev-postgres
     environment:
-      POSTGRES_DB: whatssuite_dev
-      POSTGRES_USER: whatssuite_dev
+      POSTGRES_DB: buievo_dev
+      POSTGRES_USER: buievo_dev
       POSTGRES_PASSWORD: dev_password_123
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
@@ -15,7 +15,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U whatssuite_dev -d whatssuite_dev"]
+      test: ["CMD-SHELL", "pg_isready -U buievo_dev -d buievo_dev"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -24,7 +24,7 @@ services:
   # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: whatssuite-dev-redis
+    container_name: buievo-dev-redis
     ports:
       - "6379:6379"
     volumes:
@@ -38,15 +38,15 @@ services:
 
   # API Service
   api:
-    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:latest
-    container_name: whatssuite-dev-api
+    image: ghcr.io/${GITHUB_REPOSITORY:-buievo}:latest
+    container_name: buievo-dev-api
     build:
       context: .
       dockerfile: Dockerfile
       target: api
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://whatssuite_dev:dev_password_123@postgres:5432/whatssuite_dev?schema=public
+      DATABASE_URL: postgresql://buievo_dev:dev_password_123@postgres:5432/buievo_dev?schema=public
       REDIS_URL: redis://redis:6379
       PORT: 3005
       JWT_SECRET: dev_jwt_secret_123
@@ -72,15 +72,15 @@ services:
 
   # WhatsApp Service
   wapp-service:
-    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:latest
-    container_name: whatssuite-dev-wapp-service
+    image: ghcr.io/${GITHUB_REPOSITORY:-buievo}:latest
+    container_name: buievo-dev-wapp-service
     build:
       context: .
       dockerfile: Dockerfile
       target: wapp-service
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://whatssuite_dev:dev_password_123@postgres:5432/whatssuite_dev?schema=public
+      DATABASE_URL: postgresql://buievo_dev:dev_password_123@postgres:5432/buievo_dev?schema=public
       REDIS_URL: redis://redis:6379
       PORT: 3007
       WHATSAPP_API_TOKEN: ${WHATSAPP_API_TOKEN}
@@ -105,8 +105,8 @@ services:
 
   # Admin Dashboard
   admin:
-    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:latest
-    container_name: whatssuite-dev-admin
+    image: ghcr.io/${GITHUB_REPOSITORY:-buievo}:latest
+    container_name: buievo-dev-admin
     build:
       context: .
       dockerfile: Dockerfile
@@ -130,8 +130,8 @@ services:
 
   # Web Client
   web:
-    image: ghcr.io/${GITHUB_REPOSITORY:-whatssuite}:latest
-    container_name: whatssuite-dev-web
+    image: ghcr.io/${GITHUB_REPOSITORY:-buievo}:latest
+    container_name: buievo-dev-web
     build:
       context: .
       dockerfile: Dockerfile
@@ -161,4 +161,4 @@ volumes:
 
 networks:
   default:
-    name: whatssuite-dev-network
+    name: buievo-dev-network

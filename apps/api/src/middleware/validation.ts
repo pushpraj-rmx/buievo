@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createContactSchema, updateContactSchema } from "@whatssuite/validation";
+import { createContactSchema, updateContactSchema } from "@buievo/validation";
 
 export const validateContact = (req: Request, res: Response, next: NextFunction) => {
   try {

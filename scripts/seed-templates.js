@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@whatssuite/db');
+const { PrismaClient } = require('@buievo/db');
 
 const prisma = new PrismaClient();
 

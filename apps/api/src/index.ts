@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
-import { dbConnection } from "@whatssuite/db";
-import { redis } from "@whatssuite/redis";
+import { dbConnection } from "@buievo/db";
+import { redis } from "@buievo/redis";
 
 // Import middleware
 import { 
@@ -48,7 +48,7 @@ app.get("/", (req, res) => {
   res.json({
     success: true,
     data: {
-      message: "WhatsSuite API is running",
+      message: "buievo API is running",
       version: "1.0.0",
       timestamp: new Date().toISOString(),
     },

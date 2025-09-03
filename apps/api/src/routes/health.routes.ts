@@ -1,4 +1,4 @@
-import { redis } from "@whatssuite/redis";
+import { redis } from "@buievo/redis";
 import { Router, Request, Response } from "express";
 
 const router = Router();

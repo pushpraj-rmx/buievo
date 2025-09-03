@@ -3,7 +3,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import type { AuthenticatedRequest } from '@whatssuite/types';
+import type { AuthenticatedRequest } from '@buievo/types';
 
 export interface JwtPayload {
   userId: string;

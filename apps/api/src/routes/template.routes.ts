@@ -9,7 +9,7 @@ import {
   duplicateTemplate,
   uploadMedia,
 } from "../controllers/template.controller";
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 
 const router = Router();
 

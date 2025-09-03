@@ -1,4 +1,4 @@
-// Contact validation schemas for WhatsSuite
+// Contact validation schemas for buievo
 
 import { z } from "zod";
 import { 

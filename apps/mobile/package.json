@@ -1,5 +1,5 @@
 {
-  "name": "@whatssuite/mobile",
+  "name": "@buievo/mobile",
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
-    "@whatssuite/types": "workspace:*",
+    "@buievo/types": "workspace:*",
     "expo": "~53.0.22",
     "expo-constants": "~17.0.0",
     "expo-linking": "~7.0.0",

@@ -1,4 +1,4 @@
-// Database utilities for WhatsSuite
+// Database utilities for buievo
 // Comprehensive database system with Prisma client and basic utilities
 
 import { PrismaClient } from "@prisma/client";

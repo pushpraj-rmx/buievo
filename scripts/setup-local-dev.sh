@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# WhatsSuite Local Development Environment Setup Script
+# buievo Local Development Environment Setup Script
 # This script sets up a development environment on your HOST MACHINE (no Docker)
 
 set -e
 
-echo "🚀 Setting up WhatsSuite Local Development Environment..."
+echo "🚀 Setting up buievo Local Development Environment..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 
 # Check if we're in the right directory
 if [ ! -f "package.json" ] || [ ! -f "env.development" ]; then
-    echo -e "${RED}❌ Error: Please run this script from the WhatsSuite root directory${NC}"
+    echo -e "${RED}❌ Error: Please run this script from the buievo root directory${NC}"
     exit 1
 fi
 
@@ -76,23 +76,23 @@ fi
 
 # Create development database
 echo -e "${BLUE}🗄️  Creating development database...${NC}"
-if ! psql -h localhost -U postgres -c "SELECT 1 FROM pg_database WHERE datname='whatssuite_dev'" | grep -q 1; then
-    echo "Creating database 'whatssuite_dev'..."
-    psql -h localhost -U postgres -c "CREATE DATABASE whatssuite_dev;"
-    echo -e "${GREEN}✅ Database 'whatssuite_dev' created${NC}"
+if ! psql -h localhost -U postgres -c "SELECT 1 FROM pg_database WHERE datname='buievo_dev'" | grep -q 1; then
+    echo "Creating database 'buievo_dev'..."
+    psql -h localhost -U postgres -c "CREATE DATABASE buievo_dev;"
+    echo -e "${GREEN}✅ Database 'buievo_dev' created${NC}"
 else
-    echo -e "${GREEN}✅ Database 'whatssuite_dev' already exists${NC}"
+    echo -e "${GREEN}✅ Database 'buievo_dev' already exists${NC}"
 fi
 
 # Create development user if it doesn't exist
 echo -e "${BLUE}👤 Setting up database user...${NC}"
-if ! psql -h localhost -U postgres -c "SELECT 1 FROM pg_user WHERE usename='whatssuite_dev'" | grep -q 1; then
-    echo "Creating user 'whatssuite_dev'..."
-    psql -h localhost -U postgres -c "CREATE USER whatssuite_dev WITH PASSWORD 'dev_password_123';"
-    psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE whatssuite_dev TO whatssuite_dev;"
-    echo -e "${GREEN}✅ User 'whatssuite_dev' created with privileges${NC}"
+if ! psql -h localhost -U postgres -c "SELECT 1 FROM pg_user WHERE usename='buievo_dev'" | grep -q 1; then
+    echo "Creating user 'buievo_dev'..."
+    psql -h localhost -U postgres -c "CREATE USER buievo_dev WITH PASSWORD 'dev_password_123';"
+    psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE buievo_dev TO buievo_dev;"
+    echo -e "${GREEN}✅ User 'buievo_dev' created with privileges${NC}"
 else
-    echo -e "${GREEN}✅ User 'whatssuite_dev' already exists${NC}"
+    echo -e "${GREEN}✅ User 'buievo_dev' already exists${NC}"
 fi
 
 # Install dependencies if needed
@@ -101,11 +101,11 @@ pnpm install
 
 # Generate Prisma client
 echo -e "${BLUE}🔧 Generating Prisma client...${NC}"
-pnpm --filter @whatssuite/db exec prisma generate
+pnpm --filter @buievo/db exec prisma generate
 
 # Run migrations
 echo -e "${BLUE}🔄 Running database migrations...${NC}"
-pnpm --filter @whatssuite/db exec prisma migrate deploy
+pnpm --filter @buievo/db exec prisma migrate deploy
 
 echo -e "${GREEN}🎉 Local development environment setup complete!${NC}"
 echo ""
@@ -113,7 +113,7 @@ echo -e "${BLUE}📱 Your local development services will run on:${NC}"
 echo -e "   • Admin Dashboard: ${GREEN}http://localhost:3003${NC}"
 echo -e "   • Web Client: ${GREEN}http://localhost:3004${NC}"
 echo -e "   • API: ${GREEN}http://localhost:3005${NC}"
-echo -e "   • Database: ${GREEN}localhost:5432 (whatssuite_dev)${NC}"
+echo -e "   • Database: ${GREEN}localhost:5432 (buievo_dev)${NC}"
 echo -e "   • Redis: ${GREEN}localhost:6379${NC}"
 echo ""
 echo -e "${BLUE}🚀 To start development services:${NC}"

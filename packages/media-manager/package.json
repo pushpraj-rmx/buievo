@@ -1,5 +1,5 @@
 {
-  "name": "@whatssuite/media-manager",
+  "name": "@buievo/media-manager",
   "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -10,13 +10,13 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@whatssuite/types": "workspace:*",
+    "@buievo/types": "workspace:*",
     "axios": "^1.11.0",
     "form-data": "^4.0.0"
   },
   "devDependencies": {
-    "@whatssuite/eslint-config": "workspace:*",
-    "@whatssuite/typescript-config": "workspace:*",
+    "@buievo/eslint-config": "workspace:*",
+    "@buievo/typescript-config": "workspace:*",
     "eslint": "^9.31.0",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3"

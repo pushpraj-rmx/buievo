@@ -1,4 +1,4 @@
-# Development Dockerfile for WhatsSuite
+# Development Dockerfile for buievo
 FROM node:20-alpine AS base
 
 # Install pnpm
@@ -17,7 +17,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 # Generate Prisma client
-RUN ["pnpm", "--filter", "@whatssuite/db", "exec", "prisma", "generate"]
+RUN ["pnpm", "--filter", "@buievo/db", "exec", "prisma", "generate"]
 
 # Build packages (but not apps for development)
 RUN pnpm --filter "./packages/*" build
@@ -26,21 +26,21 @@ RUN pnpm --filter "./packages/*" build
 FROM base AS api-dev
 WORKDIR /usr/src/app
 EXPOSE 3001
-CMD ["pnpm", "--filter", "@whatssuite/api", "dev"]
+CMD ["pnpm", "--filter", "@buievo/api", "dev"]
 
 # Wapp-Service Development Stage
 FROM base AS wapp-service-dev
 WORKDIR /usr/src/app
-CMD ["pnpm", "--filter", "@whatssuite/wapp-service", "dev"]
+CMD ["pnpm", "--filter", "@buievo/wapp-service", "dev"]
 
 # Admin Development Stage
 FROM base AS admin-dev
 WORKDIR /usr/src/app
 EXPOSE 3002
-CMD ["pnpm", "--filter", "@whatssuite/admin", "dev", "--port", "3002"]
+CMD ["pnpm", "--filter", "@buievo/admin", "dev", "--port", "3002"]
 
 # Web Development Stage
 FROM base AS web-dev
 WORKDIR /usr/src/app
 EXPOSE 3000
-CMD ["pnpm", "--filter", "@whatssuite/web", "dev", "--port", "3000"]
+CMD ["pnpm", "--filter", "@buievo/web", "dev", "--port", "3000"]

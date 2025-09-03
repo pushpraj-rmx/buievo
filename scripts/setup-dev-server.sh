@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Development Server Setup Script
-# This script sets up the development server environment and deploys WhatsSuite
+# This script sets up the development server environment and deploys buievo
 
 set -e
 
-echo "🚀 Setting up WhatsSuite Development Server..."
+echo "🚀 Setting up buievo Development Server..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -15,8 +15,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-PROJECT_DIR="/opt/whatssuite-dev"
-GITHUB_REPO="pushpraj-rmx/whatssuite"  # Your actual repository
+PROJECT_DIR="/opt/buievo-dev"
+GITHUB_REPO="pushpraj-rmx/buievo"  # Your actual repository
 BRANCH="development"
 
 # Function to print colored output
@@ -112,7 +112,7 @@ else
 fi
 
 print_status "Running database migrations..."
-docker-compose -f docker-compose.dev-server.yml exec -T api pnpm --filter @whatssuite/db exec prisma migrate deploy
+docker-compose -f docker-compose.dev-server.yml exec -T api pnpm --filter @buievo/db exec prisma migrate deploy
 
 print_success "Development server setup completed!"
 echo ""

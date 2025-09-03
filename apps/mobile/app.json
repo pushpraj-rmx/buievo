@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Whatssuite",
-    "slug": "whatssuite-mobile",
+    "name": "buievo",
+    "slug": "buievo-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.whatssuite.mobile"
+      "bundleIdentifier": "com.buievo.mobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.whatssuite.mobile"
+      "package": "com.buievo.mobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"

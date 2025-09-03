@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# WhatsSuite Development Environment Setup Script
+# buievo Development Environment Setup Script
 # This script sets up a development environment without affecting production
 
 set -e
 
-echo "🚀 Setting up WhatsSuite Development Environment..."
+echo "🚀 Setting up buievo Development Environment..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 
 # Check if we're in the right directory
 if [ ! -f "package.json" ] || [ ! -f "docker-compose.dev.yml" ]; then
-    echo -e "${RED}❌ Error: Please run this script from the WhatsSuite root directory${NC}"
+    echo -e "${RED}❌ Error: Please run this script from the buievo root directory${NC}"
     exit 1
 fi
 
@@ -67,7 +67,7 @@ echo -e "${BLUE}⏳ Waiting for services to be ready...${NC}"
 sleep 10
 
 # Check if services are healthy
-if ! docker-compose -f docker-compose.dev.yml exec -T postgres-dev pg_isready -U whatssuite_dev -d whatssuite_dev > /dev/null 2>&1; then
+if ! docker-compose -f docker-compose.dev.yml exec -T postgres-dev pg_isready -U buievo_dev -d buievo_dev > /dev/null 2>&1; then
     echo -e "${RED}❌ Error: PostgreSQL is not ready${NC}"
     exit 1
 fi
@@ -81,7 +81,7 @@ echo -e "${GREEN}✅ Development database and Redis are ready${NC}"
 
 # Run database migrations
 echo -e "${BLUE}🗄️  Setting up database schema...${NC}"
-docker-compose -f docker-compose.dev.yml exec -T postgres-dev createdb -U whatssuite_dev whatssuite_dev 2>/dev/null || true
+docker-compose -f docker-compose.dev.yml exec -T postgres-dev createdb -U buievo_dev buievo_dev 2>/dev/null || true
 
 # Install dependencies if needed
 echo -e "${BLUE}📦 Installing dependencies...${NC}"
@@ -89,11 +89,11 @@ pnpm install
 
 # Generate Prisma client
 echo -e "${BLUE}🔧 Generating Prisma client...${NC}"
-pnpm --filter @whatssuite/db exec prisma generate
+pnpm --filter @buievo/db exec prisma generate
 
 # Run migrations
 echo -e "${BLUE}🔄 Running database migrations...${NC}"
-pnpm --filter @whatssuite/db exec prisma migrate deploy
+pnpm --filter @buievo/db exec prisma migrate deploy
 
 echo -e "${GREEN}🎉 Development environment setup complete!${NC}"
 echo ""

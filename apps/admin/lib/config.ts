@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-// Centralized Configuration Management for WhatsSuite
+// Centralized Configuration Management for buievo
 // This service manages all application settings and provides a single source of truth
 
 export interface WhatsAppConfig {
@@ -178,7 +178,7 @@ class ConfigService {
     try {
       // Try to load from localStorage first (only in browser)
       if (typeof window !== 'undefined' && window.localStorage) {
-        const savedConfig = localStorage.getItem('whatssuite-config');
+        const savedConfig = localStorage.getItem('buievo-config');
         if (savedConfig) {
           this.config = { ...defaultConfig, ...JSON.parse(savedConfig) };
         }
@@ -224,7 +224,7 @@ class ConfigService {
   private saveToLocalStorage() {
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
-        localStorage.setItem('whatssuite-config', JSON.stringify(this.config));
+        localStorage.setItem('buievo-config', JSON.stringify(this.config));
       }
     } catch (error) {
       console.warn('Failed to save configuration to localStorage:', error);

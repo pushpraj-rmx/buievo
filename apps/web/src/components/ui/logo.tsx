@@ -35,7 +35,7 @@ export function Logo({
       </svg>
       {showText && (
         <span className={`ml-2 font-semibold ${textClassName}`}>
-          Whatssuite
+          buievo
         </span>
       )}
     </div>

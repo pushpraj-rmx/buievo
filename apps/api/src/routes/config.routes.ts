@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 
 const router = Router();
 

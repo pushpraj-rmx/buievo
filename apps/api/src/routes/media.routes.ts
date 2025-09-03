@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 import multer from "multer";
 import {
   uploadMedia,
@@ -7,7 +7,7 @@ import {
   deleteMedia,
 } from "../controllers/media.controller";
 import axios from "axios";
-import { MediaManager } from "@whatssuite/media-manager";
+import { MediaManager } from "@buievo/media-manager";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });

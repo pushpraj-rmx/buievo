@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { prisma } from "@whatssuite/db";
-import { wappClient } from "@whatssuite/wapp-client";
+import { prisma } from "@buievo/db";
+import { wappClient } from "@buievo/wapp-client";
 import type { 
   ConversationSummary, 
   ConversationWithMessages, 
   MessageResponse,
   SendMessageRequest,
   ApiResponse 
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 export const getConversations = async (req: Request, res: Response) => {
   try {

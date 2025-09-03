@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { redis } from "@whatssuite/redis";
+import { redis } from "@buievo/redis";
 
 // This script sends a message to a single contact by their ID.
 

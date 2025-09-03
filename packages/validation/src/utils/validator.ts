@@ -1,11 +1,11 @@
-// Validation utilities for WhatsSuite
+// Validation utilities for buievo
 
 import { z } from "zod";
 import type { 
   ValidationResultUtil as ValidationResult, 
   ValidationErrorUtil as ValidationError, 
   ValidationWarningUtil as ValidationWarning 
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 // Validation result builder
 export class ValidationResultBuilder {

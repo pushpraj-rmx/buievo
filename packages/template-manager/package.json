@@ -1,5 +1,5 @@
 {
-  "name": "@whatssuite/template-manager",
+  "name": "@buievo/template-manager",
   "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -10,14 +10,14 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@whatssuite/types": "workspace:*",
+    "@buievo/types": "workspace:*",
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "form-data": "^4.0.0"
   },
   "devDependencies": {
-    "@whatssuite/eslint-config": "workspace:*",
-    "@whatssuite/typescript-config": "workspace:*",
+    "@buievo/eslint-config": "workspace:*",
+    "@buievo/typescript-config": "workspace:*",
     "eslint": "^9.31.0",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3"

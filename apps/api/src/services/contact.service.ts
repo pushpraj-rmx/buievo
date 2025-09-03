@@ -1,11 +1,11 @@
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 import type { 
   ContactServiceResponse, 
   SingleContactResponse,
   CreateContactRequest,
   UpdateContactRequest,
   ContactWithSegments
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 export class ContactService {
   /**

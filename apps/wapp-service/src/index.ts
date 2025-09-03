@@ -1,10 +1,10 @@
 import "dotenv/config";
-import { redis } from "@whatssuite/redis";
-import { prisma } from "@whatssuite/db";
+import { redis } from "@buievo/redis";
+import { prisma } from "@buievo/db";
 import {
   wappClient,
   type SendTemplateMessageArgs,
-} from "@whatssuite/wapp-client";
+} from "@buievo/wapp-client";
 
 // Import new modular components
 import { logger } from './logger';

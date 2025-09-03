@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { MediaManager, MediaType } from "@whatssuite/media-manager";
+import { MediaManager, MediaType } from "@buievo/media-manager";
 import { z } from "zod";
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 
 function getMediaManager(): MediaManager {
   const accessToken = process.env.ACCESS_TOKEN;

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { prisma } from "@whatssuite/db";
-import { redis } from "@whatssuite/redis";
+import { prisma } from "@buievo/db";
+import { redis } from "@buievo/redis";
 import type { 
   Campaign, 
   CampaignFilters, 
@@ -10,7 +10,7 @@ import type {
   CampaignAnalytics,
   CampaignStats,
   ApiResponse 
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 // Get all campaigns with pagination and filtering
 export const getCampaigns = async (req: Request, res: Response) => {

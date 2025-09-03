@@ -4,9 +4,9 @@ import {
   TemplateDefinition,
   TemplateValidationResult,
   MediaAsset,
-} from "@whatssuite/template-manager";
+} from "@buievo/template-manager";
 import { z } from "zod";
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 import type { 
   Template, 
   TemplateFilters, 
@@ -14,7 +14,7 @@ import type {
   CreateTemplateRequest, 
   UpdateTemplateRequest,
   ApiResponse 
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 function getTemplateManager(): TemplateManager {
   const accessToken = process.env.ACCESS_TOKEN;

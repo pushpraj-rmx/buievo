@@ -1,4 +1,4 @@
-// Validation schemas for WhatsSuite
+// Validation schemas for buievo
 // Comprehensive validation system with Zod schemas
 
 // Base schemas
@@ -26,7 +26,7 @@ import type {
   SendMessageRequest,
   PaginationParams,
   WhatsAppMessagePayload
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 // Base validation schemas (legacy)
 export const phoneNumberSchema = z

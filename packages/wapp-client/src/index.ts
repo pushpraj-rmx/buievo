@@ -48,18 +48,18 @@ export type { ValidationResult } from './validation';
 export { WhatsAppHttpClient } from './http-client';
 export type { HttpClientOptions } from './http-client';
 
-// Re-export types from @whatssuite/types for convenience
+// Re-export types from @buievo/types for convenience
 export type {
   WhatsAppMessagePayload,
   WhatsAppApiResponse,
   WhatsAppMessageComponent,
   WhatsAppTemplate,
   WhatsAppTemplateComponent
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 // Legacy exports for backward compatibility
 import { WhatsAppClient } from './client';
-import type { WhatsAppApiResponse } from "@whatssuite/types";
+import type { WhatsAppApiResponse } from "@buievo/types";
 
 // Legacy interface for backward compatibility
 export interface SendTemplateMessageArgs {

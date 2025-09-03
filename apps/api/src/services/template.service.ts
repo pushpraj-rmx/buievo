@@ -1,10 +1,10 @@
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 import type { 
   TemplateServiceResponse, 
   SingleTemplateResponse,
   CreateTemplateRequest,
   UpdateTemplateRequest
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 export class TemplateService {
   /**

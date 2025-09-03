@@ -1,5 +1,5 @@
 {
-  "name": "@whatssuite/wapp-client",
+  "name": "@buievo/wapp-client",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
@@ -19,6 +19,6 @@
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "@whatssuite/types": "workspace:*"
+    "@buievo/types": "workspace:*"
   }
 }

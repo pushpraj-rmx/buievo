@@ -7,7 +7,7 @@ import type {
   PaginatedResponse, 
   ServiceResponse,
   PaginationParams 
-} from '@whatssuite/types';
+} from '@buievo/types';
 
 export interface ResponseOptions {
   requestId?: string;

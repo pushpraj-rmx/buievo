@@ -5,7 +5,7 @@ import type {
   WhatsAppMessagePayload,
   WhatsAppApiResponse,
   WhatsAppMessageComponent
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 import { createWhatsAppConfig, validateWhatsAppConfig, WhatsAppConfig, WhatsAppClientOptions } from './config';
 import { logger } from './logger';

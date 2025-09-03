@@ -247,7 +247,7 @@ export function getApiHeaders(config: TemplateManagerConfig, additionalHeaders: 
   return {
     'Authorization': `Bearer ${config.accessToken}`,
     'Content-Type': 'application/json',
-    'User-Agent': 'WhatsSuite-TemplateManager/1.0.0',
+    'User-Agent': 'buievo-TemplateManager/1.0.0',
     ...additionalHeaders,
   };
 }

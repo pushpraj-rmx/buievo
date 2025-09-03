@@ -110,7 +110,7 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-3xl font-bold">Settings</h1>
         <p className="text-muted-foreground">
-          Manage your WhatsSuite configuration and preferences
+          Manage your buievo configuration and preferences
         </p>
       </div>
 

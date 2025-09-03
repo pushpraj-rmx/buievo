@@ -1,9 +1,9 @@
-import { MediaManager, MediaType } from "@whatssuite/media-manager";
-import { prisma } from "@whatssuite/db";
+import { MediaManager, MediaType } from "@buievo/media-manager";
+import { prisma } from "@buievo/db";
 import type { 
   MediaUploadResponse,
   UploadMediaRequest
-} from "@whatssuite/types";
+} from "@buievo/types";
 
 export class MediaService {
   private mediaManager: MediaManager;

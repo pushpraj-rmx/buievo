@@ -1,7 +1,7 @@
-import { prisma } from "@whatssuite/db";
+import { prisma } from "@buievo/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { User } from "@whatssuite/types";
+import type { User } from "@buievo/types";
 
 export interface AuthTokens {
   accessToken: string;
