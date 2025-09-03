@@ -13,8 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/bcryptjs": "^3.0.0",
-    "@types/jsonwebtoken": "^9.0.10",
     "@buievo/db": "workspace:*",
     "@buievo/media-manager": "workspace:*",
     "@buievo/redis": "workspace:*",
@@ -22,6 +20,8 @@
     "@buievo/types": "workspace:*",
     "@buievo/validation": "workspace:*",
     "@buievo/wapp-client": "workspace:*",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.3",
+    "@types/express": "^4.17.17",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.15.3",
     "tsx": "^4.20.3",

@@ -363,7 +363,7 @@ export class ContactService {
       active,
       inactive,
       pending,
-      bySegment: segmentStats.map((segment) => ({
+      bySegment: segmentStats.map((segment: any) => ({
         segmentId: segment.id,
         name: segment.name,
         count: segment._count.contacts,
