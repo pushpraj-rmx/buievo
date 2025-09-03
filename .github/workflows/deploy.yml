@@ -37,3 +37,13 @@ jobs:
 
             # Clean up old docker images
             docker image prune -f
+
+            # Display service status and ports
+            echo "🚀 Services deployed successfully!"
+            echo "📱 Service Ports:"
+            echo "   • API: http://${{ secrets.VPS_HOST }}:3011"
+            echo "   • Web Client: http://${{ secrets.VPS_HOST }}:3012"
+            echo "   • Admin Dashboard: http://${{ secrets.VPS_HOST }}:3013"
+            echo "   • PostgreSQL: Internal (5432)"
+            echo "   • Redis: Internal (6379)"
+            echo "   • WhatsApp Service: Internal (no external port)"
