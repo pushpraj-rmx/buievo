@@ -27,7 +27,7 @@ export interface ApiClientConfig {
 
 // Default configuration
 const DEFAULT_CONFIG: ApiClientConfig = {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3005",
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:32101",
   timeout: 30000,
   retries: 3,
   retryDelay: 1000,

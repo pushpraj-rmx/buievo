@@ -79,7 +79,11 @@ export function securityHeaders() {
  */
 export function corsMiddleware(options: SecurityOptions['corsOptions'] = {}) {
   const defaultOptions: cors.CorsOptions = {
-    origin: process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || '*',
+    origin: process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [
+      'http://localhost:32100', // Admin frontend
+      'http://localhost:3000',  // Web frontend
+      'http://localhost:4000',  // Alternative admin port
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: [
@@ -102,12 +106,12 @@ export function corsMiddleware(options: SecurityOptions['corsOptions'] = {}) {
  */
 export function requestIdMiddleware() {
   return (req: Request, res: Response, next: NextFunction) => {
-    const requestId = req.headers['x-request-id'] as string || 
-                     `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+    const requestId = req.headers['x-request-id'] as string ||
+      `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
     (req as any).requestId = requestId;
     res.setHeader('X-Request-ID', requestId);
-    
+
     next();
   };
 }
@@ -119,7 +123,7 @@ export function requestLogger() {
   return (req: Request, res: Response, next: NextFunction) => {
     const startTime = Date.now();
     const requestId = (req as any).requestId;
-    
+
     // Log request
     console.log(`[${new Date().toISOString()}] [${requestId}] ${req.method} ${req.path}`, {
       query: req.query,
@@ -130,11 +134,11 @@ export function requestLogger() {
 
     // Override res.end to log response
     const originalEnd = res.end;
-    (res as any).end = function(chunk?: any, encoding?: any) {
+    (res as any).end = function (chunk?: any, encoding?: any) {
       const duration = Date.now() - startTime;
-      
+
       console.log(`[${new Date().toISOString()}] [${requestId}] ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
-      
+
       originalEnd.call(this, chunk, encoding);
     };
 
@@ -218,7 +222,7 @@ function parseSize(size: string): number {
 
   const value = parseFloat(match[1]);
   const unit = match[2] || 'b';
-  
+
   return value * units[unit];
 }
 

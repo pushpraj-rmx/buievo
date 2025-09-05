@@ -35,15 +35,15 @@ export interface ContactStats {
 export class ContactService {
   // Get contacts with pagination and advanced filters
   async getContacts(filters: ContactFilters) {
-    const { 
-      page, 
-      limit, 
-      search, 
-      name, 
-      email, 
-      phone, 
-      comment, 
-      status, 
+    const {
+      page,
+      limit,
+      search,
+      name,
+      email,
+      phone,
+      comment,
+      status,
       segmentId,
       createdAfter,
       createdBefore,
@@ -54,7 +54,7 @@ export class ContactService {
 
     // Build where clause with advanced search capabilities
     const where: any = {};
-    
+
     // General search across all fields (OR condition)
     if (search) {
       where.OR = [
@@ -69,15 +69,15 @@ export class ContactService {
     if (name) {
       where.name = { contains: name, mode: "insensitive" };
     }
-    
+
     if (email) {
       where.email = { contains: email, mode: "insensitive" };
     }
-    
+
     if (phone) {
       where.phone = { contains: phone, mode: "insensitive" };
     }
-    
+
     if (comment) {
       where.comment = { contains: comment, mode: "insensitive" };
     }
@@ -171,20 +171,219 @@ export class ContactService {
     });
   }
 
-  // Create new contact
-  async createContact(data: CreateContactRequest) {
+  // Check for duplicates before creating contact
+  async checkForDuplicates(data: CreateContactRequest) {
     try {
       // Validate input
       const validatedData = validateContact(data);
 
-      // Check if contact with same phone already exists
-      const existingContact = await prisma.contact.findFirst({
-        where: { phone: validatedData.phone },
+      // Convert empty email to null
+      const emailValue = validatedData.email === "" ? null : validatedData.email;
+
+      // Check for existing contacts with same email or phone
+      const existingContacts = await prisma.contact.findMany({
+        where: {
+          OR: [
+            ...(emailValue ? [{ email: emailValue }] : []),
+            { phone: validatedData.phone },
+          ],
+        },
+        include: {
+          segments: true,
+        },
       });
 
-      if (existingContact) {
-        throw createError("Contact with this phone number already exists", 400);
+      if (existingContacts.length === 0) {
+        return {
+          hasDuplicates: false,
+          duplicates: [],
+          suggestedActions: [],
+        };
       }
+
+      // Analyze duplicates and determine conflict types
+      const duplicates = existingContacts.map(existingContact => {
+        let duplicateType: 'email' | 'phone' | 'both' = 'phone';
+        const conflictFields: string[] = [];
+
+        if (emailValue && existingContact.email === emailValue) {
+          conflictFields.push('email');
+          duplicateType = existingContact.phone === validatedData.phone ? 'both' : 'email';
+        }
+
+        if (existingContact.phone === validatedData.phone) {
+          conflictFields.push('phone');
+        }
+
+        return {
+          existingContact: {
+            id: existingContact.id,
+            name: existingContact.name,
+            email: existingContact.email,
+            phone: existingContact.phone,
+            status: existingContact.status,
+            comment: existingContact.comment,
+            segments: existingContact.segments,
+            createdAt: existingContact.createdAt,
+            updatedAt: existingContact.updatedAt,
+          },
+          duplicateType,
+          conflictFields,
+        };
+      });
+
+      // Suggest actions based on conflict types
+      const suggestedActions: Array<'update' | 'skip' | 'force-create'> = [];
+
+      // If only phone conflict, suggest update (likely same person)
+      if (duplicates.some(d => d.duplicateType === 'phone' && d.conflictFields.length === 1)) {
+        suggestedActions.push('update');
+      }
+
+      // If email conflict, suggest update (likely same person)
+      if (duplicates.some(d => d.duplicateType === 'email' && d.conflictFields.length === 1)) {
+        suggestedActions.push('update');
+      }
+
+      // If both conflict, definitely suggest update
+      if (duplicates.some(d => d.duplicateType === 'both')) {
+        suggestedActions.push('update');
+      }
+
+      // Always suggest skip and force-create as alternatives
+      suggestedActions.push('skip', 'force-create');
+
+      return {
+        hasDuplicates: true,
+        duplicates,
+        suggestedActions: Array.from(new Set(suggestedActions)), // Remove duplicates
+      };
+    } catch (error) {
+      logger.error("Error checking for duplicates:", error);
+      throw error;
+    }
+  }
+
+  // Create contact with resolution strategy
+  async createContactWithResolution(data: CreateContactRequest, resolution: {
+    action: 'update' | 'skip' | 'force-create';
+    targetContactId?: string;
+  }) {
+    try {
+      // Validate input
+      const validatedData = validateContact(data);
+
+      // Convert empty email to null
+      const emailValue = validatedData.email === "" ? null : validatedData.email;
+
+      if (resolution.action === 'skip') {
+        return {
+          success: true,
+          action: 'skipped' as const,
+          message: 'Contact creation skipped due to duplicate',
+        };
+      }
+
+      if (resolution.action === 'update' && resolution.targetContactId) {
+        // Update existing contact
+        const updateData: any = {
+          name: validatedData.name,
+          comment: validatedData.comment,
+        };
+
+        // Only update email if it's not already taken by another contact
+        if (emailValue !== undefined) {
+          if (emailValue === null) {
+            updateData.email = null;
+          } else {
+            // Check if this email is already used by another contact
+            const emailConflict = await prisma.contact.findFirst({
+              where: {
+                email: emailValue,
+                id: { not: resolution.targetContactId },
+              },
+            });
+            if (!emailConflict) {
+              updateData.email = emailValue;
+            }
+          }
+        }
+
+        // Add to segments if provided
+        if (validatedData.segmentIds && validatedData.segmentIds.length > 0) {
+          updateData.segments = {
+            connect: validatedData.segmentIds.map((id) => ({ id })),
+          };
+        }
+
+        const updatedContact = await prisma.contact.update({
+          where: { id: resolution.targetContactId },
+          data: updateData,
+          include: {
+            segments: true,
+          },
+        });
+
+        logger.info(`Contact updated: ${updatedContact.id}`);
+        return {
+          success: true,
+          contact: updatedContact,
+          action: 'updated' as const,
+          message: 'Contact updated successfully',
+        };
+      }
+
+      if (resolution.action === 'force-create') {
+        // Force create new contact with unique identifiers
+        const uniquePhone = `${validatedData.phone}_${Date.now()}`;
+        const uniqueEmail = emailValue ? `${emailValue.split('@')[0]}_${Date.now()}@${emailValue.split('@')[1]}` : null;
+
+        const contact = await prisma.contact.create({
+          data: {
+            name: validatedData.name,
+            email: uniqueEmail,
+            phone: uniquePhone,
+            status: 'active',
+            comment: validatedData.comment,
+            segments: validatedData.segmentIds
+              ? {
+                connect: validatedData.segmentIds.map((id) => ({ id })),
+              }
+              : undefined,
+          },
+          include: {
+            segments: true,
+          },
+        });
+
+        logger.info(`Contact force-created: ${contact.id}`);
+        return {
+          success: true,
+          contact,
+          action: 'created' as const,
+          message: 'Contact created with unique identifiers',
+        };
+      }
+
+      throw createError("Invalid resolution action", 400);
+    } catch (error) {
+      logger.error("Error creating contact with resolution:", error);
+      throw error;
+    }
+  }
+
+  // Create new contact (legacy method - now with duplicate checking)
+  async createContact(data: CreateContactRequest) {
+    try {
+      // Check for duplicates first
+      const duplicateCheck = await this.checkForDuplicates(data);
+
+      if (duplicateCheck.hasDuplicates) {
+        throw createError("Contact with this phone number or email already exists", 400);
+      }
+
+      // Validate input
+      const validatedData = validateContact(data);
 
       // Convert empty email to null
       const emailValue = validatedData.email === "" ? null : validatedData.email;
@@ -414,8 +613,8 @@ export class ContactService {
             comment,
             segments: segmentIds
               ? {
-                  connect: segmentIds.map((id) => ({ id })),
-                }
+                connect: segmentIds.map((id) => ({ id })),
+              }
               : undefined,
           },
         });
@@ -423,8 +622,7 @@ export class ContactService {
         results.created++;
       } catch (error) {
         results.errors.push(
-          `Failed to create contact: ${JSON.stringify(contactData)} - ${
-            error instanceof Error ? error.message : "Unknown error"
+          `Failed to create contact: ${JSON.stringify(contactData)} - ${error instanceof Error ? error.message : "Unknown error"
           }`
         );
       }
@@ -508,8 +706,8 @@ export class ContactService {
               comment: contact.comment,
               segments: segmentIds
                 ? {
-                    connect: segmentIds.map((id) => ({ id })),
-                  }
+                  connect: segmentIds.map((id) => ({ id })),
+                }
                 : undefined,
             },
           });
@@ -517,8 +715,7 @@ export class ContactService {
         }
       } catch (error) {
         results.errors.push(
-          `Failed to resolve duplicate: ${JSON.stringify(duplicate.contact)} - ${
-            error instanceof Error ? error.message : "Unknown error"
+          `Failed to resolve duplicate: ${JSON.stringify(duplicate.contact)} - ${error instanceof Error ? error.message : "Unknown error"
           }`
         );
       }
@@ -541,7 +738,7 @@ export class ContactService {
         };
       };
     } = {};
-    
+
     if (status && status !== "all") {
       where.status = status;
     }
@@ -614,7 +811,7 @@ export class ContactService {
     createdAt: Date;
   }>): string {
     const headers = ["Name", "Email", "Phone", "Status", "Comment", "Segments", "Created At"];
-    
+
     const rows = contacts.map((contact) => [
       contact.name,
       contact.email || "",

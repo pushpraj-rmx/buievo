@@ -1441,3 +1441,97 @@ Unknown argument `comments`. Did you mean `comment`? Available options are marke
 2025-09-05 15:03:25 [info]: 📊 Health check: http://localhost:3003/health
 2025-09-05 15:03:25 [info]: 📚 API docs: http://localhost:3003/api/v1
 2025-09-05 15:08:01 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 18:39:45 [info]: 🚀 Contact Service running on port 5001
+2025-09-05 18:39:45 [info]: 📊 Health check: http://localhost:5001/health
+2025-09-05 18:39:45 [info]: 📚 API docs: http://localhost:5001/api/v1
+2025-09-05 18:47:52 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 18:47:53 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 18:47:53 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 18:47:53 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 18:48:51 [info]: SIGINT received, shutting down gracefully
+2025-09-05 18:49:06 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 18:49:06 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 18:49:06 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 18:56:10 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 18:56:11 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 18:56:11 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 18:56:11 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 18:56:28 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 18:56:29 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 18:56:29 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 18:56:29 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 18:56:38 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 18:56:38 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 18:56:38 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 18:56:38 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 19:50:00 [info]: Contact created: cmf6x98ge0000px1ar86wmx5y
+2025-09-05 19:50:22 [info]: Segment created: cmf6x9pv00001px1aveacwv7c
+2025-09-05 19:50:33 [info]: Contact updated: cmf6x98ge0000px1ar86wmx5y with 1 segments
+2025-09-05 19:51:04 [info]: Contact updated: cmf6x98ge0000px1ar86wmx5y with 1 segments
+2025-09-05 20:00:21 [info]: Contact updated: cmf6x98ge0000px1ar86wmx5y with 1 segments
+2025-09-05 20:00:54 [info]: Bulk import completed: 15 created, 1 duplicates, 0 errors
+2025-09-05 20:01:00 [info]: Bulk import completed: 0 created, 16 duplicates, 0 errors
+2025-09-05 20:01:11 [info]: Contact deleted: cmf6x98ge0000px1ar86wmx5y
+2025-09-05 20:01:20 [info]: Bulk import completed: 1 created, 15 duplicates, 0 errors
+2025-09-05 20:03:46 [info]: Bulk import completed: 0 created, 16 duplicates, 0 errors
+2025-09-05 20:03:57 [info]: Bulk import completed: 0 created, 16 duplicates, 0 errors
+2025-09-05 20:04:08 [info]: Bulk import completed: 0 created, 16 duplicates, 0 errors
+2025-09-05 20:08:15 [info]: Bulk import completed: 0 created, 16 duplicates, 0 errors
+2025-09-05 20:10:52 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:10:54 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:10:54 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:10:54 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:14:14 [info]: Bulk import completed: 100 created, 16 duplicates, 0 errors
+2025-09-05 20:17:18 [info]: SIGINT received, shutting down gracefully
+2025-09-05 20:21:48 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:21:48 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:21:48 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:28:45 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:28:46 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:28:46 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:28:46 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:29:07 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:29:08 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:29:08 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:29:08 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:29:17 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:29:18 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:29:18 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:29:18 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:35:52 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:35:53 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:35:53 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:35:53 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:39:12 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:39:13 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:39:13 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:39:13 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:39:25 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:39:25 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:39:25 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:39:25 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:39:33 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:39:34 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:39:34 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:39:34 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:44:16 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:44:17 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:44:17 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:44:17 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:44:44 [info]: Bulk import completed: 0 created, 116 duplicates, 0 errors
+2025-09-05 20:44:51 [info]: SIGINT received, shutting down gracefully
+2025-09-05 20:45:06 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:45:06 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:45:06 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:46:37 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/code/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:67:23)","url":"/api/v1/contacts/search?q=sal&limit=100","method":"GET","ip":"::1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 20:46:51 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/code/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:67:23)","url":"/api/v1/contacts/search?q=Sal&limit=100","method":"GET","ip":"::1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 20:48:30 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/code/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:67:23)","url":"/api/v1/contacts/search?q=tha&limit=100","method":"GET","ip":"::1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 20:49:06 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/code/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:67:23)","url":"/api/v1/contacts/search?q=nani&limit=100","method":"GET","ip":"::1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 20:58:50 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:59:11 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:59:11 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:59:11 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 20:59:42 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 20:59:43 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 20:59:43 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 20:59:43 [info]: 📚 API docs: http://localhost:32102/api/v1

@@ -28,6 +28,7 @@ import {
   type ContactType,
   type SegmentType,
 } from "@/lib/contact-api";
+import { SingleContactDuplicateDialog } from "./single-contact-duplicate-dialog";
 
 interface ContactFormProps {
   open: boolean;
@@ -47,6 +48,24 @@ export function ContactForm({
   const [loading, setLoading] = useState(false);
   const [phoneError, setPhoneError] = useState("");
   const [phoneValid, setPhoneValid] = useState(false);
+  const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
+  const [duplicateInfo, setDuplicateInfo] = useState<{
+    hasDuplicates: boolean;
+    duplicates: Array<{
+      existingContact: ContactType;
+      duplicateType: "email" | "phone" | "both";
+      conflictFields: string[];
+    }>;
+    suggestedActions: Array<"update" | "skip" | "force-create">;
+  } | null>(null);
+  const [pendingContactData, setPendingContactData] = useState<{
+    name: string;
+    email?: string;
+    phone: string;
+    status?: "active" | "inactive" | "pending";
+    comment?: string;
+    segmentIds?: string[];
+  } | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -148,14 +167,25 @@ export function ContactForm({
       if (editingContact) {
         await contactApi.updateContact(editingContact.id, contactData);
         toast.success("Contact updated successfully");
+        onOpenChange(false);
+        resetForm();
+        onSuccess();
       } else {
-        await contactApi.createContact(contactData);
-        toast.success("Contact created successfully");
+        // Check for duplicates before creating
+        const duplicateCheck = await contactApi.checkDuplicates(contactData);
+        
+        if (duplicateCheck.data.hasDuplicates) {
+          setDuplicateInfo(duplicateCheck.data);
+          setPendingContactData(contactData);
+          setShowDuplicateDialog(true);
+        } else {
+          await contactApi.createContact(contactData);
+          toast.success("Contact created successfully");
+          onOpenChange(false);
+          resetForm();
+          onSuccess();
+        }
       }
-
-      onOpenChange(false);
-      resetForm();
-      onSuccess();
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Failed to save contact"
@@ -163,6 +193,17 @@ export function ContactForm({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDuplicateResolved = (result: { success: boolean; contact?: ContactType; action: string; message: string }) => {
+    if (result.success) {
+      onOpenChange(false);
+      resetForm();
+      onSuccess();
+    }
+    setShowDuplicateDialog(false);
+    setDuplicateInfo(null);
+    setPendingContactData(null);
   };
 
   const handleSegmentToggle = (segmentId: string) => {
@@ -182,6 +223,7 @@ export function ContactForm({
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -332,5 +374,17 @@ export function ContactForm({
         </form>
       </DialogContent>
     </Dialog>
+
+    {/* Duplicate Resolution Dialog */}
+    {showDuplicateDialog && duplicateInfo && pendingContactData && (
+      <SingleContactDuplicateDialog
+        open={showDuplicateDialog}
+        onOpenChange={setShowDuplicateDialog}
+        contactData={pendingContactData}
+        duplicateInfo={duplicateInfo}
+        onResolved={handleDuplicateResolved}
+      />
+    )}
+    </>
   );
 }

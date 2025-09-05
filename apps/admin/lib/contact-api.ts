@@ -5,7 +5,7 @@
  * It handles all 23 endpoints and provides proper error handling.
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_CONTACT_SERVICE_URL || "http://localhost:3003";
+const API_BASE_URL = process.env.NEXT_PUBLIC_CONTACT_SERVICE_URL || "http://localhost:32102";
 
 // Types matching the Contact Service API
 export interface Contact {
@@ -79,6 +79,28 @@ export interface DuplicateResolution {
   action: "update" | "skip" | "force-create";
 }
 
+export interface DuplicateCheckResult {
+  hasDuplicates: boolean;
+  duplicates: Array<{
+    existingContact: Contact;
+    duplicateType: "email" | "phone" | "both";
+    conflictFields: string[];
+  }>;
+  suggestedActions: Array<"update" | "skip" | "force-create">;
+}
+
+export interface ContactResolution {
+  action: "update" | "skip" | "force-create";
+  targetContactId?: string;
+}
+
+export interface ContactCreationResult {
+  success: boolean;
+  contact?: Contact;
+  action: "created" | "updated" | "skipped";
+  message: string;
+}
+
 class ContactApiClient {
   private baseUrl: string;
 
@@ -91,7 +113,7 @@ class ContactApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
@@ -213,7 +235,7 @@ class ContactApiClient {
       throw new Error(`Search failed: ${response.status}`);
     }
     const data = await response.json();
-    
+
     // Handle different response formats from Contact Service
     if (Array.isArray(data)) {
       // If it's a direct array, wrap it in pagination format
@@ -262,11 +284,11 @@ class ContactApiClient {
     const response = await fetch(
       `${this.baseUrl}/api/v1/contacts/export?${searchParams}`
     );
-    
+
     if (!response.ok) {
       throw new Error(`Export failed: ${response.status}`);
     }
-    
+
     return response.text();
   }
 
@@ -292,6 +314,37 @@ class ContactApiClient {
     return this.request("/api/v1/contacts/resolve-duplicates", {
       method: "POST",
       body: JSON.stringify(resolution),
+    });
+  }
+
+  async checkDuplicates(contact: {
+    name: string;
+    email?: string;
+    phone: string;
+    status?: "active" | "inactive" | "pending";
+    comment?: string;
+    segmentIds?: string[];
+  }): Promise<{ success: true; data: DuplicateCheckResult }> {
+    return this.request("/api/v1/contacts/check-duplicates", {
+      method: "POST",
+      body: JSON.stringify(contact),
+    });
+  }
+
+  async createWithResolution(
+    contact: {
+      name: string;
+      email?: string;
+      phone: string;
+      status?: "active" | "inactive" | "pending";
+      comment?: string;
+      segmentIds?: string[];
+    },
+    resolution: ContactResolution
+  ): Promise<{ success: true; data: ContactCreationResult }> {
+    return this.request("/api/v1/contacts/create-with-resolution", {
+      method: "POST",
+      body: JSON.stringify({ contact, resolution }),
     });
   }
 

@@ -1,10 +1,10 @@
 // Contact validation schemas for buievo
 
 import { z } from "zod";
-import { 
-  nameSchema, 
-  emailSchema, 
-  phoneNumberSchema, 
+import {
+  nameSchema,
+  emailSchema,
+  phoneNumberSchema,
   uuidSchema,
   flexibleIdSchema,
   statusSchema,
@@ -49,7 +49,9 @@ export const contactSchema = z.object({
 
 // Contact import schemas
 export const contactImportSchema = z.object({
-  file: z.instanceof(File, { message: "File is required" }),
+  file: z.any().refine((val) => val && typeof val === 'object' && val.constructor && val.constructor.name === 'File', {
+    message: "File is required"
+  }),
   format: z.enum(["csv", "xlsx", "json"]),
   hasHeader: z.boolean().default(true),
   mapping: z.record(z.string()).optional(),
@@ -218,7 +220,7 @@ export const contactStatsSchema = z.object({
 export const contactExportSchema = z.object({
   format: z.enum(["csv", "xlsx", "json"]),
   fields: z.array(z.enum([
-    "id", "name", "email", "phone", "status", "comment", "tags", 
+    "id", "name", "email", "phone", "status", "comment", "tags",
     "source", "whatsappId", "lastContactedAt", "createdAt", "updatedAt"
   ])).min(1, "At least one field must be selected"),
   filters: contactFilterSchema.optional(),

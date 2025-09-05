@@ -13,14 +13,18 @@ import { logger } from "./utils/logger";
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.CONTACT_SERVICE_PORT || 5001;
+const PORT = process.env.CONTACT_SERVICE_PORT || 32102;
 
 // Middleware
 app.use(helmet());
 
-// CORS configuration - allow all origins for development
+// CORS configuration - allow specific origins for development
 app.use(cors({
-  origin: true, // Allow all origins for development
+  origin: [
+    'http://localhost:32100', // Admin frontend
+    'http://localhost:3000',  // Web frontend
+    'http://localhost:4000',  // Alternative admin port
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "Origin", "X-Requested-With", "Accept"],

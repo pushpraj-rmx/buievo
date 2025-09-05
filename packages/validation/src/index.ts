@@ -121,7 +121,9 @@ export const updateSegmentSchema = createSegmentSchema.partial();
 
 // Media validation schemas (legacy)
 export const uploadMediaSchema = z.object({
-  file: z.instanceof(File, { message: "File is required" }),
+  file: z.any().refine((val) => val && typeof val === 'object' && val.constructor && val.constructor.name === 'File', {
+    message: "File is required"
+  }),
   type: z.enum(["image", "document", "video", "audio"]),
   caption: z.string().max(500, "Caption too long").optional(),
   filename: z.string().optional(),

@@ -4,9 +4,9 @@ import { dbConnection } from "@buievo/db";
 import { redis } from "@buievo/redis";
 
 // Import middleware
-import { 
-  securityMiddleware, 
-  requestLogger 
+import {
+  securityMiddleware,
+  requestLogger
 } from "./middleware/security.middleware";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
 
@@ -24,7 +24,7 @@ import wabaRoutes from "./routes/waba.routes";
 import configRoutes from "./routes/config.routes";
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 32101;
 
 // Apply security middleware
 const securityMiddlewares = securityMiddleware({

@@ -10,12 +10,19 @@ router.get("/", ContactController.getContacts);
 router.get("/export", ContactController.exportContacts);
 router.get("/stats", ContactController.getContactStats);
 router.get("/segments", ContactController.getAvailableSegments);
+router.get("/search", ContactController.searchContacts);
 
 // Get single contact by ID
 router.get("/:id", ContactController.getContact);
 
 // Create new contact
 router.post("/", ContactController.createContact);
+
+// Check for duplicates before creating contact
+router.post("/check-duplicates", ContactController.checkDuplicates);
+
+// Create contact with resolution strategy
+router.post("/create-with-resolution", ContactController.createWithResolution);
 
 // Update contact
 router.put("/:id", ContactController.updateContact);
