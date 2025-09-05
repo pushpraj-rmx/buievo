@@ -56,7 +56,7 @@ export const createContactSchema = z.object({
   phone: phoneNumberSchema,
   status: z.enum(["active", "inactive", "pending"]).default("active"),
   comment: z.string().max(500, "Comment too long").optional().nullable(),
-  segmentIds: z.array(z.string().uuid()).optional(),
+  segmentIds: z.array(z.string().refine((val) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val) || /^c[a-z0-9]{24}$/i.test(val), "Invalid ID format - must be UUID or CUID")).optional(),
 });
 
 export const updateContactSchema = createContactSchema.partial();

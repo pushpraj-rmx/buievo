@@ -170,7 +170,7 @@ export class CampaignService {
 
     // Calculate analytics
     const totalContacts = campaign.targetSegments.reduce(
-      (total, segment) => total + segment.contacts.length,
+      (total: number, segment: any) => total + segment.contacts.length,
       0
     );
 

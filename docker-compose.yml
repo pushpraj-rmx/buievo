@@ -31,12 +31,12 @@ services:
       dockerfile: Dockerfile
       target: api
     ports:
-      - "3011:3001"
+      - "5000:5000"
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
       REDIS_URL: redis://redis:6379
-      PORT: 3001
+      PORT: 5000
       PHONE_NUMBER_ID: ${PHONE_NUMBER_ID}
       ACCESS_TOKEN: ${ACCESS_TOKEN}
       WABA_ID: ${WABA_ID}
@@ -75,7 +75,7 @@ services:
       dockerfile: Dockerfile
       target: web
     ports:
-      - "3012:3000"
+      - "3000:3000"
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
@@ -90,10 +90,11 @@ services:
       dockerfile: Dockerfile
       target: admin
     ports:
-      - "3013:3002"
+      - "4000:4000"
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      PORT: 4000
     depends_on:
       api:
         condition: service_started

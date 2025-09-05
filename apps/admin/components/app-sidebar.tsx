@@ -39,7 +39,7 @@ const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/avatar.png",
   },
   navMain: [
     {
@@ -178,7 +178,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <Logo size={20} showText={true} textClassName="text-base font-semibold" />
+                <Logo
+                  size={20}
+                  showText={true}
+                  textClassName="text-base font-semibold"
+                />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

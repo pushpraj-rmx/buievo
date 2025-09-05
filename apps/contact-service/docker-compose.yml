@@ -6,12 +6,12 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3003:3003"
+      - "5001:5001"
     environment:
       - NODE_ENV=production
-      - CONTACT_SERVICE_PORT=3003
+      - CONTACT_SERVICE_PORT=5001
       - CONTACT_SERVICE_DATABASE_URL=postgresql://postgres:password@postgres:5432/contact_service
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3002}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:4000}
       - LOG_LEVEL=${LOG_LEVEL:-info}
     depends_on:
       - postgres

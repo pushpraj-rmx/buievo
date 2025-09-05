@@ -1,12 +1,11 @@
 {
-  "extends": "@buievo/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "noEmit": true,
+
     "paths": {
       "@/*": ["./src/*"]
     }

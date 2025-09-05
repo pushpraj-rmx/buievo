@@ -21,7 +21,7 @@ export function getStorageConfig(): StorageConfig {
         provider: "local",
         local: {
           uploadDir: process.env.LOCAL_UPLOAD_DIR || "./uploads",
-          baseUrl: process.env.LOCAL_BASE_URL || "http://localhost:3001/media",
+          baseUrl: process.env.LOCAL_BASE_URL || "http://localhost:3005/media",
         },
       };
 
@@ -93,7 +93,7 @@ export function getFallbackStorageConfig(): StorageConfig | undefined {
         baseUrl:
           process.env.FALLBACK_LOCAL_BASE_URL ||
           config.local?.baseUrl ||
-          "http://localhost:3001/media",
+          "http://localhost:3005/media",
       };
       break;
 
@@ -172,7 +172,7 @@ export const exampleConfigs = {
     provider: "local" as const,
     local: {
       uploadDir: "./uploads",
-      baseUrl: "http://localhost:3001/media",
+      baseUrl: "http://localhost:3005/media",
     },
   },
 

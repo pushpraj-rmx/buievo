@@ -92,7 +92,7 @@ echo -e "${BLUE}🏥 Performing health checks...${NC}"
 sleep 10
 
 # Check API health
-if curl -f http://localhost:3001/ > /dev/null 2>&1; then
+if curl -f http://localhost:3005/ > /dev/null 2>&1; then
     echo -e "${GREEN}✅ API is responding${NC}"
 else
     echo -e "${YELLOW}⚠️  API health check failed${NC}"
@@ -109,7 +109,7 @@ echo ""
 echo -e "${BLUE}📱 Your production services are running on:${NC}"
 echo -e "   • Admin Dashboard: ${GREEN}http://localhost:3002${NC}"
 echo -e "   • Web Client: ${GREEN}http://localhost:3000${NC}"
-echo -e "   • API: ${GREEN}http://localhost:3001${NC}"
+echo -e "   • API: ${GREEN}http://localhost:3005${NC}"
 echo ""
 echo -e "${BLUE}📊 Service Status:${NC}"
 docker-compose ps

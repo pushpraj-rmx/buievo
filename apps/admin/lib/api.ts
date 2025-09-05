@@ -1,4 +1,4 @@
-import type { QueryParams } from './types';
+import type { QueryParams } from "./types";
 
 // Local API response type to avoid conflicts
 interface ApiResponse<T = unknown> {
@@ -7,14 +7,14 @@ interface ApiResponse<T = unknown> {
   message?: string;
   error?: string;
 }
-import { 
-  createErrorFromApiResponse, 
+import {
+  createErrorFromApiResponse,
   createErrorFromNetworkError,
   NetworkError,
   TimeoutError,
   AuthenticationError,
-  AuthorizationError
-} from './errors';
+  AuthorizationError,
+} from "./errors";
 
 // API client configuration
 export interface ApiClientConfig {
@@ -27,18 +27,18 @@ export interface ApiClientConfig {
 
 // Default configuration
 const DEFAULT_CONFIG: ApiClientConfig = {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3005",
   timeout: 30000,
   retries: 3,
   retryDelay: 1000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 };
 
 // Request options
 export interface RequestOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   headers?: Record<string, string>;
   timeout?: number;
   retries?: number;
@@ -66,30 +66,34 @@ export class ApiClient {
   }
 
   // Get request headers
-  private getHeaders(customHeaders?: Record<string, string>): Record<string, string> {
+  private getHeaders(
+    customHeaders?: Record<string, string>,
+  ): Record<string, string> {
     const headers = { ...this.config.headers, ...customHeaders };
-    
+
     if (this.authToken) {
       headers.Authorization = `Bearer ${this.authToken}`;
     }
-    
+
     return headers;
   }
 
   // Make HTTP request with retry logic
   private async makeRequest<T>(
     url: string,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<ApiResponse<T>> {
     const {
-      method = 'GET',
+      method = "GET",
       headers: customHeaders,
       timeout = this.config.timeout,
       retries = this.config.retries,
       signal,
     } = options;
 
-    const fullUrl = url.startsWith('http') ? url : `${this.config.baseUrl}${url}`;
+    const fullUrl = url.startsWith("http")
+      ? url
+      : `${this.config.baseUrl}${url}`;
     const headers = this.getHeaders(customHeaders);
 
     let lastError: Error | null = null;
@@ -121,34 +125,36 @@ export class ApiClient {
 
         // Parse response
         let data: T;
-        const contentType = response.headers.get('content-type');
-        
-        if (contentType?.includes('application/json')) {
+        const contentType = response.headers.get("content-type");
+
+        if (contentType?.includes("application/json")) {
           data = await response.json();
         } else {
-          data = await response.text() as T;
+          data = (await response.text()) as T;
         }
 
         return {
           data,
           success: true,
-          message: 'Request successful',
+          message: "Request successful",
         } as ApiResponse<T>;
-
       } catch (error) {
         lastError = error as Error;
 
         // Don't retry on client errors (4xx)
         const errorObj = error as Record<string, unknown>;
-        if (error instanceof AuthenticationError || 
-            error instanceof AuthorizationError ||
-            (errorObj.statusCode as number) >= 400 && (errorObj.statusCode as number) < 500) {
+        if (
+          error instanceof AuthenticationError ||
+          error instanceof AuthorizationError ||
+          ((errorObj.statusCode as number) >= 400 &&
+            (errorObj.statusCode as number) < 500)
+        ) {
           throw error;
         }
 
         // Don't retry on abort
-        if ((error as Error).name === 'AbortError') {
-          throw new TimeoutError('Request timed out');
+        if ((error as Error).name === "AbortError") {
+          throw new TimeoutError("Request timed out");
         }
 
         // Retry logic
@@ -162,85 +168,107 @@ export class ApiClient {
           throw error;
         }
 
-        throw createErrorFromNetworkError(error as Error, `API request to ${url}`);
+        throw createErrorFromNetworkError(
+          error as Error,
+          `API request to ${url}`,
+        );
       }
     }
 
-    throw lastError || new Error('Unknown error occurred');
+    throw lastError || new Error("Unknown error occurred");
   }
 
   // Utility method for delays
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   // GET request
-  async get<T>(url: string, params?: QueryParams, options?: RequestOptions): Promise<ApiResponse<T>> {
-    const queryString = params ? this.buildQueryString(params) : '';
+  async get<T>(
+    url: string,
+    params?: QueryParams,
+    options?: RequestOptions,
+  ): Promise<ApiResponse<T>> {
+    const queryString = params ? this.buildQueryString(params) : "";
     const fullUrl = queryString ? `${url}?${queryString}` : url;
-    
-    return this.makeRequest<T>(fullUrl, { ...options, method: 'GET' });
+
+    return this.makeRequest<T>(fullUrl, { ...options, method: "GET" });
   }
 
   // POST request
-  async post<T>(url: string, data?: Record<string, unknown>, options?: RequestOptions): Promise<ApiResponse<T>> {
+  async post<T>(
+    url: string,
+    data?: Record<string, unknown>,
+    options?: RequestOptions,
+  ): Promise<ApiResponse<T>> {
     const body = data ? JSON.stringify(data) : undefined;
-    
+
     return this.makeRequest<T>(url, {
       ...options,
-      method: 'POST',
+      method: "POST",
       headers: {
         ...options?.headers,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body,
     });
   }
 
   // PUT request
-  async put<T>(url: string, data?: Record<string, unknown>, options?: RequestOptions): Promise<ApiResponse<T>> {
+  async put<T>(
+    url: string,
+    data?: Record<string, unknown>,
+    options?: RequestOptions,
+  ): Promise<ApiResponse<T>> {
     const body = data ? JSON.stringify(data) : undefined;
-    
+
     return this.makeRequest<T>(url, {
       ...options,
-      method: 'PUT',
+      method: "PUT",
       headers: {
         ...options?.headers,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body,
     });
   }
 
   // PATCH request
-  async patch<T>(url: string, data?: Record<string, unknown>, options?: RequestOptions): Promise<ApiResponse<T>> {
+  async patch<T>(
+    url: string,
+    data?: Record<string, unknown>,
+    options?: RequestOptions,
+  ): Promise<ApiResponse<T>> {
     const body = data ? JSON.stringify(data) : undefined;
-    
+
     return this.makeRequest<T>(url, {
       ...options,
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
         ...options?.headers,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body,
     });
   }
 
   // DELETE request
-  async delete<T>(url: string, options?: RequestOptions): Promise<ApiResponse<T>> {
-    return this.makeRequest<T>(url, { ...options, method: 'DELETE' });
+  async delete<T>(
+    url: string,
+    options?: RequestOptions,
+  ): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(url, { ...options, method: "DELETE" });
   }
 
   // Build query string from params
   private buildQueryString(params: QueryParams): string {
     const searchParams = new URLSearchParams();
 
-    if (params.page) searchParams.append('page', params.page.toString());
-    if (params.limit) searchParams.append('limit', params.limit.toString());
-    if (params.sortBy) searchParams.append('sortBy', params.sortBy);
-    if (params.sortOrder) searchParams.append('sortOrder', params.sortOrder);
-    if (params.search) searchParams.append('search', params.search);
+    if (params.page) searchParams.append("page", params.page.toString());
+    if (params.limit) searchParams.append("limit", params.limit.toString());
+    if (params.sortBy) searchParams.append("sortBy", params.sortBy);
+    if (params.sortOrder) searchParams.append("sortOrder", params.sortOrder);
+    if (params.search) searchParams.append("search", params.search);
 
     if (params.filters) {
       Object.entries(params.filters).forEach(([key, value]) => {
@@ -257,64 +285,87 @@ export class ApiClient {
   async uploadFile<T>(
     url: string,
     file: File,
-    onProgress?: (progress: number) => void
+    onProgress?: (progress: number) => void,
   ): Promise<ApiResponse<T>> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     const xhr = new XMLHttpRequest();
-    
+
     return new Promise((resolve, reject) => {
-      xhr.upload.addEventListener('progress', (event) => {
+      xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable && onProgress) {
           const progress = (event.loaded / event.total) * 100;
           onProgress(progress);
         }
       });
 
-      xhr.addEventListener('load', () => {
+      xhr.addEventListener("load", () => {
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
             const data = JSON.parse(xhr.responseText);
             resolve({
               data,
               success: true,
-              message: 'File uploaded successfully',
+              message: "File uploaded successfully",
             });
           } catch {
             resolve({
               data: xhr.responseText as T,
               success: true,
-              message: 'File uploaded successfully',
+              message: "File uploaded successfully",
             });
           }
         } else {
-          reject(createErrorFromApiResponse(
-            new Response(xhr.responseText, { status: xhr.status }),
-            { message: xhr.statusText }
-          ));
+          reject(
+            createErrorFromApiResponse(
+              new Response(xhr.responseText, { status: xhr.status }),
+              { message: xhr.statusText },
+            ),
+          );
         }
       });
 
-      xhr.addEventListener('error', () => {
-        reject(new NetworkError('File upload failed'));
+      xhr.addEventListener("error", () => {
+        reject(new NetworkError("File upload failed"));
       });
 
-      xhr.addEventListener('abort', () => {
-        reject(new TimeoutError('File upload timed out'));
+      xhr.addEventListener("abort", () => {
+        reject(new TimeoutError("File upload timed out"));
       });
 
-      const fullUrl = url.startsWith('http') ? url : `${this.config.baseUrl}${url}`;
-      xhr.open('POST', fullUrl);
-      
+      const fullUrl = url.startsWith("http")
+        ? url
+        : `${this.config.baseUrl}${url}`;
+      xhr.open("POST", fullUrl);
+
       // Set headers
       if (this.authToken) {
-        xhr.setRequestHeader('Authorization', `Bearer ${this.authToken}`);
+        xhr.setRequestHeader("Authorization", `Bearer ${this.authToken}`);
       }
-      
+
       xhr.send(formData);
     });
   }
+}
+
+export async function exportContacts() {
+  const url = `${DEFAULT_CONFIG.baseUrl}/api/v1/contacts/export`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Failed to export contacts");
+  }
+
+  return response;
+}
+
+export async function importContacts(data: Record<string, unknown>) {
+  return apiClient.post("/api/v1/contacts/bulk-import", data);
+}
+
+export async function importContactsFromFile(file: File) {
+  return apiClient.uploadFile("/api/v1/contacts/bulk-import", file);
 }
 
 // Create default API client instance
@@ -324,16 +375,16 @@ export const apiClient = new ApiClient();
 export const API_ENDPOINTS = {
   // Authentication
   auth: {
-    login: '/api/v1/auth/login',
-    logout: '/api/v1/auth/logout',
-    refresh: '/api/v1/auth/refresh',
-    profile: '/api/v1/auth/profile',
+    login: "/api/v1/auth/login",
+    logout: "/api/v1/auth/logout",
+    refresh: "/api/v1/auth/refresh",
+    profile: "/api/v1/auth/profile",
   },
 
   // Users
   users: {
-    list: '/api/v1/users',
-    create: '/api/v1/users',
+    list: "/api/v1/users",
+    create: "/api/v1/users",
     get: (id: string) => `/api/v1/users/${id}`,
     update: (id: string) => `/api/v1/users/${id}`,
     delete: (id: string) => `/api/v1/users/${id}`,
@@ -341,43 +392,43 @@ export const API_ENDPOINTS = {
 
   // WhatsApp
   whatsapp: {
-    config: '/api/v1/whatsapp/config',
-    templates: '/api/v1/whatsapp/templates',
+    config: "/api/v1/whatsapp/config",
+    templates: "/api/v1/whatsapp/templates",
     template: (id: string) => `/api/v1/whatsapp/templates/${id}`,
-    campaigns: '/api/v1/whatsapp/campaigns',
+    campaigns: "/api/v1/whatsapp/campaigns",
     campaign: (id: string) => `/api/v1/whatsapp/campaigns/${id}`,
-    contacts: '/api/v1/whatsapp/contacts',
+    contacts: "/api/v1/whatsapp/contacts",
     contact: (id: string) => `/api/v1/whatsapp/contacts/${id}`,
-    messages: '/api/v1/whatsapp/messages',
+    messages: "/api/v1/whatsapp/messages",
     message: (id: string) => `/api/v1/whatsapp/messages/${id}`,
   },
 
   // Media
   media: {
-    list: '/api/v1/media',
-    upload: '/api/v1/media/upload',
+    list: "/api/v1/media",
+    upload: "/api/v1/media/upload",
     get: (id: string) => `/api/v1/media/${id}`,
     delete: (id: string) => `/api/v1/media/${id}`,
   },
 
   // Settings
   settings: {
-    app: '/api/v1/settings/app',
-    theme: '/api/v1/settings/theme',
-    notifications: '/api/v1/settings/notifications',
-    security: '/api/v1/settings/security',
+    app: "/api/v1/settings/app",
+    theme: "/api/v1/settings/theme",
+    notifications: "/api/v1/settings/notifications",
+    security: "/api/v1/settings/security",
   },
 
   // Analytics
   analytics: {
-    dashboard: '/api/v1/analytics/dashboard',
-    messages: '/api/v1/analytics/messages',
-    campaigns: '/api/v1/analytics/campaigns',
-    templates: '/api/v1/analytics/templates',
+    dashboard: "/api/v1/analytics/dashboard",
+    messages: "/api/v1/analytics/messages",
+    campaigns: "/api/v1/analytics/campaigns",
+    templates: "/api/v1/analytics/templates",
   },
 
   // Health check
-  health: '/api/v1/health',
+  health: "/api/v1/health",
 } as const;
 
 // API service functions
@@ -446,7 +497,10 @@ export const apiService = {
       return apiClient.post(API_ENDPOINTS.whatsapp.templates, templateData);
     },
 
-    updateTemplate: async (id: string, templateData: Record<string, unknown>) => {
+    updateTemplate: async (
+      id: string,
+      templateData: Record<string, unknown>,
+    ) => {
       return apiClient.put(API_ENDPOINTS.whatsapp.template(id), templateData);
     },
 
@@ -466,7 +520,10 @@ export const apiService = {
       return apiClient.post(API_ENDPOINTS.whatsapp.campaigns, campaignData);
     },
 
-    updateCampaign: async (id: string, campaignData: Record<string, unknown>) => {
+    updateCampaign: async (
+      id: string,
+      campaignData: Record<string, unknown>,
+    ) => {
       return apiClient.put(API_ENDPOINTS.whatsapp.campaign(id), campaignData);
     },
 

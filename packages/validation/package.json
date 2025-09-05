@@ -9,12 +9,16 @@
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["validation", "schemas", "buievo"],
+  "keywords": [
+    "validation",
+    "schemas",
+    "buievo"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^22.15.3",
-    "typescript": "^5.8.3"
+    "typescript": "5.8.3"
   },
   "dependencies": {
     "zod": "^3.23.8",

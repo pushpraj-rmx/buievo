@@ -9,9 +9,19 @@ const prisma = new PrismaClient();
 export interface ContactFilters {
   page: number;
   limit: number;
-  search?: string;
+  // Advanced search parameters
+  search?: string; // General search across all fields
+  name?: string; // Search specifically in name field
+  email?: string; // Search specifically in email field
+  phone?: string; // Search specifically in phone field
+  comment?: string; // Search specifically in comment field
   status?: string;
   segmentId?: string;
+  // Date range filters
+  createdAfter?: string; // ISO date string
+  createdBefore?: string; // ISO date string
+  updatedAfter?: string; // ISO date string
+  updatedBefore?: string; // ISO date string
 }
 
 export interface ContactStats {
@@ -23,44 +33,88 @@ export interface ContactStats {
 }
 
 export class ContactService {
-  // Get contacts with pagination and filters
+  // Get contacts with pagination and advanced filters
   async getContacts(filters: ContactFilters) {
-    const { page, limit, search, status, segmentId } = filters;
+    const { 
+      page, 
+      limit, 
+      search, 
+      name, 
+      email, 
+      phone, 
+      comment, 
+      status, 
+      segmentId,
+      createdAfter,
+      createdBefore,
+      updatedAfter,
+      updatedBefore
+    } = filters;
     const skip = (page - 1) * limit;
 
-    // Build where clause
-    const where: {
-      OR?: Array<{
-        name?: { contains: string; mode: "insensitive" };
-        email?: { contains: string; mode: "insensitive" };
-        phone?: { contains: string; mode: "insensitive" };
-      }>;
-      status?: string;
-      segments?: {
-        some: {
-          id: string;
-        };
-      };
-    } = {};
+    // Build where clause with advanced search capabilities
+    const where: any = {};
     
+    // General search across all fields (OR condition)
     if (search) {
       where.OR = [
         { name: { contains: search, mode: "insensitive" } },
         { email: { contains: search, mode: "insensitive" } },
         { phone: { contains: search, mode: "insensitive" } },
+        { comment: { contains: search, mode: "insensitive" } },
       ];
     }
 
+    // Field-specific searches (AND conditions)
+    if (name) {
+      where.name = { contains: name, mode: "insensitive" };
+    }
+    
+    if (email) {
+      where.email = { contains: email, mode: "insensitive" };
+    }
+    
+    if (phone) {
+      where.phone = { contains: phone, mode: "insensitive" };
+    }
+    
+    if (comment) {
+      where.comment = { contains: comment, mode: "insensitive" };
+    }
+
+    // Status filter
     if (status && status !== "all") {
       where.status = status;
     }
 
+    // Segment filter
     if (segmentId && segmentId !== "all") {
       where.segments = {
         some: {
           id: segmentId,
         },
       };
+    }
+
+    // Date range filters
+    if (createdAfter || createdBefore) {
+      where.createdAt = {};
+      if (createdAfter) {
+        where.createdAt.gte = new Date(createdAfter);
+      }
+      if (createdBefore) {
+        where.createdAt.lte = new Date(createdBefore);
+      }
+    }
+
+    if (updatedAfter || updatedBefore) {
+      where.updatedAt = {};
+      if (updatedAfter) {
+        where.updatedAt.gte = new Date(updatedAfter);
+      }
+      if (updatedBefore) {
+        where.updatedAt.lte = new Date(updatedBefore);
+      }
     }
 
     // Get contacts with segments
@@ -148,6 +202,29 @@ export class ContactService {
         },
       });
 
+      // Assign contact to segments if segmentIds provided
+      if (validatedData.segmentIds && validatedData.segmentIds.length > 0) {
+        await prisma.contact.update({
+          where: { id: contact.id },
+          data: {
+            segments: {
+              connect: validatedData.segmentIds.map(segmentId => ({ id: segmentId })),
+            },
+          },
+        });
+
+        // Fetch the contact again with updated segments
+        const updatedContact = await prisma.contact.findUnique({
+          where: { id: contact.id },
+          include: {
+            segments: true,
+          },
+        });
+
+        logger.info(`Contact created: ${contact.id} with ${validatedData.segmentIds.length} segments`);
+        return updatedContact || contact;
+      }
+
       logger.info(`Contact created: ${contact.id}`);
       return contact;
     } catch (error) {
@@ -188,6 +265,42 @@ export class ContactService {
           segments: true,
         },
       });
+
+      // Update segments if segmentIds provided
+      if (validatedData.segmentIds !== undefined) {
+        // First, disconnect all existing segments
+        await prisma.contact.update({
+          where: { id },
+          data: {
+            segments: {
+              set: [], // This disconnects all existing segments
+            },
+          },
+        });
+
+        // Then connect to new segments if any
+        if (validatedData.segmentIds.length > 0) {
+          await prisma.contact.update({
+            where: { id },
+            data: {
+              segments: {
+                connect: validatedData.segmentIds.map(segmentId => ({ id: segmentId })),
+              },
+            },
+          });
+        }
+
+        // Fetch the contact again with updated segments
+        const updatedContact = await prisma.contact.findUnique({
+          where: { id },
+          include: {
+            segments: true,
+          },
+        });
+
+        logger.info(`Contact updated: ${contact.id} with ${validatedData.segmentIds.length} segments`);
+        return updatedContact || contact;
+      }
 
       logger.info(`Contact updated: ${contact.id}`);
       return contact;
@@ -230,6 +343,12 @@ export class ContactService {
   }>, segmentIds?: string[]) {
     const results = {
       created: 0,
+      updated: 0,
+      duplicates: [] as Array<{
+        contact: any;
+        existingContact: any;
+        duplicateType: 'email' | 'phone' | 'both';
+      }>,
       errors: [] as string[],
     };
 
@@ -246,6 +365,44 @@ export class ContactService {
 
         // Convert empty email to null
         const emailValue = email === "" ? null : email;
+
+        // Check for existing contacts with same email or phone
+        const existingContact = await prisma.contact.findFirst({
+          where: {
+            OR: [
+              ...(emailValue ? [{ email: emailValue }] : []),
+              { phone },
+            ],
+          },
+          include: {
+            segments: true,
+          },
+        });
+
+        if (existingContact) {
+          // Determine duplicate type
+          let duplicateType: 'email' | 'phone' | 'both' = 'phone';
+          if (emailValue && existingContact.email === emailValue) {
+            duplicateType = existingContact.phone === phone ? 'both' : 'email';
+          }
+
+          results.duplicates.push({
+            contact: contactData,
+            existingContact: {
+              id: existingContact.id,
+              name: existingContact.name,
+              email: existingContact.email,
+              phone: existingContact.phone,
+              status: existingContact.status,
+              comment: existingContact.comment,
+              segments: existingContact.segments,
+              createdAt: existingContact.createdAt,
+              updatedAt: existingContact.updatedAt,
+            },
+            duplicateType,
+          });
+          continue;
+        }
 
         // Create contact
         await prisma.contact.create({
@@ -273,7 +430,101 @@ export class ContactService {
       }
     }
 
-    logger.info(`Bulk import completed: ${results.created} created, ${results.errors.length} errors`);
+    logger.info(`Bulk import completed: ${results.created} created, ${results.duplicates.length} duplicates, ${results.errors.length} errors`);
+    return results;
+  }
+
+  // Resolve duplicates from bulk import
+  async resolveDuplicates(duplicates: Array<{
+    contact: any;
+    existingContact: any;
+    duplicateType: 'email' | 'phone' | 'both';
+  }>, action: 'update' | 'skip' | 'force-create', segmentIds?: string[]) {
+    const results = {
+      updated: 0,
+      created: 0,
+      skipped: 0,
+      errors: [] as string[],
+    };
+
+    for (const duplicate of duplicates) {
+      try {
+        const { contact, existingContact } = duplicate;
+
+        if (action === 'skip') {
+          results.skipped++;
+          continue;
+        }
+
+        if (action === 'update') {
+          // Update existing contact with new data, but be careful with unique fields
+          const updateData: any = {
+            name: contact.name,
+            status: contact.status,
+            comment: contact.comment,
+          };
+
+          // Only update email if it's not already taken by another contact
+          if (contact.email !== undefined) {
+            if (contact.email === "") {
+              updateData.email = null;
+            } else {
+              // Check if this email is already used by another contact
+              const emailConflict = await prisma.contact.findFirst({
+                where: {
+                  email: contact.email,
+                  id: { not: existingContact.id },
+                },
+              });
+              if (!emailConflict) {
+                updateData.email = contact.email;
+              }
+            }
+          }
+
+          // Add to segments if provided
+          if (segmentIds) {
+            updateData.segments = {
+              connect: segmentIds.map((id) => ({ id })),
+            };
+          }
+
+          await prisma.contact.update({
+            where: { id: existingContact.id },
+            data: updateData,
+          });
+          results.updated++;
+        } else if (action === 'force-create') {
+          // Force create new contact (may require unique identifiers)
+          const uniquePhone = `${contact.phone}_${Date.now()}`;
+          const uniqueEmail = contact.email ? `${contact.email.split('@')[0]}_${Date.now()}@${contact.email.split('@')[1]}` : null;
+
+          await prisma.contact.create({
+            data: {
+              name: contact.name,
+              email: uniqueEmail,
+              phone: uniquePhone,
+              status: contact.status,
+              comment: contact.comment,
+              segments: segmentIds
+                ? {
+                    connect: segmentIds.map((id) => ({ id })),
+                  }
+                : undefined,
+            },
+          });
+          results.created++;
+        }
+      } catch (error) {
+        results.errors.push(
+          `Failed to resolve duplicate: ${JSON.stringify(duplicate.contact)} - ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
+      }
+    }
+
+    logger.info(`Duplicate resolution completed: ${results.updated} updated, ${results.created} created, ${results.skipped} skipped, ${results.errors.length} errors`);
     return results;
   }
 
@@ -320,25 +571,6 @@ export class ContactService {
     return contacts;
   }
 
-  // Search contacts
-  async searchContacts(query: string, limit: number = 10) {
-    return prisma.contact.findMany({
-      where: {
-        OR: [
-          { name: { contains: query, mode: "insensitive" } },
-          { email: { contains: query, mode: "insensitive" } },
-          { phone: { contains: query, mode: "insensitive" } },
-        ],
-      },
-      include: {
-        segments: true,
-      },
-      take: limit,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  }
 
   // Get contact statistics
   async getContactStats(): Promise<ContactStats> {

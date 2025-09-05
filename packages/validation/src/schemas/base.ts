@@ -4,6 +4,7 @@ import { z } from "zod";
 
 // Common validation patterns
 export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+export const CUID_REGEX = /^c[a-z0-9]{24}$/i;
 export const PHONE_REGEX = /^\+?[1-9]\d{1,14}$/;
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const URL_REGEX = /^https?:\/\/.+/;
@@ -15,6 +16,16 @@ export const uuidSchema = z
   .regex(UUID_REGEX, "Invalid UUID format")
   .min(36, "UUID too short")
   .max(36, "UUID too long");
+
+export const cuidSchema = z
+  .string()
+  .regex(CUID_REGEX, "Invalid CUID format")
+  .min(25, "CUID too short")
+  .max(25, "CUID too long");
+
+export const flexibleIdSchema = z
+  .string()
+  .refine((val) => UUID_REGEX.test(val) || CUID_REGEX.test(val), "Invalid ID format - must be UUID or CUID");
 
 export const phoneNumberSchema = z
   .string()

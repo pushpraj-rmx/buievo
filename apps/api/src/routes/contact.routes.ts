@@ -2,7 +2,7 @@ import { Router } from "express";
 import axios from "axios";
 
 const router = Router();
-const CONTACT_SERVICE_URL = process.env.CONTACT_SERVICE_URL || "http://localhost:3003";
+const CONTACT_SERVICE_URL = process.env.CONTACT_SERVICE_URL || "http://localhost:5001";
 
 // Proxy specific contact routes to contact service
 router.get("/", async (req, res) => {
@@ -117,6 +117,19 @@ router.get("/search", async (req, res) => {
 router.get("/stats", async (req, res) => {
   try {
     const response = await axios.get(`${CONTACT_SERVICE_URL}/api/v1/contacts/stats`);
+    res.status(response.status).json(response.data);
+  } catch (error: any) {
+    console.error('Contact service proxy error:', error.message);
+    res.status(error.response?.status || 500).json({
+      message: error.response?.data?.message || 'Contact service unavailable'
+    });
+  }
+});
+
+// Add route for getting segments under contacts
+router.get("/segments", async (req, res) => {
+  try {
+    const response = await axios.get(`${CONTACT_SERVICE_URL}/api/v1/segments`);
     res.status(response.status).json(response.data);
   } catch (error: any) {
     console.error('Contact service proxy error:', error.message);

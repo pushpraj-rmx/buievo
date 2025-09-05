@@ -68,6 +68,7 @@ export interface CreateContactRequest {
   email?: string;
   phone: string;
   comment?: string;
+  segmentIds?: string[];
 }
 
 export interface UpdateContactRequest {
@@ -76,6 +77,7 @@ export interface UpdateContactRequest {
   phone?: string;
   comment?: string;
   status?: 'active' | 'inactive' | 'pending';
+  segmentIds?: string[];
 }
 
 export interface ContactWithSegments extends Contact {

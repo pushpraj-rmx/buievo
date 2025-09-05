@@ -203,7 +203,7 @@ class ConfigService {
       }
 
       // Use absolute URL for server-side rendering
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
       const response = await fetch(`${baseUrl}/api/v1/config`, {
         method: 'GET',
         headers: {
@@ -240,7 +240,7 @@ class ConfigService {
       }
 
       // Use absolute URL for server-side rendering
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005';
       const response = await fetch(`${baseUrl}/api/v1/config`, {
         method: 'POST',
         headers: {

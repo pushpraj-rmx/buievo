@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 3006",
+    "dev": "next dev --turbopack -p 4000",
     "build": "next build",
-    "start": "next start -p 3002",
+    "start": "next start -p 4000",
     "lint": "next lint"
   },
   "dependencies": {
@@ -75,6 +75,6 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.6",
-    "typescript": "^5"
+    "typescript": "5.8.3"
   }
 }

@@ -30,7 +30,7 @@ export const getConversations = async (req: Request, res: Response) => {
       },
     });
 
-    const transformedConversations = conversations.map((conversation) => ({
+    const transformedConversations = conversations.map((conversation: any) => ({
       id: conversation.id,
       contactId: conversation.contactId,
       contact: conversation.contact,
@@ -122,7 +122,7 @@ export const getConversation = async (req: Request, res: Response) => {
       data: { unreadCount: 0 },
     });
 
-    const transformedMessages = conversation.messages.map((message) => ({
+    const transformedMessages = conversation.messages.map((message: any) => ({
       id: message.id,
       conversationId: message.conversationId,
       content: message.body || "",

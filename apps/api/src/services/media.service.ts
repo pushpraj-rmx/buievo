@@ -256,12 +256,12 @@ export class MediaService {
     ]);
 
     const typeStats: Record<string, number> = {};
-    byType.forEach((item) => {
+    byType.forEach((item: any) => {
       typeStats[item.type] = item._count.id;
     });
 
     const statusStats: Record<string, number> = {};
-    byStatus.forEach((item) => {
+    byStatus.forEach((item: any) => {
       statusStats[item.status] = item._count.id;
     });
 

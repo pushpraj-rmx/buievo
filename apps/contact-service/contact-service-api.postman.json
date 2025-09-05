@@ -1,0 +1,727 @@
+{
+    "info": {
+        "name": "Contact Service API",
+        "description": "Complete API collection for the Contact Management Microservice",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "version": "1.0.0"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3003",
+            "type": "string"
+        },
+        {
+            "key": "apiVersion",
+            "value": "v1",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Health Checks",
+            "item": [
+                {
+                    "name": "Root Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                ""
+                            ]
+                        },
+                        "description": "Basic health check endpoint"
+                    }
+                },
+                {
+                    "name": "Health Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Basic health check with service status"
+                    }
+                },
+                {
+                    "name": "Detailed Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/health/detailed",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "health",
+                                "detailed"
+                            ]
+                        },
+                        "description": "Detailed health check with database connectivity"
+                    }
+                },
+                {
+                    "name": "Readiness Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/health/ready",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "health",
+                                "ready"
+                            ]
+                        },
+                        "description": "Readiness check for Kubernetes deployments"
+                    }
+                },
+                {
+                    "name": "Liveness Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/health/live",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "health",
+                                "live"
+                            ]
+                        },
+                        "description": "Liveness check for Kubernetes deployments"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Contacts",
+            "item": [
+                {
+                    "name": "Get All Contacts",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts?page=1&limit=10&search=&status=all&segmentId=all",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number for pagination"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Number of contacts per page"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "description": "Search term for name, email, or phone"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "all",
+                                    "description": "Filter by status (active, inactive, pending, all)"
+                                },
+                                {
+                                    "key": "segmentId",
+                                    "value": "all",
+                                    "description": "Filter by segment ID or 'all'"
+                                }
+                            ]
+                        },
+                        "description": "Get all contacts with pagination and filters"
+                    }
+                },
+                {
+                    "name": "Get Contact by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "contact_id_here",
+                                    "description": "Contact ID to retrieve"
+                                }
+                            ]
+                        },
+                        "description": "Get a specific contact by ID"
+                    }
+                },
+                {
+                    "name": "Create Contact",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+1234567890\",\n  \"status\": \"active\",\n  \"comment\": \"Sample contact\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts"
+                            ]
+                        },
+                        "description": "Create a new contact"
+                    }
+                },
+                {
+                    "name": "Update Contact",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Doe Updated\",\n  \"email\": \"john.updated@example.com\",\n  \"status\": \"inactive\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "contact_id_here",
+                                    "description": "Contact ID to update"
+                                }
+                            ]
+                        },
+                        "description": "Update an existing contact"
+                    }
+                },
+                {
+                    "name": "Delete Contact",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "contact_id_here",
+                                    "description": "Contact ID to delete"
+                                }
+                            ]
+                        },
+                        "description": "Delete a contact"
+                    }
+                },
+                {
+                    "name": "Search Contacts",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/search?q=john&limit=10",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                "search"
+                            ],
+                            "query": [
+                                {
+                                    "key": "q",
+                                    "value": "john",
+                                    "description": "Search query term"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Maximum number of results"
+                                }
+                            ]
+                        },
+                        "description": "Search contacts by name, email, or phone"
+                    }
+                },
+                {
+                    "name": "Get Contact Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/stats",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get contact statistics and counts"
+                    }
+                },
+                {
+                    "name": "Export Contacts",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/export?format=csv&segmentId=all&status=all",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                "export"
+                            ],
+                            "query": [
+                                {
+                                    "key": "format",
+                                    "value": "csv",
+                                    "description": "Export format (csv)"
+                                },
+                                {
+                                    "key": "segmentId",
+                                    "value": "all",
+                                    "description": "Filter by segment ID or 'all'"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "all",
+                                    "description": "Filter by status or 'all'"
+                                }
+                            ]
+                        },
+                        "description": "Export contacts to CSV format"
+                    }
+                },
+                {
+                    "name": "Bulk Import Contacts",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane.doe@example.com\",\n      \"phone\": \"+1234567891\",\n      \"status\": \"active\"\n    },\n    {\n      \"name\": \"Bob Smith\",\n      \"email\": \"bob.smith@example.com\",\n      \"phone\": \"+1234567892\",\n      \"status\": \"active\"\n    }\n  ],\n  \"segmentIds\": [\"segment_id_here\"]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/bulk-import",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                "bulk-import"
+                            ]
+                        },
+                        "description": "Bulk import multiple contacts (now detects duplicates instead of failing)"
+                    }
+                },
+                {
+                    "name": "Resolve Duplicates",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"duplicates\": [\n    {\n      \"contact\": {\n        \"name\": \"John Doe Updated\",\n        \"email\": \"john.doe@example.com\",\n        \"phone\": \"+1234567890\",\n        \"status\": \"active\"\n      },\n      \"existingContact\": {\n        \"id\": \"existing_contact_id\",\n        \"name\": \"John Doe\",\n        \"email\": null,\n        \"phone\": \"+1234567890\",\n        \"status\": \"active\",\n        \"comment\": null,\n        \"segments\": [],\n        \"createdAt\": \"2025-09-04T02:31:10.150Z\",\n        \"updatedAt\": \"2025-09-04T02:31:10.150Z\"\n      },\n      \"duplicateType\": \"phone\"\n    }\n  ],\n  \"action\": \"update\",\n  \"segmentIds\": [\"segment_id_here\"]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/resolve-duplicates",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                "resolve-duplicates"
+                            ]
+                        },
+                        "description": "Resolve duplicates from bulk import with actions: update, skip, or force-create"
+                    }
+                },
+                {
+                    "name": "Get Available Segments",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/contacts/segments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "contacts",
+                                "segments"
+                            ]
+                        },
+                        "description": "Get all available segments for contacts"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Segments",
+            "item": [
+                {
+                    "name": "Get All Segments",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/segments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "segments"
+                            ]
+                        },
+                        "description": "Get all segments with contact counts"
+                    }
+                },
+                {
+                    "name": "Get Segment by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/segments/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "segments",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "segment_id_here",
+                                    "description": "Segment ID to retrieve"
+                                }
+                            ]
+                        },
+                        "description": "Get a specific segment by ID"
+                    }
+                },
+                {
+                    "name": "Create Segment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"VIP Customers\",\n  \"description\": \"High-value customers\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/segments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "segments"
+                            ]
+                        },
+                        "description": "Create a new segment"
+                    }
+                },
+                {
+                    "name": "Update Segment",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"VIP Customers Updated\",\n  \"description\": \"Updated description for VIP customers\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/segments/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "segments",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "segment_id_here",
+                                    "description": "Segment ID to update"
+                                }
+                            ]
+                        },
+                        "description": "Update an existing segment"
+                    }
+                },
+                {
+                    "name": "Delete Segment",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/segments/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "segments",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "segment_id_here",
+                                    "description": "Segment ID to delete"
+                                }
+                            ]
+                        },
+                        "description": "Delete a segment"
+                    }
+                },
+                {
+                    "name": "Get Segment Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/segments/stats",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "segments",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get segment statistics and counts"
+                    }
+                },
+                {
+                    "name": "Add Contacts to Segment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"contactIds\": [\"contact_id_1\", \"contact_id_2\"]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/segments/:id/contacts",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "segments",
+                                ":id",
+                                "contacts"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "segment_id_here",
+                                    "description": "Segment ID to add contacts to"
+                                }
+                            ]
+                        },
+                        "description": "Add multiple contacts to a segment"
+                    }
+                },
+                {
+                    "name": "Remove Contacts from Segment",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"contactIds\": [\"contact_id_1\", \"contact_id_2\"]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/segments/:id/contacts",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "segments",
+                                ":id",
+                                "contacts"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "segment_id_here",
+                                    "description": "Segment ID to remove contacts from"
+                                }
+                            ]
+                        },
+                        "description": "Remove multiple contacts from a segment"
+                    }
+                }
+            ]
+        }
+    ]
+}

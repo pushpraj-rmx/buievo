@@ -2,7 +2,7 @@ import { Router } from "express";
 import axios from "axios";
 
 const router = Router();
-const CONTACT_SERVICE_URL = process.env.CONTACT_SERVICE_URL || "http://localhost:3003";
+const CONTACT_SERVICE_URL = process.env.CONTACT_SERVICE_URL || "http://localhost:5001";
 
 // Proxy specific segment routes to contact service
 router.get("/", async (req, res) => {

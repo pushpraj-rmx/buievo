@@ -96,7 +96,7 @@ export async function exampleLocalStorage() {
       provider: "local" as const,
       local: {
         uploadDir: "./uploads",
-        baseUrl: "http://localhost:3001/media",
+        baseUrl: "http://localhost:3005/media",
       },
     };
 
@@ -163,7 +163,7 @@ export function exampleEnvironmentSwitching() {
         provider: "local" as const,
         local: {
           uploadDir: "./uploads",
-          baseUrl: "http://localhost:3001/media",
+          baseUrl: "http://localhost:3005/media",
         },
       };
 

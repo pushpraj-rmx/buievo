@@ -1,2 +1,988 @@
 2025-08-27 17:51:37 [error]: Error fetching contact: Contact not found {"statusCode":404,"isOperational":true,"stack":"Error: Contact not found\n    at createError (/home/pushpraj/Code/Marketing/buievo-main/apps/contact-service/src/middleware/error-handler.ts:50:17)\n    at getContact (/home/pushpraj/Code/Marketing/buievo-main/apps/contact-service/src/controllers/contact.controller.ts:36:15)"}
 2025-08-27 17:52:49 [error]: Error fetching contact: Contact not found {"statusCode":404,"isOperational":true,"stack":"Error: Contact not found\n    at createError (/home/pushpraj/Code/Marketing/buievo-main/apps/contact-service/src/middleware/error-handler.ts:50:17)\n    at getContact (/home/pushpraj/Code/Marketing/buievo-main/apps/contact-service/src/controllers/contact.controller.ts:36:15)"}
+2025-09-03 19:00:11 [error]: Error fetching contact: Contact not found {"statusCode":404,"isOperational":true,"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:41:15)"}
+2025-09-04 07:33:10 [error]: Error fetching contact: Contact not found {"statusCode":404,"isOperational":true,"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:41:15)"}
+2025-09-04 07:38:39 [error]: Error fetching contact: Contact not found {"statusCode":404,"isOperational":true,"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:41:15)"}
+2025-09-04 07:41:08 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:42:23)","url":"/api/v1/contacts/segments","method":"GET","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 07:41:28 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:42:23)","url":"/api/v1/contacts/segments","method":"GET","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 07:42:40 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:43:23)","url":"/api/v1/contacts/nonexistent-id","method":"GET","ip":"::1","userAgent":"curl/8.15.0"}
+2025-09-04 07:43:51 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:43:23)","url":"/api/v1/contacts/nonexistent-id","method":"GET","ip":"::1","userAgent":"curl/8.15.0"}
+2025-09-04 07:43:54 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:43:23)","url":"/api/v1/contacts/segments","method":"GET","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 07:46:09 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:43:23)","url":"/api/v1/contacts/segments","method":"GET","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 07:47:18 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:43:23)","url":"/api/v1/contacts/nonexistent-id","method":"GET","ip":"::1","userAgent":"curl/8.15.0"}
+2025-09-04 07:58:48 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 07:58:48 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 07:58:48 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 08:01:18 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:01:18 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:01:18 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 08:01:22 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:01:22 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:01:22 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"curl/8.15.0"}
+2025-09-04 08:01:39 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:01:39 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:01:39 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 08:02:45 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:02:45 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:02:45 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 08:12:56 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:12:56 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:12:56 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 08:13:50 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:13:50 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:13:50 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 08:21:43 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  },
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]},{"validation":"regex","code":"invalid_string","message":"Invalid phone number format","path":["phone"]},{"code":"too_small","minimum":10,"type":"string","inclusive":true,"exact":false,"message":"Phone number too short","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  },\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  },\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:21:43 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  },
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]},{"validation":"regex","code":"invalid_string","message":"Invalid phone number format","path":["phone"]},{"code":"too_small","minimum":10,"type":"string","inclusive":true,"exact":false,"message":"Phone number too short","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  },\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  },\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:21:43 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  },
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  },\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  },\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 08:25:11 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  },
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]},{"validation":"regex","code":"invalid_string","message":"Invalid phone number format","path":["phone"]},{"code":"too_small","minimum":10,"type":"string","inclusive":true,"exact":false,"message":"Phone number too short","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  },\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  },\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:25:11 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  },
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]},{"validation":"regex","code":"invalid_string","message":"Invalid phone number format","path":["phone"]},{"code":"too_small","minimum":10,"type":"string","inclusive":true,"exact":false,"message":"Phone number too short","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  },\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  },\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:25:11 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  },
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  },\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  },\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 08:31:58 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:31:58 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 08:31:58 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 10:32:44 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 10:32:44 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 10:32:44 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 10:59:08 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 10:59:08 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 10:59:08 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 11:02:08 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:02:08 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:02:08 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 11:03:43 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:03:43 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:03:43 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 11:03:52 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:03:52 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:03:52 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 11:07:33 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:07:33 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:07:33 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 11:09:13 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:09:13 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:09:13 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 11:09:32 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:09:32 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:09:32 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 11:15:37 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:15:37 [error]: Error creating contact: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"issues":[{"validation":"email","code":"invalid_string","message":"Invalid email format","path":["email"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-04 11:15:37 [error]: [
+  {
+    "validation": "email",
+    "code": "invalid_string",
+    "message": "Invalid email format",
+    "path": [
+      "email"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"email\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid email format\",\n    \"path\": [\n      \"email\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"axios/1.11.0"}
+2025-09-04 17:15:38 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:45:23)","url":"/api/v1/contacts/contact_id_here","method":"GET","ip":"::ffff:127.0.0.1","userAgent":"bruno-runtime/2.9.1"}
+2025-09-04 17:16:22 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-04 17:16:22 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-04 17:16:22 [error]: Contact with this phone number already exists {"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"bruno-runtime/2.9.1"}
+2025-09-04 17:17:40 [error]: Search query is required {"stack":"Error: Search query is required\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at searchContacts (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:163:23)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15\n    at Function.process_params (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n    at Function.handle (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:175:3)","url":"/api/v1/contacts/search?q&limit=10","method":"GET","ip":"::ffff:127.0.0.1","userAgent":"bruno-runtime/2.9.1"}
+2025-09-04 17:28:52 [error]: Segment not found {"stack":"Error: Segment not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getSegment (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/segment.controller.ts:34:23)","url":"/api/v1/segments/segment_id_here","method":"GET","ip":"::ffff:127.0.0.1","userAgent":"bruno-runtime/2.9.1"}
+2025-09-04 17:29:49 [error]: Error updating segment: Segment not found {"statusCode":404,"isOperational":true,"stack":"Error: Segment not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at SegmentService.updateSegment (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/segment.service.ts:110:15)\n    at async updateSegment (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/segment.controller.ts:69:23)"}
+2025-09-04 17:29:49 [error]: Error updating segment: Segment not found {"statusCode":404,"isOperational":true,"stack":"Error: Segment not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at SegmentService.updateSegment (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/segment.service.ts:110:15)\n    at async updateSegment (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/segment.controller.ts:69:23)"}
+2025-09-04 17:29:49 [error]: Segment not found {"stack":"Error: Segment not found\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at SegmentService.updateSegment (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/segment.service.ts:110:15)\n    at async updateSegment (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/segment.controller.ts:69:23)","url":"/api/v1/segments/segment_id_here","method":"PUT","ip":"::ffff:127.0.0.1","userAgent":"bruno-runtime/2.9.1"}
+2025-09-05 05:52:39 [error]: Error updating contact: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"issues":[{"validation":"uuid","code":"invalid_string","message":"Invalid uuid","path":["segmentIds",0]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateUpdateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:162:48)\n    at ContactService.updateContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:163:29)\n    at updateContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:80:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 05:52:39 [error]: Error updating contact: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"issues":[{"validation":"uuid","code":"invalid_string","message":"Invalid uuid","path":["segmentIds",0]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateUpdateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:162:48)\n    at ContactService.updateContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:163:29)\n    at updateContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:80:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 05:52:39 [error]: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateUpdateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:162:48)\n    at ContactService.updateContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:163:29)\n    at updateContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:80:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts/cmf63btkb0000x4zpba7wb9qo","method":"PUT","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 05:53:11 [error]: Error creating contact: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"issues":[{"validation":"uuid","code":"invalid_string","message":"Invalid uuid","path":["segmentIds",0]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 05:53:11 [error]: Error creating contact: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"issues":[{"validation":"uuid","code":"invalid_string","message":"Invalid uuid","path":["segmentIds",0]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 05:53:11 [error]: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 06:08:44 [error]: Error creating contact: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"issues":[{"validation":"uuid","code":"invalid_string","message":"Invalid uuid","path":["segmentIds",0]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 12:36:39 [error]: Error creating contact: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"issues":[{"validation":"uuid","code":"invalid_string","message":"Invalid uuid","path":["segmentIds",0]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 12:36:39 [error]: Error creating contact: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"issues":[{"validation":"uuid","code":"invalid_string","message":"Invalid uuid","path":["segmentIds",0]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 12:36:39 [error]: [
+  {
+    "validation": "uuid",
+    "code": "invalid_string",
+    "message": "Invalid uuid",
+    "path": [
+      "segmentIds",
+      0
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"uuid\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid uuid\",\n    \"path\": [\n      \"segmentIds\",\n      0\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"curl/8.15.0"}
+2025-09-05 12:52:20 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 12:52:20 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 12:52:20 [error]: Contact with this phone number already exists {"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"curl/8.15.0"}
+2025-09-05 13:07:23 [error]: Error creating contact: [
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"code":"too_small","minimum":10,"type":"string","inclusive":true,"exact":false,"message":"Phone number too short","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 13:07:23 [error]: Error creating contact: [
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"code":"too_small","minimum":10,"type":"string","inclusive":true,"exact":false,"message":"Phone number too short","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 13:07:23 [error]: [
+  {
+    "code": "too_small",
+    "minimum": 10,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Phone number too short",
+    "path": [
+      "phone"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"code\": \"too_small\",\n    \"minimum\": 10,\n    \"type\": \"string\",\n    \"inclusive\": true,\n    \"exact\": false,\n    \"message\": \"Phone number too short\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:12:55 [error]: Error creating contact: [
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"validation":"regex","code":"invalid_string","message":"Invalid phone number format","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 13:12:55 [error]: Error creating contact: [
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"validation":"regex","code":"invalid_string","message":"Invalid phone number format","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 13:12:55 [error]: [
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:13:04 [error]: Error creating contact: [
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"validation":"regex","code":"invalid_string","message":"Invalid phone number format","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 13:13:04 [error]: Error creating contact: [
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  }
+] {"issues":[{"validation":"regex","code":"invalid_string","message":"Invalid phone number format","path":["phone"]}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-05 13:13:04 [error]: [
+  {
+    "validation": "regex",
+    "code": "invalid_string",
+    "message": "Invalid phone number format",
+    "path": [
+      "phone"
+    ]
+  }
+] {"stack":"ZodError: [\n  {\n    \"validation\": \"regex\",\n    \"code\": \"invalid_string\",\n    \"message\": \"Invalid phone number format\",\n    \"path\": [\n      \"phone\"\n    ]\n  }\n]\n    at get error (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/buievo-main/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/buievo-main/buievo/packages/validation/dist/index.js:157:48)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:124:29)\n    at createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:44)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/buievo-main/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:26:26 [error]: Error creating contact: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:26:26 [error]: Error creating contact: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:26:26 [error]: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:26:36 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:26:36 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:26:36 [error]: Contact with this phone number already exists {"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:26:43 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:26:43 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:26:43 [error]: Contact with this phone number already exists {"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:26:54 [error]: Error creating contact: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:26:54 [error]: Error creating contact: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:26:54 [error]: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:27:00 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:27:00 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:27:00 [error]: Contact with this phone number already exists {"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:27:08 [error]: Error creating contact: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:27:08 [error]: Error creating contact: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:27:08 [error]: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:27:11 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:27:11 [error]: Error creating contact: Contact with this phone number already exists {"statusCode":400,"isOperational":true,"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:27:11 [error]: Contact with this phone number already exists {"stack":"Error: Contact with this phone number already exists\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:132:15)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-05 13:29:49 [error]: Error creating contact: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:29:49 [error]: Error creating contact: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)"}
+2025-09-05 13:29:49 [error]: Cannot read properties of undefined (reading 'createMany') {"stack":"TypeError: Cannot read properties of undefined (reading 'createMany')\n    at ContactService.createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:153:37)\n    at async createContact (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:60:23)","url":"/api/v1/contacts","method":"POST","ip":"::1","userAgent":"curl/8.15.0"}
+2025-09-05 14:48:01 [error]: Error fetching contacts: 
+Invalid `prisma.contact.count()` invocation in
+/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:138:22
+
+  135     createdAt: "desc",
+  136   },
+  137 }),
+→ 138 prisma.contact.count({
+        select: {
+          _count: {
+            select: {
+              _all: true
+            }
+          }
+        },
+        where: {
+          OR: [
+            {
+              name: {
+                contains: "john",
+                mode: "insensitive"
+              }
+            },
+            {
+              email: {
+                contains: "john",
+                mode: "insensitive"
+              }
+            },
+            {
+              phone: {
+                contains: "john",
+                mode: "insensitive"
+              }
+            },
+            {
+              comments: {
+                contains: "john",
+                mode: "insensitive"
+              }
+            }
+          ]
+        }
+      })
+
+Unknown argument `comments`. Did you mean `comment`? Available options are marked with ?. {"name":"PrismaClientValidationError","clientVersion":"5.22.0","stack":"PrismaClientValidationError: \nInvalid `prisma.contact.count()` invocation in\n/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:138:22\n\n  135     createdAt: \"desc\",\n  136   },\n  137 }),\n→ 138 prisma.contact.count({\n        select: {\n          _count: {\n            select: {\n              _all: true\n            }\n          }\n        },\n        where: {\n          OR: [\n            {\n              name: {\n                contains: \"john\",\n                mode: \"insensitive\"\n              }\n            },\n            {\n              email: {\n                contains: \"john\",\n                mode: \"insensitive\"\n              }\n            },\n            {\n              phone: {\n                contains: \"john\",\n                mode: \"insensitive\"\n              }\n            },\n            {\n              comments: {\n                contains: \"john\",\n                mode: \"insensitive\"\n              }\n            }\n          ]\n        }\n      })\n\nUnknown argument `comments`. Did you mean `comment`? Available options are marked with ?.\n    at wn (/home/akshay/buievo-main/buievo/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:29:1363)\n    at $n.handleRequestError (/home/akshay/buievo-main/buievo/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6958)\n    at $n.handleAndLogRequestError (/home/akshay/buievo-main/buievo/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/home/akshay/buievo-main/buievo/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/home/akshay/buievo-main/buievo/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async Promise.all (index 1)\n    at async ContactService.getContacts (/home/akshay/buievo-main/buievo/apps/contact-service/src/services/contact.service.ts:121:31)\n    at async getContacts (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:30:22)"}
+2025-09-05 14:48:01 [error]: Failed to fetch contacts {"stack":"Error: Failed to fetch contacts\n    at createError (/home/akshay/buievo-main/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContacts (/home/akshay/buievo-main/buievo/apps/contact-service/src/controllers/contact.controller.ts:49:24)","url":"/api/v1/contacts?search=john&page=1&limit=5","method":"GET","ip":"::1","userAgent":"curl/8.15.0"}

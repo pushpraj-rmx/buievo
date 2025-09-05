@@ -88,7 +88,7 @@ log "🏥 Performing health checks..."
 sleep 10
 
 # Check API health
-if curl -f http://localhost:3001/ > /dev/null 2>&1; then
+if curl -f http://localhost:3005/ > /dev/null 2>&1; then
     log "✅ API is responding"
 else
     log "⚠️  API health check failed"

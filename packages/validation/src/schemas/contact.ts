@@ -6,6 +6,7 @@ import {
   emailSchema, 
   phoneNumberSchema, 
   uuidSchema,
+  flexibleIdSchema,
   statusSchema,
   commentSchema,
   paginationSchema,
@@ -17,14 +18,14 @@ import {
 // Contact schemas
 export const createContactSchema = z.object({
   name: nameSchema,
-  email: emailSchema,
+  email: emailSchema.optional(),
   phone: phoneNumberSchema,
   status: statusSchema.default("active"),
   comment: commentSchema,
   tags: z.array(z.string().max(50)).max(20).optional(),
   customFields: z.record(z.any()).optional(),
   source: z.enum(["manual", "import", "api", "webhook", "form"]).default("manual"),
-  segmentIds: z.array(uuidSchema).optional(),
+  segmentIds: z.array(flexibleIdSchema).optional(),
   metadata: z.record(z.any()).optional(),
 });
 
@@ -33,7 +34,7 @@ export const updateContactSchema = createContactSchema.partial();
 export const contactSchema = z.object({
   id: uuidSchema,
   name: nameSchema,
-  email: emailSchema,
+  email: emailSchema.optional(),
   phone: phoneNumberSchema,
   status: statusSchema,
   comment: commentSchema,
@@ -94,17 +95,17 @@ export const contactBulkTagSchema = z.object({
 
 // Contact segment schemas
 export const addContactToSegmentsSchema = z.object({
-  contactId: uuidSchema,
-  segmentIds: z.array(uuidSchema).min(1, "At least one segment ID is required"),
+  contactId: flexibleIdSchema,
+  segmentIds: z.array(flexibleIdSchema).min(1, "At least one segment ID is required"),
 });
 
 export const removeContactFromSegmentsSchema = z.object({
-  contactId: uuidSchema,
-  segmentIds: z.array(uuidSchema).min(1, "At least one segment ID is required"),
+  contactId: flexibleIdSchema,
+  segmentIds: z.array(flexibleIdSchema).min(1, "At least one segment ID is required"),
 });
 
 export const getContactsBySegmentSchema = z.object({
-  segmentId: uuidSchema,
+  segmentId: flexibleIdSchema,
   pagination: paginationSchema.optional(),
   filters: filterParamsSchema.optional(),
   search: searchParamsSchema.optional(),
@@ -123,7 +124,7 @@ export const contactFilterSchema = z.object({
   status: z.array(statusSchema).optional(),
   tags: z.array(z.string().max(50)).optional(),
   source: z.array(z.enum(["manual", "import", "api", "webhook", "form"])).optional(),
-  segmentIds: z.array(uuidSchema).optional(),
+  segmentIds: z.array(flexibleIdSchema).optional(),
   hasWhatsappId: z.boolean().optional(),
   lastContactedFrom: dateSchema.optional(),
   lastContactedTo: dateSchema.optional(),
