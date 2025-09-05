@@ -55,31 +55,63 @@ export class ContactService {
     // Build where clause with advanced search capabilities
     const where: any = {};
 
-    // General search across all fields (OR condition)
+    // General search across all fields (OR condition) - improved with better matching
     if (search) {
+      const searchTerm = search.trim();
       where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { email: { contains: search, mode: "insensitive" } },
-        { phone: { contains: search, mode: "insensitive" } },
-        { comment: { contains: search, mode: "insensitive" } },
+        // Exact matches first (highest priority)
+        { name: { equals: searchTerm, mode: "insensitive" } },
+        { email: { equals: searchTerm, mode: "insensitive" } },
+        { phone: { equals: searchTerm, mode: "insensitive" } },
+        // Starts with matches (high priority)
+        { name: { startsWith: searchTerm, mode: "insensitive" } },
+        { email: { startsWith: searchTerm, mode: "insensitive" } },
+        { phone: { startsWith: searchTerm, mode: "insensitive" } },
+        // Contains matches (lower priority)
+        { name: { contains: searchTerm, mode: "insensitive" } },
+        { email: { contains: searchTerm, mode: "insensitive" } },
+        { phone: { contains: searchTerm, mode: "insensitive" } },
+        { comment: { contains: searchTerm, mode: "insensitive" } },
       ];
     }
 
-    // Field-specific searches (AND conditions)
+    // Field-specific searches (AND conditions) - improved with better matching
     if (name) {
-      where.name = { contains: name, mode: "insensitive" };
+      const nameTerm = name.trim();
+      where.name = {
+        OR: [
+          { equals: nameTerm, mode: "insensitive" },
+          { startsWith: nameTerm, mode: "insensitive" },
+          { contains: nameTerm, mode: "insensitive" }
+        ]
+      };
     }
 
     if (email) {
-      where.email = { contains: email, mode: "insensitive" };
+      const emailTerm = email.trim();
+      where.email = {
+        OR: [
+          { equals: emailTerm, mode: "insensitive" },
+          { startsWith: emailTerm, mode: "insensitive" },
+          { contains: emailTerm, mode: "insensitive" }
+        ]
+      };
     }
 
     if (phone) {
-      where.phone = { contains: phone, mode: "insensitive" };
+      const phoneTerm = phone.trim();
+      where.phone = {
+        OR: [
+          { equals: phoneTerm, mode: "insensitive" },
+          { startsWith: phoneTerm, mode: "insensitive" },
+          { contains: phoneTerm, mode: "insensitive" }
+        ]
+      };
     }
 
     if (comment) {
-      where.comment = { contains: comment, mode: "insensitive" };
+      const commentTerm = comment.trim();
+      where.comment = { contains: commentTerm, mode: "insensitive" };
     }
 
     // Status filter
@@ -149,6 +181,37 @@ export class ContactService {
         pages,
       },
     };
+  }
+
+  // Get search suggestions based on partial input
+  async getSearchSuggestions(query: string, limit: number = 10) {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+
+    const searchTerm = query.trim();
+    const suggestions = await prisma.contact.findMany({
+      where: {
+        OR: [
+          { name: { startsWith: searchTerm, mode: "insensitive" } },
+          { email: { startsWith: searchTerm, mode: "insensitive" } },
+          { phone: { startsWith: searchTerm, mode: "insensitive" } },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+      },
+      take: limit,
+      orderBy: [
+        { name: "asc" },
+        { email: "asc" },
+      ],
+    });
+
+    return suggestions;
   }
 
   // Get single contact by ID

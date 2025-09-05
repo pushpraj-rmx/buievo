@@ -1535,3 +1535,19 @@ Unknown argument `comments`. Did you mean `comment`? Available options are marke
 2025-09-05 20:59:43 [info]: 🚀 Contact Service running on port 32102
 2025-09-05 20:59:43 [info]: 📊 Health check: http://localhost:32102/health
 2025-09-05 20:59:43 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 21:35:18 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 21:35:20 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 21:35:20 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 21:35:20 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 21:35:34 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 21:35:35 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 21:35:35 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 21:35:35 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 21:35:52 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 21:35:53 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 21:35:53 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 21:35:53 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-05 21:36:07 [info]: SIGTERM received, shutting down gracefully
+2025-09-05 21:36:08 [info]: 🚀 Contact Service running on port 32102
+2025-09-05 21:36:08 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-05 21:36:08 [info]: 📚 API docs: http://localhost:32102/api/v1

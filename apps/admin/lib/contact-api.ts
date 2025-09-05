@@ -267,6 +267,21 @@ class ContactApiClient {
     }
   }
 
+  async getSearchSuggestions(params: {
+    q: string;
+    limit?: number;
+  }): Promise<Contact[]> {
+    const searchParams = new URLSearchParams();
+    searchParams.set("q", params.q);
+    if (params.limit) searchParams.set("limit", params.limit.toString());
+
+    const response = await fetch(`${this.baseUrl}/api/v1/contacts/search/suggestions?${searchParams}`);
+    if (!response.ok) {
+      throw new Error(`Search suggestions failed: ${response.status}`);
+    }
+    return response.json();
+  }
+
   async getContactStats(): Promise<{ success: true; data: ContactStats }> {
     return this.request("/api/v1/contacts/stats");
   }

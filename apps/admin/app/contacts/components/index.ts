@@ -10,5 +10,6 @@ export { SingleContactDuplicateDialog } from "./single-contact-duplicate-dialog"
 export { ContactStats } from "./contact-stats";
 export { ContactSearchDialog } from "./contact-search-dialog";
 export { SegmentManagementDialog } from "./segment-management-dialog";
+export { EnhancedSearchInput } from "./enhanced-search-input";
 
 

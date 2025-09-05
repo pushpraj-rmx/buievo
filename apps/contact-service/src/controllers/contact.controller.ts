@@ -99,6 +99,28 @@ export class ContactController {
     }
   }
 
+  // Get search suggestions
+  static async getSearchSuggestions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { q, limit = 10 } = req.query;
+
+      if (!q || typeof q !== 'string' || !q.trim()) {
+        return res.json([]);
+      }
+
+      const suggestions = await contactService.getSearchSuggestions(
+        q.trim(),
+        Number(limit)
+      );
+
+      res.json(suggestions);
+    } catch (error) {
+      logger.error("Error getting search suggestions:", error);
+      const appError = createError("Failed to get search suggestions", 500);
+      return next(appError);
+    }
+  }
+
   // Create new contact
   static async createContact(req: Request, res: Response, next: NextFunction) {
     try {

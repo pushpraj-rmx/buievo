@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -13,14 +12,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   Plus,
-  Search,
   Upload,
   Download,
   Filter,
   X,
-  SearchCheck,
 } from "lucide-react";
 import { type SegmentType } from "@/lib/contact-api";
+import { EnhancedSearchInput } from "./enhanced-search-input";
 
 interface ContactsToolbarProps {
   search: string;
@@ -108,25 +106,12 @@ export function ContactsToolbar({
       {/* Search and Filters */}
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex-1">
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search contacts by name, phone, or email..."
-                value={search}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onAdvancedSearch}
-              title="Advanced Search"
-            >
-              <SearchCheck className="h-4 w-4" />
-            </Button>
-          </div>
+          <EnhancedSearchInput
+            value={search}
+            onChange={onSearchChange}
+            onAdvancedSearch={onAdvancedSearch}
+            placeholder="Search contacts by name, phone, or email..."
+          />
         </div>
 
         <div className="flex gap-3">

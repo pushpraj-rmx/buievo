@@ -11,6 +11,7 @@ router.get("/export", ContactController.exportContacts);
 router.get("/stats", ContactController.getContactStats);
 router.get("/segments", ContactController.getAvailableSegments);
 router.get("/search", ContactController.searchContacts);
+router.get("/search/suggestions", ContactController.getSearchSuggestions);
 
 // Get single contact by ID
 router.get("/:id", ContactController.getContact);
