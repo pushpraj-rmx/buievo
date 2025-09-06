@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,11 +31,11 @@ interface SearchSuggestion {
   type: 'name' | 'email' | 'phone';
 }
 
-export function EnhancedSearchInput({
+export const EnhancedSearchInput = memo(function EnhancedSearchInput({
   value,
   onChange,
   onAdvancedSearch,
-  placeholder = "Search contacts by name, phone, or email...",
+  placeholder = "Search contacts by name, phone, email, or comments...",
   className,
 }: EnhancedSearchInputProps) {
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -43,6 +43,7 @@ export function EnhancedSearchInput({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const onChangeDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Load recent searches from localStorage
@@ -60,7 +61,7 @@ export function EnhancedSearchInput({
   // Save recent searches to localStorage
   const saveRecentSearch = useCallback((query: string) => {
     if (!query.trim()) return;
-    
+
     const updated = [query, ...recentSearches.filter(s => s !== query)].slice(0, 5);
     setRecentSearches(updated);
     localStorage.setItem('contact-recent-searches', JSON.stringify(updated));
@@ -82,7 +83,7 @@ export function EnhancedSearchInput({
 
       const formattedSuggestions: SearchSuggestion[] = contacts.flatMap(contact => {
         const contactSuggestions: SearchSuggestion[] = [];
-        
+
         if (contact.name?.toLowerCase().includes(query.toLowerCase())) {
           contactSuggestions.push({
             id: `${contact.id}-name`,
@@ -92,7 +93,7 @@ export function EnhancedSearchInput({
             type: 'name'
           });
         }
-        
+
         if (contact.email?.toLowerCase().includes(query.toLowerCase())) {
           contactSuggestions.push({
             id: `${contact.id}-email`,
@@ -102,7 +103,7 @@ export function EnhancedSearchInput({
             type: 'email'
           });
         }
-        
+
         if (contact.phone?.includes(query)) {
           contactSuggestions.push({
             id: `${contact.id}-phone`,
@@ -112,12 +113,12 @@ export function EnhancedSearchInput({
             type: 'phone'
           });
         }
-        
+
         return contactSuggestions;
       });
 
       // Remove duplicates and limit results
-      const uniqueSuggestions = formattedSuggestions.filter((suggestion, index, self) => 
+      const uniqueSuggestions = formattedSuggestions.filter((suggestion, index, self) =>
         index === self.findIndex(s => s.id === suggestion.id)
       ).slice(0, 8);
 
@@ -130,14 +131,22 @@ export function EnhancedSearchInput({
     }
   }, []);
 
-  // Handle input change with debouncing
+  // Handle input change with debouncing for both onChange and suggestions
   const handleInputChange = useCallback((newValue: string) => {
-    onChange(newValue);
-    
+    // Debounce the onChange callback to prevent immediate re-renders
+    if (onChangeDebounceRef.current) {
+      clearTimeout(onChangeDebounceRef.current);
+    }
+
+    onChangeDebounceRef.current = setTimeout(() => {
+      onChange(newValue);
+    }, 300); // 300ms delay for onChange
+
+    // Debounce suggestions fetching
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
-    
+
     debounceRef.current = setTimeout(() => {
       fetchSuggestions(newValue);
     }, 300);
@@ -146,9 +155,9 @@ export function EnhancedSearchInput({
   // Handle suggestion selection
   const handleSuggestionSelect = useCallback((suggestion: SearchSuggestion) => {
     const searchValue = suggestion.type === 'name' ? suggestion.name :
-                       suggestion.type === 'email' ? suggestion.email :
-                       suggestion.phone;
-    
+      suggestion.type === 'email' ? suggestion.email :
+        suggestion.phone;
+
     onChange(searchValue);
     saveRecentSearch(searchValue);
     setShowSuggestions(false);
@@ -193,6 +202,9 @@ export function EnhancedSearchInput({
       if (debounceRef.current) {
         clearTimeout(debounceRef.current);
       }
+      if (onChangeDebounceRef.current) {
+        clearTimeout(onChangeDebounceRef.current);
+      }
     };
   }, []);
 
@@ -223,7 +235,7 @@ export function EnhancedSearchInput({
             </Button>
           )}
         </div>
-        
+
         <Button
           variant="outline"
           size="icon"
@@ -292,4 +304,4 @@ export function EnhancedSearchInput({
       )}
     </div>
   );
-}
+});

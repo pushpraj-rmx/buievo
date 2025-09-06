@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import {
   Card,
   CardContent,
@@ -22,7 +22,7 @@ interface ContactStatsProps {
   onRefresh?: () => void;
 }
 
-export function ContactStats({ onRefresh }: ContactStatsProps) {
+export const ContactStats = memo(function ContactStats({ onRefresh }: ContactStatsProps) {
   const [contactStats, setContactStats] = useState<ContactStatsType | null>(
     null
   );
@@ -59,10 +59,10 @@ export function ContactStats({ onRefresh }: ContactStatsProps) {
     fetchStats();
   }, []);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     fetchStats(true);
     onRefresh?.();
-  };
+  }, [onRefresh]);
 
   if (loading) {
     return (
@@ -176,9 +176,9 @@ export function ContactStats({ onRefresh }: ContactStatsProps) {
                 .map((segment) => {
                   const percentage = contactStats?.total
                     ? Math.round(
-                        ((segment._count?.contacts || 0) / contactStats.total) *
-                          100
-                      )
+                      ((segment._count?.contacts || 0) / contactStats.total) *
+                      100
+                    )
                     : 0;
 
                   return (
@@ -212,4 +212,4 @@ export function ContactStats({ onRefresh }: ContactStatsProps) {
       )}
     </div>
   );
-}
+});

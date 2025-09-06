@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -26,13 +27,14 @@ interface ContactTableProps {
   onDelete: (id: string) => void;
 }
 
-export function ContactTable({
+export const ContactTable = memo(function ContactTable({
   contacts,
   onEdit,
   onView,
   onDelete,
 }: ContactTableProps) {
-  const getStatusColor = (status: string) => {
+  // Memoized utility functions to prevent recreation on every render
+  const getStatusColor = useCallback((status: string) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -43,17 +45,77 @@ export function ContactTable({
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
+  }, []);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     return new Date(dateString).toLocaleDateString();
-  };
+  }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     if (confirm("Are you sure you want to delete this contact?")) {
       onDelete(id);
     }
-  };
+  }, [onDelete]);
+
+  // Memoized contact rows to prevent unnecessary re-renders
+  const contactRows = useMemo(() => {
+    return contacts.map((contact) => (
+      <TableRow key={contact.id}>
+        <TableCell className="font-medium">{contact.name}</TableCell>
+        <TableCell>{contact.phone}</TableCell>
+        <TableCell>{contact.email || "-"}</TableCell>
+        <TableCell>
+          <Badge className={getStatusColor(contact.status)}>
+            {contact.status}
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <div className="flex flex-wrap gap-1">
+            {contact.segments.length > 0 ? (
+              contact.segments.map((segment) => (
+                <Badge
+                  key={segment.id}
+                  variant="outline"
+                  className="text-xs"
+                >
+                  {segment.name}
+                </Badge>
+              ))
+            ) : (
+              <span className="text-gray-400 text-sm">No segments</span>
+            )}
+          </div>
+        </TableCell>
+        <TableCell>{formatDate(contact.createdAt)}</TableCell>
+        <TableCell>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onView(contact)}>
+                <Eye className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit(contact)}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleDelete(contact.id)}
+                className="text-red-600"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TableCell>
+      </TableRow>
+    ));
+  }, [contacts, getStatusColor, formatDate, onView, onEdit, handleDelete]);
 
   if (contacts.length === 0) {
     return (
@@ -78,64 +140,9 @@ export function ContactTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {contacts.map((contact) => (
-            <TableRow key={contact.id}>
-              <TableCell className="font-medium">{contact.name}</TableCell>
-              <TableCell>{contact.phone}</TableCell>
-              <TableCell>{contact.email || "-"}</TableCell>
-              <TableCell>
-                <Badge className={getStatusColor(contact.status)}>
-                  {contact.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {contact.segments.length > 0 ? (
-                    contact.segments.map((segment) => (
-                      <Badge
-                        key={segment.id}
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        {segment.name}
-                      </Badge>
-                    ))
-                  ) : (
-                    <span className="text-gray-400 text-sm">No segments</span>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>{formatDate(contact.createdAt)}</TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onView(contact)}>
-                      <Eye className="mr-2 h-4 w-4" />
-                      View Details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onEdit(contact)}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleDelete(contact.id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
+          {contactRows}
         </TableBody>
       </Table>
     </div>
   );
-}
+});

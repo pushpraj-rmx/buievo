@@ -15,6 +15,7 @@ export interface ContactFilters {
   email?: string; // Search specifically in email field
   phone?: string; // Search specifically in phone field
   comment?: string; // Search specifically in comment field
+  segmentName?: string; // Search by segment name
   status?: string;
   segmentId?: string;
   // Date range filters
@@ -22,6 +23,9 @@ export interface ContactFilters {
   createdBefore?: string; // ISO date string
   updatedAfter?: string; // ISO date string
   updatedBefore?: string; // ISO date string
+  // Search options
+  includeInactive?: boolean; // Include inactive contacts in search
+  fuzzySearch?: boolean; // Enable fuzzy matching
 }
 
 export interface ContactStats {
@@ -43,22 +47,25 @@ export class ContactService {
       email,
       phone,
       comment,
+      segmentName,
       status,
       segmentId,
       createdAfter,
       createdBefore,
       updatedAfter,
-      updatedBefore
+      updatedBefore,
+      includeInactive = false,
+      fuzzySearch = false
     } = filters;
     const skip = (page - 1) * limit;
 
     // Build where clause with advanced search capabilities
     const where: any = {};
 
-    // General search across all fields (OR condition) - improved with better matching
+    // General search across all fields (OR condition) - enhanced with segment search
     if (search) {
       const searchTerm = search.trim();
-      where.OR = [
+      const searchConditions: any[] = [
         // Exact matches first (highest priority)
         { name: { equals: searchTerm, mode: "insensitive" } },
         { email: { equals: searchTerm, mode: "insensitive" } },
@@ -73,6 +80,22 @@ export class ContactService {
         { phone: { contains: searchTerm, mode: "insensitive" } },
         { comment: { contains: searchTerm, mode: "insensitive" } },
       ];
+
+      // Add segment name search if fuzzy search is enabled
+      if (fuzzySearch) {
+        searchConditions.push({
+          segments: {
+            some: {
+              name: {
+                contains: searchTerm,
+                mode: "insensitive" as const
+              }
+            }
+          }
+        });
+      }
+
+      where.OR = searchConditions;
     }
 
     // Field-specific searches (AND conditions) - improved with better matching
@@ -114,9 +137,28 @@ export class ContactService {
       where.comment = { contains: commentTerm, mode: "insensitive" };
     }
 
-    // Status filter
+    // Segment name search
+    if (segmentName) {
+      const segmentTerm = segmentName.trim();
+      where.segments = {
+        some: {
+          name: {
+            OR: [
+              { equals: segmentTerm, mode: "insensitive" as const },
+              { startsWith: segmentTerm, mode: "insensitive" as const },
+              { contains: segmentTerm, mode: "insensitive" as const }
+            ]
+          }
+        }
+      };
+    }
+
+    // Status filter - enhanced to include inactive contacts option
     if (status && status !== "all") {
       where.status = status;
+    } else if (!includeInactive) {
+      // By default, only show active contacts unless explicitly requested
+      where.status = { not: "inactive" };
     }
 
     // Segment filter
@@ -184,7 +226,7 @@ export class ContactService {
   }
 
   // Get search suggestions based on partial input
-  async getSearchSuggestions(query: string, limit: number = 10) {
+  async getSearchSuggestions(query: string, limit: number = 10, includeSegments: boolean = true) {
     if (!query || query.trim().length < 2) {
       return [];
     }
@@ -196,6 +238,13 @@ export class ContactService {
           { name: { startsWith: searchTerm, mode: "insensitive" } },
           { email: { startsWith: searchTerm, mode: "insensitive" } },
           { phone: { startsWith: searchTerm, mode: "insensitive" } },
+          ...(includeSegments ? [{
+            segments: {
+              some: {
+                name: { startsWith: searchTerm, mode: "insensitive" as const }
+              }
+            }
+          }] : [])
         ],
       },
       select: {
@@ -203,6 +252,12 @@ export class ContactService {
         name: true,
         email: true,
         phone: true,
+        segments: includeSegments ? {
+          select: {
+            id: true,
+            name: true,
+          }
+        } : false,
       },
       take: limit,
       orderBy: [
@@ -212,6 +267,44 @@ export class ContactService {
     });
 
     return suggestions;
+  }
+
+  // Get segment suggestions for search
+  async getSegmentSuggestions(query: string, limit: number = 5) {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+
+    const searchTerm = query.trim();
+
+    try {
+      const suggestions = await prisma.segment.findMany({
+        where: {
+          OR: [
+            { name: { startsWith: searchTerm, mode: "insensitive" as const } },
+            { name: { contains: searchTerm, mode: "insensitive" as const } },
+          ],
+        },
+        select: {
+          id: true,
+          name: true,
+          _count: {
+            select: {
+              contacts: true,
+            },
+          },
+        },
+        take: limit,
+        orderBy: [
+          { name: "asc" },
+        ],
+      });
+
+      return suggestions;
+    } catch (error) {
+      logger.error("Error getting segment suggestions:", error);
+      return [];
+    }
   }
 
   // Get single contact by ID

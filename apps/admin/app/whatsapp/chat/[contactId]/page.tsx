@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, use } from "react";
 import { Button } from "@/components/ui/button";
 
 import { Badge } from "@/components/ui/badge";
@@ -58,12 +58,8 @@ export default function IndividualChatPage({
 }: {
   params: Promise<{ contactId: string }>;
 }) {
-  const [contactId, setContactId] = useState<string>("");
-
-  // Handle async params
-  useEffect(() => {
-    params.then(({ contactId: id }) => setContactId(id));
-  }, [params]);
+  // Use React's use() hook to unwrap the params Promise
+  const { contactId } = use(params);
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -132,9 +128,9 @@ export default function IndividualChatPage({
       setConversation((prev) =>
         prev
           ? {
-              ...prev,
-              messages: [...prev.messages, newMessage],
-            }
+            ...prev,
+            messages: [...prev.messages, newMessage],
+          }
           : null,
       );
       setMessage("");
@@ -205,9 +201,8 @@ export default function IndividualChatPage({
           )}
 
           <div
-            className={`rounded-lg px-3 py-2 max-w-full ${
-              isOutbound ? "bg-[#005c4b] text-white" : "bg-[#202c33] text-white"
-            }`}
+            className={`rounded-lg px-3 py-2 max-w-full ${isOutbound ? "bg-[#005c4b] text-white" : "bg-[#202c33] text-white"
+              }`}
           >
             {msg.type === "text" && (
               <p className="text-sm whitespace-pre-wrap break-words">
@@ -237,9 +232,8 @@ export default function IndividualChatPage({
             )}
 
             <div
-              className={`flex items-center gap-1 mt-1 ${
-                isOutbound ? "justify-end" : "justify-start"
-              }`}
+              className={`flex items-center gap-1 mt-1 ${isOutbound ? "justify-end" : "justify-start"
+                }`}
             >
               <span className="text-xs opacity-70">
                 {formatTime(msg.timestamp)}

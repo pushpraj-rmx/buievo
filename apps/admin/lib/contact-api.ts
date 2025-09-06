@@ -152,13 +152,29 @@ class ContactApiClient {
     status?: string;
     segmentId?: string;
     search?: string;
+    // Advanced search parameters (already supported by backend)
+    name?: string;
+    email?: string;
+    phone?: string;
+    comment?: string;
+    segmentName?: string;
+    createdAfter?: string;
+    createdBefore?: string;
+    updatedAfter?: string;
+    updatedBefore?: string;
+    includeInactive?: boolean;
+    fuzzySearch?: boolean;
   }): Promise<PaginatedResponse<Contact>> {
     const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.set("page", params.page.toString());
-    if (params?.limit) searchParams.set("limit", params.limit.toString());
-    if (params?.status) searchParams.set("status", params.status);
-    if (params?.segmentId) searchParams.set("segmentId", params.segmentId);
-    if (params?.search) searchParams.set("search", params.search);
+
+    // Add all non-empty parameters
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.set(key, value.toString());
+        }
+      });
+    }
 
     const response = await fetch(`${this.baseUrl}/api/v1/contacts?${searchParams}`);
     if (!response.ok) {
@@ -266,6 +282,7 @@ class ContactApiClient {
       return this.request(`/api/v1/contacts/search?${searchParams}`);
     }
   }
+
 
   async getSearchSuggestions(params: {
     q: string;

@@ -11,5 +11,7 @@ export { ContactStats } from "./contact-stats";
 export { ContactSearchDialog } from "./contact-search-dialog";
 export { SegmentManagementDialog } from "./segment-management-dialog";
 export { EnhancedSearchInput } from "./enhanced-search-input";
+export { ContactsSearchSection } from "./contacts-search-section";
+export { ContactsTableSection } from "./contacts-table-section";
 
 

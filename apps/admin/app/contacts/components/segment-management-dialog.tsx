@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Users, Plus, Minus } from "lucide-react";
+import { Loader2, Plus, Minus } from "lucide-react";
 import {
   contactApi,
   type ContactType,

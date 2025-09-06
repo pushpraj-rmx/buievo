@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -38,7 +39,7 @@ interface ContactsToolbarProps {
   onClearSelection: () => void;
 }
 
-export function ContactsToolbar({
+export const ContactsToolbar = memo(function ContactsToolbar({
   search,
   onSearchChange,
   statusFilter,
@@ -110,7 +111,7 @@ export function ContactsToolbar({
             value={search}
             onChange={onSearchChange}
             onAdvancedSearch={onAdvancedSearch}
-            placeholder="Search contacts by name, phone, or email..."
+            placeholder="Search contacts by name, phone, email, or comments..."
           />
         </div>
 
@@ -224,4 +225,4 @@ export function ContactsToolbar({
       )}
     </div>
   );
-}
+});

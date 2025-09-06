@@ -19,12 +19,15 @@ export class ContactController {
         email,
         phone,
         comment,
+        segmentName,
         status,
         segmentId,
         createdAfter,
         createdBefore,
         updatedAfter,
-        updatedBefore
+        updatedBefore,
+        includeInactive,
+        fuzzySearch
       } = req.query;
 
       const result = await contactService.getContacts({
@@ -35,12 +38,15 @@ export class ContactController {
         email: email as string,
         phone: phone as string,
         comment: comment as string,
+        segmentName: segmentName as string,
         status: status as string,
         segmentId: segmentId as string,
         createdAfter: createdAfter as string,
         createdBefore: createdBefore as string,
         updatedAfter: updatedAfter as string,
         updatedBefore: updatedBefore as string,
+        includeInactive: includeInactive === 'true',
+        fuzzySearch: fuzzySearch === 'true',
       });
 
       res.json(result);
@@ -75,34 +81,11 @@ export class ContactController {
     }
   }
 
-  // Search contacts
-  static async searchContacts(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { q, page = 1, limit = 10 } = req.query;
-
-      if (!q || typeof q !== 'string' || !q.trim()) {
-        const error = createError("Search query is required", 400);
-        return next(error);
-      }
-
-      const result = await contactService.getContacts({
-        page: Number(page),
-        limit: Number(limit),
-        search: q.trim(),
-      });
-
-      res.json(result);
-    } catch (error) {
-      logger.error("Error searching contacts:", error);
-      const appError = createError("Failed to search contacts", 500);
-      return next(appError);
-    }
-  }
 
   // Get search suggestions
   static async getSearchSuggestions(req: Request, res: Response, next: NextFunction) {
     try {
-      const { q, limit = 10 } = req.query;
+      const { q, limit = 10, includeSegments = 'true' } = req.query;
 
       if (!q || typeof q !== 'string' || !q.trim()) {
         return res.json([]);
@@ -110,13 +93,36 @@ export class ContactController {
 
       const suggestions = await contactService.getSearchSuggestions(
         q.trim(),
-        Number(limit)
+        Number(limit),
+        includeSegments === 'true'
       );
 
       res.json(suggestions);
     } catch (error) {
       logger.error("Error getting search suggestions:", error);
       const appError = createError("Failed to get search suggestions", 500);
+      return next(appError);
+    }
+  }
+
+  // Get segment suggestions
+  static async getSegmentSuggestions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { q, limit = 5 } = req.query;
+
+      if (!q || typeof q !== 'string' || !q.trim()) {
+        return res.json([]);
+      }
+
+      const suggestions = await contactService.getSegmentSuggestions(
+        q.trim(),
+        Number(limit)
+      );
+
+      res.json(suggestions);
+    } catch (error) {
+      logger.error("Error getting segment suggestions:", error);
+      const appError = createError("Failed to get segment suggestions", 500);
       return next(appError);
     }
   }

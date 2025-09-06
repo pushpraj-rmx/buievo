@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,45 +28,74 @@ interface ContactSearchDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSearchResults: (contacts: ContactType[]) => void;
+  segments?: Array<{ id: string; name: string }>;
 }
 
-export function ContactSearchDialog({
+export const ContactSearchDialog = memo(function ContactSearchDialog({
   open,
   onOpenChange,
   onSearchResults,
+  segments = [],
 }: ContactSearchDialogProps) {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchFields, setSearchFields] = useState<string[]>([
-    "name",
-    "email",
-    "phone",
-  ]);
   const [fuzzySearch, setFuzzySearch] = useState(true);
   const [highlightResults, setHighlightResults] = useState(false);
   const [maxResults, setMaxResults] = useState(100);
 
-  const availableFields = [
-    { value: "name", label: "Name" },
-    { value: "email", label: "Email" },
-    { value: "phone", label: "Phone" },
-    { value: "comment", label: "Comment" },
-    { value: "tags", label: "Tags" },
-  ];
+  // Advanced search fields
+  const [nameSearch, setNameSearch] = useState("");
+  const [emailSearch, setEmailSearch] = useState("");
+  const [phoneSearch, setPhoneSearch] = useState("");
+  const [commentSearch, setCommentSearch] = useState("");
+  const [segmentNameSearch, setSegmentNameSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [segmentFilter, setSegmentFilter] = useState("all");
+  const [includeInactive, setIncludeInactive] = useState(false);
+  const [createdAfter, setCreatedAfter] = useState("");
+  const [createdBefore, setCreatedBefore] = useState("");
+
 
   const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      toast.error("Please enter a search query");
+    // Check if we have any search criteria
+    const hasSearchCriteria =
+      searchQuery.trim() ||
+      nameSearch.trim() ||
+      emailSearch.trim() ||
+      phoneSearch.trim() ||
+      commentSearch.trim() ||
+      segmentNameSearch.trim() ||
+      statusFilter !== "all" ||
+      segmentFilter !== "all";
+
+    if (!hasSearchCriteria) {
+      toast.error("Please enter at least one search criteria");
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await contactApi.searchContacts({
-        q: searchQuery.trim(),
+      // Build search parameters
+      const searchParams: Record<string, string | number | boolean> = {
         limit: maxResults,
-      });
+      };
+
+      // Add search parameters if they have values
+      if (searchQuery.trim()) searchParams.search = searchQuery.trim();
+      if (nameSearch.trim()) searchParams.name = nameSearch.trim();
+      if (emailSearch.trim()) searchParams.email = emailSearch.trim();
+      if (phoneSearch.trim()) searchParams.phone = phoneSearch.trim();
+      if (commentSearch.trim()) searchParams.comment = commentSearch.trim();
+      if (segmentNameSearch.trim()) searchParams.segmentName = segmentNameSearch.trim();
+      if (statusFilter !== "all") searchParams.status = statusFilter;
+      if (segmentFilter !== "all") searchParams.segmentId = segmentFilter;
+      if (includeInactive) searchParams.includeInactive = true;
+      if (fuzzySearch) searchParams.fuzzySearch = true;
+      if (createdAfter) searchParams.createdAfter = createdAfter;
+      if (createdBefore) searchParams.createdBefore = createdBefore;
+
+      const response = await contactApi.getContacts(searchParams);
 
       // Ensure we have valid data
       const searchResults = response.data || [];
@@ -86,86 +115,156 @@ export function ContactSearchDialog({
     }
   };
 
-  const handleFieldToggle = (field: string) => {
-    setSearchFields((prev) =>
-      prev.includes(field) ? prev.filter((f) => f !== field) : [...prev, field]
-    );
-  };
-
-  const handleSelectAllFields = () => {
-    setSearchFields(availableFields.map((f) => f.value));
-  };
-
-  const handleDeselectAllFields = () => {
-    setSearchFields([]);
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Search className="h-5 w-5" />
             Advanced Contact Search
           </DialogTitle>
           <DialogDescription>
-            Search contacts using advanced filters and options
+            Search contacts using advanced filters including comments and segments
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Search Query */}
+        <div className="space-y-6">
+          {/* General Search */}
           <div className="space-y-2">
-            <Label htmlFor="search-query">Search Query</Label>
+            <Label htmlFor="search-query">General Search</Label>
             <Input
               id="search-query"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter search terms..."
+              placeholder="Search across all fields..."
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !loading) {
                   handleSearch();
                 }
               }}
             />
+            <p className="text-xs text-gray-500">
+              Searches across name, email, phone, and comments
+            </p>
           </div>
 
-          {/* Search Fields */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>Search Fields</Label>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleSelectAllFields}
-                >
-                  All
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleDeselectAllFields}
-                >
-                  None
-                </Button>
+          {/* Field-Specific Searches */}
+          <div className="space-y-4 border-t pt-4">
+            <h4 className="text-sm font-medium">Field-Specific Searches</h4>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name-search">Name</Label>
+                <Input
+                  id="name-search"
+                  value={nameSearch}
+                  onChange={(e) => setNameSearch(e.target.value)}
+                  placeholder="Search by name..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email-search">Email</Label>
+                <Input
+                  id="email-search"
+                  value={emailSearch}
+                  onChange={(e) => setEmailSearch(e.target.value)}
+                  placeholder="Search by email..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone-search">Phone</Label>
+                <Input
+                  id="phone-search"
+                  value={phoneSearch}
+                  onChange={(e) => setPhoneSearch(e.target.value)}
+                  placeholder="Search by phone..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="comment-search">Comments</Label>
+                <Input
+                  id="comment-search"
+                  value={commentSearch}
+                  onChange={(e) => setCommentSearch(e.target.value)}
+                  placeholder="Search in comments..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="segment-name-search">Segment Name</Label>
+                <Input
+                  id="segment-name-search"
+                  value={segmentNameSearch}
+                  onChange={(e) => setSegmentNameSearch(e.target.value)}
+                  placeholder="Search by segment name..."
+                />
               </div>
             </div>
-            <div className="space-y-2 max-h-32 overflow-y-auto border rounded-md p-2">
-              {availableFields.map((field) => (
-                <div key={field.value} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`field-${field.value}`}
-                    checked={searchFields.includes(field.value)}
-                    onCheckedChange={() => handleFieldToggle(field.value)}
-                  />
-                  <Label htmlFor={`field-${field.value}`} className="text-sm">
-                    {field.label}
-                  </Label>
-                </div>
-              ))}
+          </div>
+
+          {/* Filters */}
+          <div className="space-y-4 border-t pt-4">
+            <h4 className="text-sm font-medium">Filters</h4>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="status-filter">Status</Label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="segment-filter">Segment</Label>
+                <Select value={segmentFilter} onValueChange={setSegmentFilter}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Segments</SelectItem>
+                    {segments.map((segment) => (
+                      <SelectItem key={segment.id} value={segment.id}>
+                        {segment.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Date Range Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="created-after">Created After</Label>
+                <Input
+                  id="created-after"
+                  type="date"
+                  value={createdAfter}
+                  onChange={(e) => setCreatedAfter(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="created-before">Created Before</Label>
+                <Input
+                  id="created-before"
+                  type="date"
+                  value={createdBefore}
+                  onChange={(e) => setCreatedBefore(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
@@ -173,33 +272,43 @@ export function ContactSearchDialog({
           <div className="space-y-4 border-t pt-4">
             <h4 className="text-sm font-medium">Search Options</h4>
 
-            {/* Fuzzy Search */}
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="fuzzy-search"
-                checked={fuzzySearch}
-                onCheckedChange={(checked) => setFuzzySearch(checked === true)}
-              />
-              <Label htmlFor="fuzzy-search" className="text-sm">
-                Enable fuzzy search (finds similar matches)
-              </Label>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="fuzzy-search"
+                  checked={fuzzySearch}
+                  onCheckedChange={(checked) => setFuzzySearch(checked === true)}
+                />
+                <Label htmlFor="fuzzy-search" className="text-sm">
+                  Enable fuzzy search (includes segment name matching)
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="include-inactive"
+                  checked={includeInactive}
+                  onCheckedChange={(checked) => setIncludeInactive(checked === true)}
+                />
+                <Label htmlFor="include-inactive" className="text-sm">
+                  Include inactive contacts
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="highlight-results"
+                  checked={highlightResults}
+                  onCheckedChange={(checked) =>
+                    setHighlightResults(checked === true)
+                  }
+                />
+                <Label htmlFor="highlight-results" className="text-sm">
+                  Highlight matching terms in results
+                </Label>
+              </div>
             </div>
 
-            {/* Highlight Results */}
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="highlight-results"
-                checked={highlightResults}
-                onCheckedChange={(checked) =>
-                  setHighlightResults(checked === true)
-                }
-              />
-              <Label htmlFor="highlight-results" className="text-sm">
-                Highlight matching terms in results
-              </Label>
-            </div>
-
-            {/* Max Results */}
             <div className="space-y-2">
               <Label htmlFor="max-results">Maximum Results</Label>
               <Select
@@ -232,9 +341,7 @@ export function ContactSearchDialog({
           </Button>
           <Button
             onClick={handleSearch}
-            disabled={
-              loading || !searchQuery.trim() || searchFields.length === 0
-            }
+            disabled={loading}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Search
@@ -243,4 +350,4 @@ export function ContactSearchDialog({
       </DialogContent>
     </Dialog>
   );
-}
+});
