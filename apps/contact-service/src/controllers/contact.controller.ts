@@ -27,7 +27,9 @@ export class ContactController {
         updatedAfter,
         updatedBefore,
         includeInactive,
-        fuzzySearch
+        fuzzySearch,
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
       } = req.query;
 
       const result = await contactService.getContacts({
@@ -47,6 +49,8 @@ export class ContactController {
         updatedBefore: updatedBefore as string,
         includeInactive: includeInactive === 'true',
         fuzzySearch: fuzzySearch === 'true',
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc',
       });
 
       res.json(result);

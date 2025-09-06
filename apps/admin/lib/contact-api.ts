@@ -164,6 +164,9 @@ class ContactApiClient {
     updatedBefore?: string;
     includeInactive?: boolean;
     fuzzySearch?: boolean;
+    // Sorting parameters
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
   }): Promise<PaginatedResponse<Contact>> {
     const searchParams = new URLSearchParams();
 

@@ -1660,3 +1660,91 @@ Unknown argument `comments`. Did you mean `comment`? Available options are marke
 2025-09-06 13:17:55 [info]: 🚀 Contact Service running on port 32102
 2025-09-06 13:17:55 [info]: 📊 Health check: http://localhost:32102/health
 2025-09-06 13:17:55 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 14:27:04 [error]: Error checking for duplicates: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  }
+] {"issues":[{"code":"invalid_type","expected":"string","received":"undefined","path":["name"],"message":"Required"}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"name\"\n    ],\n    \"message\": \"Required\"\n  }\n]\n    at get error [as error] (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/code/buievo/packages/validation/dist/index.js:159:48)\n    at ContactService.checkForDuplicates (/home/akshay/code/buievo/apps/contact-service/src/services/contact.service.ts:334:29)\n    at checkDuplicates (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:147:43)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-06 14:27:04 [error]: Error checking duplicates: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  }
+] {"issues":[{"code":"invalid_type","expected":"string","received":"undefined","path":["name"],"message":"Required"}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"name\"\n    ],\n    \"message\": \"Required\"\n  }\n]\n    at get error [as error] (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/code/buievo/packages/validation/dist/index.js:159:48)\n    at ContactService.checkForDuplicates (/home/akshay/code/buievo/apps/contact-service/src/services/contact.service.ts:334:29)\n    at checkDuplicates (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:147:43)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-06 14:27:04 [error]: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  }
+] {"stack":"ZodError: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"name\"\n    ],\n    \"message\": \"Required\"\n  }\n]\n    at get error [as error] (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/code/buievo/packages/validation/dist/index.js:159:48)\n    at ContactService.checkForDuplicates (/home/akshay/code/buievo/apps/contact-service/src/services/contact.service.ts:334:29)\n    at checkDuplicates (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:147:43)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts/check-duplicates","method":"POST","ip":"::1","userAgent":"curl/8.5.0"}
+2025-09-06 14:27:22 [info]: Segment created: cmf8166qp000013k1fhylfyhf
+2025-09-06 14:27:25 [info]: Contact created: cmf8168v0000113k15b3vn2cu
+2025-09-06 14:27:31 [info]: Contact updated: cmf8168v0000113k15b3vn2cu
+2025-09-06 14:27:33 [info]: Segment updated: cmf8166qp000013k1fhylfyhf
+2025-09-06 14:27:36 [info]: Added 1 contacts to segment: cmf8166qp000013k1fhylfyhf
+2025-09-06 14:27:43 [info]: Removed 1 contacts from segment: cmf8166qp000013k1fhylfyhf
+2025-09-06 14:27:45 [info]: Contact deleted: cmf8168v0000113k15b3vn2cu
+2025-09-06 14:27:46 [info]: Segment deleted: cmf8166qp000013k1fhylfyhf
+2025-09-06 15:04:38 [info]: SIGINT received, shutting down gracefully
+2025-09-06 15:09:29 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:09:29 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:09:29 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:14:29 [info]: SIGINT received, shutting down gracefully
+2025-09-06 15:20:28 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:20:28 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:20:28 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:24:20 [info]: SIGTERM received, shutting down gracefully
+2025-09-06 15:24:21 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:24:21 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:24:21 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:24:34 [info]: SIGTERM received, shutting down gracefully
+2025-09-06 15:24:35 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:24:35 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:24:35 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:25:04 [info]: SIGTERM received, shutting down gracefully
+2025-09-06 15:25:04 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:25:04 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:25:04 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:25:23 [info]: SIGTERM received, shutting down gracefully
+2025-09-06 15:25:24 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:25:24 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:25:24 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:25:58 [info]: SIGTERM received, shutting down gracefully
+2025-09-06 15:25:58 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:25:58 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:25:58 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:26:02 [info]: Bulk import completed: 0 created, 116 duplicates, 0 errors
+2025-09-06 15:29:09 [info]: SIGTERM received, shutting down gracefully
+2025-09-06 15:29:09 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:29:09 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:29:09 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:32:25 [info]: SIGTERM received, shutting down gracefully
+2025-09-06 15:32:26 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:32:26 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:32:26 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:33:45 [info]: Contact updated: cmf6y4ejw00091oax5b97av4l with 1 segments
+2025-09-06 15:41:51 [info]: SIGINT received, shutting down gracefully
+2025-09-06 15:42:12 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 15:42:12 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 15:42:12 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 15:52:17 [info]: SIGINT received, shutting down gracefully
+2025-09-06 16:03:41 [info]: 🚀 Contact Service running on port 32102
+2025-09-06 16:03:41 [info]: 📊 Health check: http://localhost:32102/health
+2025-09-06 16:03:41 [info]: 📚 API docs: http://localhost:32102/api/v1
+2025-09-06 16:06:16 [info]: Segment created: cmf84pd310000tkhzh67f10oh

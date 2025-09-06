@@ -990,3 +990,36 @@ Unknown argument `comments`. Did you mean `comment`? Available options are marke
 2025-09-05 20:46:51 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/code/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:67:23)","url":"/api/v1/contacts/search?q=Sal&limit=100","method":"GET","ip":"::1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
 2025-09-05 20:48:30 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/code/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:67:23)","url":"/api/v1/contacts/search?q=tha&limit=100","method":"GET","ip":"::1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
 2025-09-05 20:49:06 [error]: Contact not found {"stack":"Error: Contact not found\n    at createError (/home/akshay/code/buievo/apps/contact-service/src/middleware/error-handler.ts:55:17)\n    at getContact (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:67:23)","url":"/api/v1/contacts/search?q=nani&limit=100","method":"GET","ip":"::1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0"}
+2025-09-06 14:27:04 [error]: Error checking for duplicates: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  }
+] {"issues":[{"code":"invalid_type","expected":"string","received":"undefined","path":["name"],"message":"Required"}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"name\"\n    ],\n    \"message\": \"Required\"\n  }\n]\n    at get error [as error] (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/code/buievo/packages/validation/dist/index.js:159:48)\n    at ContactService.checkForDuplicates (/home/akshay/code/buievo/apps/contact-service/src/services/contact.service.ts:334:29)\n    at checkDuplicates (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:147:43)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-06 14:27:04 [error]: Error checking duplicates: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  }
+] {"issues":[{"code":"invalid_type","expected":"string","received":"undefined","path":["name"],"message":"Required"}],"name":"ZodError","stack":"ZodError: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"name\"\n    ],\n    \"message\": \"Required\"\n  }\n]\n    at get error [as error] (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/code/buievo/packages/validation/dist/index.js:159:48)\n    at ContactService.checkForDuplicates (/home/akshay/code/buievo/apps/contact-service/src/services/contact.service.ts:334:29)\n    at checkDuplicates (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:147:43)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15"}
+2025-09-06 14:27:04 [error]: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "name"
+    ],
+    "message": "Required"
+  }
+] {"stack":"ZodError: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"name\"\n    ],\n    \"message\": \"Required\"\n  }\n]\n    at get error [as error] (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:45:31)\n    at ZodObject.parse (/home/akshay/code/buievo/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.cjs:120:22)\n    at validateContact (/home/akshay/code/buievo/packages/validation/dist/index.js:159:48)\n    at ContactService.checkForDuplicates (/home/akshay/code/buievo/apps/contact-service/src/services/contact.service.ts:334:29)\n    at checkDuplicates (/home/akshay/code/buievo/apps/contact-service/src/controllers/contact.controller.ts:147:43)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at next (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n    at /home/akshay/code/buievo/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15","url":"/api/v1/contacts/check-duplicates","method":"POST","ip":"::1","userAgent":"curl/8.5.0"}

@@ -1,180 +1,83 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { toast } from "sonner";
-
+import { useState, useCallback, useMemo } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus } from "lucide-react";
 import {
-  ContactForm,
-  ContactView,
-  SegmentForm,
-  ImportExportDialog,
-  ContactSearchDialog,
-  SegmentManagementDialog,
-  ContactsSearchSection,
-  ContactsTableSection,
+  ContactForm, ContactView, SegmentForm, ImportExportDialog,
+  ContactSearchDialog, SegmentManagementDialog, InfiniteContactTable,
 } from "./components";
 import {
-  contactApi,
-  type ContactType,
-  type SegmentType,
-} from "@/lib/contact-api";
+  useInfiniteContacts, useSegments, useContactStats, useDeleteContact,
+  useDeleteSegment,
+  type ContactFilters,
+} from "@/hooks";
+import { type ContactType, type SegmentType } from "@/lib/contact-api";
+import { toast } from "sonner";
+import { SortingState, ColumnFiltersState } from "@tanstack/react-table";
 
-export default function ContactsPage() {
-  // State
-  const [contacts, setContacts] = useState<ContactType[]>([]);
-  const [segments, setSegments] = useState<SegmentType[]>([]);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0,
-  });
-  const [loading, setLoading] = useState(true);
+export default function InfiniteContactsPage() {
+  // UI State
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [segmentDialogOpen, setSegmentDialogOpen] = useState(false);
+  const [importExportDialogOpen, setImportExportDialogOpen] = useState(false);
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<ContactType | null>(null);
+  const [editingSegment, setEditingSegment] = useState<SegmentType | null>(null);
+  const [viewingContact, setViewingContact] = useState<ContactType | null>(null);
+
+  // Search and Filter State
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [segmentFilter, setSegmentFilter] = useState("all");
-  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  // Dialog states
-  const [contactDialogOpen, setContactDialogOpen] = useState(false);
-  const [segmentDialogOpen, setSegmentDialogOpen] = useState(false);
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [importDialogOpen, setImportDialogOpen] = useState(false);
-  const [exportDialogOpen, setExportDialogOpen] = useState(false);
-  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
-  const [segmentManagementDialogOpen, setSegmentManagementDialogOpen] =
-    useState(false);
-  const [selectedSegment, setSelectedSegment] = useState<SegmentType | null>(
-    null
-  );
+  // Build filters for API call (without page parameter for infinite scroll)
+  const filters: Omit<ContactFilters, 'page'> = useMemo(() => ({
+    limit: 20, // Load 20 contacts per page for infinite scroll
+    ...(search && { search }),
+    ...(statusFilter !== "all" && { status: statusFilter }),
+    ...(segmentFilter !== "all" && { segmentId: segmentFilter }),
+    fuzzySearch: true,
+    // Add sorting parameters
+    ...(sorting.length > 0 && {
+      sortBy: sorting[0].id,
+      sortOrder: sorting[0].desc ? 'desc' : 'asc',
+    }),
+  }), [search, statusFilter, segmentFilter, sorting]);
 
-  // Form states
-  const [editingContact, setEditingContact] = useState<ContactType | null>(
-    null
-  );
-  const [editingSegment, setEditingSegment] = useState<SegmentType | null>(
-    null
-  );
-  const [viewingContact, setViewingContact] = useState<ContactType | null>(
-    null
-  );
+  // Fetch data using TanStack Query Infinite Query
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isError,
+  } = useInfiniteContacts(filters);
 
-  // Loading states
-  const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
-  const paginationRef = useRef(pagination);
-  const statusFilterRef = useRef(statusFilter);
-  const segmentFilterRef = useRef(segmentFilter);
-  const selectedContactsRef = useRef(selectedContacts);
+  const { data: segments = [] } = useSegments();
+  const { data: stats } = useContactStats();
 
-  // Update refs when values change - combine into single effect to reduce re-renders
-  useEffect(() => {
-    paginationRef.current = pagination;
-    statusFilterRef.current = statusFilter;
-    segmentFilterRef.current = segmentFilter;
-    selectedContactsRef.current = selectedContacts;
-  }, [pagination, statusFilter, segmentFilter, selectedContacts]);
+  // Flatten all pages of contacts
+  const allContacts = useMemo(() => {
+    return data?.pages.flatMap(page => page.data) || [];
+  }, [data]);
 
-  // Fetch contacts - stable function using refs
-  const fetchContacts = useCallback(async (searchTerm?: string, page?: number, limit?: number) => {
-    try {
-      setLoading(true);
-      const response = await contactApi.getContacts({
-        page: page || paginationRef.current.page,
-        limit: limit || paginationRef.current.limit,
-        ...(searchTerm && { search: searchTerm }),
-        ...(statusFilterRef.current !== "all" && { status: statusFilterRef.current }),
-        ...(segmentFilterRef.current !== "all" && { segmentId: segmentFilterRef.current }),
-        // Enable fuzzy search for better results
-        fuzzySearch: true,
-      });
+  // Get total count from first page
+  const totalCount = data?.pages[0]?.pagination?.total || 0;
 
-      setContacts(response.data);
-      setPagination(response.pagination);
-    } catch (error) {
-      toast.error("Failed to fetch contacts");
-      console.error("Error fetching contacts:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []); // Stable function - no dependencies needed since we use refs
+  // Mutations
+  const deleteContactMutation = useDeleteContact();
+  const deleteSegmentMutation = useDeleteSegment();
 
-  // Debounced search function - stable function using refs
-  const debouncedSearch = useCallback((searchTerm: string) => {
-    if (searchDebounceRef.current) {
-      clearTimeout(searchDebounceRef.current);
-    }
-
-    searchDebounceRef.current = setTimeout(async () => {
-      try {
-        setLoading(true);
-        const response = await contactApi.getContacts({
-          page: paginationRef.current.page,
-          limit: paginationRef.current.limit,
-          search: searchTerm,
-          ...(statusFilterRef.current !== "all" && { status: statusFilterRef.current }),
-          ...(segmentFilterRef.current !== "all" && { segmentId: segmentFilterRef.current }),
-          fuzzySearch: true,
-        });
-
-        setContacts(response.data);
-        setPagination(response.pagination);
-      } catch (error) {
-        toast.error("Failed to fetch contacts");
-        console.error("Error fetching contacts:", error);
-      } finally {
-        setLoading(false);
-      }
-    }, 500); // 500ms delay
-  }, []); // Stable function - no dependencies needed since we use refs
-
-  // Fetch segments
-  const fetchSegments = useCallback(async () => {
-    try {
-      const response = await contactApi.getSegments();
-      setSegments(response.data);
-    } catch (error) {
-      toast.error("Failed to fetch segments");
-      console.error("Error fetching segments:", error);
-    }
-  }, []);
-
-  // Initial load
-  useEffect(() => {
-    fetchContacts();
-    fetchSegments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
-
-  // Handle filter changes (status and segment filters)
-  useEffect(() => {
-    fetchContacts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, segmentFilter]); // fetchContacts is stable, no need to include it
-
-  // Debounced search effect
-  useEffect(() => {
-    if (search.trim()) {
-      debouncedSearch(search);
-    } else {
-      // If search is empty, fetch all contacts immediately
-      if (searchDebounceRef.current) {
-        clearTimeout(searchDebounceRef.current);
-      }
-      fetchContacts();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]); // debouncedSearch and fetchContacts are stable, no need to include them
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (searchDebounceRef.current) {
-        clearTimeout(searchDebounceRef.current);
-      }
-    };
-  }, []);
-
-  // Contact handlers
+  // Handlers
   const handleCreateContact = useCallback(() => {
     setEditingContact(null);
     setContactDialogOpen(true);
@@ -191,161 +94,195 @@ export default function ContactsPage() {
   }, []);
 
   const handleDeleteContact = useCallback(async (id: string) => {
-    try {
-      await contactApi.deleteContact(id);
-      toast.success("Contact deleted successfully");
-      fetchContacts();
-      setSelectedContacts((prev) =>
-        prev.filter((contactId) => contactId !== id)
-      );
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to delete contact"
-      );
+    if (confirm("Are you sure you want to delete this contact?")) {
+      deleteContactMutation.mutate(id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // fetchContacts is stable now
+  }, [deleteContactMutation]);
 
-  const handleBulkDelete = useCallback(async () => {
-    if (selectedContactsRef.current.length === 0) return;
-
-    if (
-      !confirm(
-        `Are you sure you want to delete ${selectedContactsRef.current.length} contacts?`
-      )
-    ) {
-      return;
-    }
-
-    try {
-      const promises = selectedContactsRef.current.map((id) =>
-        contactApi.deleteContact(id)
-      );
-
-      await Promise.all(promises);
-      toast.success(`${selectedContactsRef.current.length} contacts deleted successfully`);
-      setSelectedContacts([]);
-      fetchContacts();
-    } catch (error) {
-      toast.error("Failed to delete some contacts");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // No dependencies needed since we use refs
-
-  // Segment handlers
   const handleCreateSegment = useCallback(() => {
     setEditingSegment(null);
     setSegmentDialogOpen(true);
   }, []);
 
-  // Import/Export handlers
-  const handleImport = useCallback(() => {
-    setImportDialogOpen(true);
+  const handleEditSegment = useCallback((segment: SegmentType) => {
+    setEditingSegment(segment);
+    setSegmentDialogOpen(true);
   }, []);
 
-  const handleExport = useCallback(() => {
-    setExportDialogOpen(true);
+  const handleDeleteSegment = useCallback(async (id: string) => {
+    if (confirm("Are you sure you want to delete this segment?")) {
+      deleteSegmentMutation.mutate(id);
+    }
+  }, [deleteSegmentMutation]);
+
+  const handleSortingChange = useCallback((updater: SortingState | ((old: SortingState) => SortingState)) => {
+    setSorting(updater);
   }, []);
 
-  // Utility handlers
-  const handlePageChange = useCallback((page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
+  const handleColumnFiltersChange = useCallback((updater: ColumnFiltersState | ((old: ColumnFiltersState) => ColumnFiltersState)) => {
+    setColumnFilters(updater);
   }, []);
 
-  const handleClearSelection = useCallback(() => {
-    setSelectedContacts([]);
-  }, []);
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const handleContactSuccess = useCallback(() => {
-    fetchContacts();
-    setSelectedContacts([]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // fetchContacts is stable now
-
-  const handleSegmentSuccess = useCallback(() => {
-    fetchSegments();
-  }, [fetchSegments]);
-
-  const handleAdvancedSearch = useCallback(() => {
-    setSearchDialogOpen(true);
-  }, []);
-
-  const handleSearchResults = useCallback((searchResults: ContactType[]) => {
-    // Ensure we have valid data
-    const results = searchResults || [];
-    setContacts(results);
-    setPagination({
-      page: 1,
-      limit: 10,
-      total: results.length,
-      totalPages: Math.ceil(results.length / 10),
-    });
-  }, []);
-
-  // Memoized search change handler
-  const handleSearchChange = useCallback((value: string) => {
-    setSearch(value);
-  }, []);
-
-  // Memoized filter change handlers
-  const handleStatusFilterChange = useCallback((value: string) => {
-    setStatusFilter(value);
-  }, []);
-
-  const handleSegmentFilterChange = useCallback((value: string) => {
-    setSegmentFilter(value);
-  }, []);
-
-
-  // Note: Stats are now handled by the ContactStats component
-
-  if (loading) {
+  if (isError) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading contacts...</p>
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Error Loading Contacts</h2>
+          <p className="text-gray-600 mb-4">
+            {error instanceof Error ? error.message : 'An unexpected error occurred'}
+          </p>
+          <Button onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div></div>
+        <div>
+          <h1 className="text-3xl font-bold">Contacts (Infinite Scroll)</h1>
+          <p className="text-muted-foreground">
+            Manage your contact database with infinite scroll loading
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={handleCreateContact}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Contact
+          </Button>
+          <Button variant="outline" onClick={handleCreateSegment}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Segment
+          </Button>
+          <Button variant="outline" onClick={() => setImportExportDialogOpen(true)}>
+            Import/Export
+          </Button>
+        </div>
       </div>
 
-      {/* Search Section - Isolated from table rendering */}
-      <ContactsSearchSection
-        search={search}
-        onSearchChange={handleSearchChange}
-        statusFilter={statusFilter}
-        onStatusFilterChange={handleStatusFilterChange}
-        segmentFilter={segmentFilter}
-        onSegmentFilterChange={handleSegmentFilterChange}
-        segments={segments}
-        onCreateContact={handleCreateContact}
-        onCreateSegment={handleCreateSegment}
-        onImport={handleImport}
-        onExport={handleExport}
-        onAdvancedSearch={handleAdvancedSearch}
-        selectedContacts={selectedContacts}
-        onBulkDelete={handleBulkDelete}
-        onClearSelection={handleClearSelection}
-        onRefresh={fetchContacts}
-      />
+      {/* Stats Section */}
+      {stats && (
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.total}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.active}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Inactive</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.inactive}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.pending}</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      {/* Table Section - Only re-renders when contacts data changes */}
-      <ContactsTableSection
-        contacts={contacts}
-        pagination={pagination}
-        onEdit={handleEditContact}
-        onView={handleViewContact}
-        onDelete={handleDeleteContact}
-        onPageChange={handlePageChange}
-      />
+      {/* Search and Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Search & Filter</CardTitle>
+          <CardDescription>
+            Search and filter your contacts with infinite scroll loading.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <Input
+                placeholder="Search contacts..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={segmentFilter} onValueChange={setSegmentFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by segment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Segments</SelectItem>
+                {segments.map((segment) => (
+                  <SelectItem key={segment.id} value={segment.id}>
+                    {segment.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button variant="outline" onClick={() => setSearchDialogOpen(true)}>
+              Advanced Search
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Contacts Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Contact List</CardTitle>
+          <CardDescription>
+            Showing {allContacts.length} of {totalCount} contacts
+            {hasNextPage && " (scroll to load more)"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <InfiniteContactTable
+            contacts={allContacts}
+            onEdit={handleEditContact}
+            onView={handleViewContact}
+            onDelete={handleDeleteContact}
+            loading={isLoading}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            onLoadMore={handleLoadMore}
+            onSortingChange={handleSortingChange}
+            onColumnFiltersChange={handleColumnFiltersChange}
+            sorting={sorting}
+            columnFilters={columnFilters}
+          />
+        </CardContent>
+      </Card>
 
       {/* Dialogs */}
       <ContactForm
@@ -353,14 +290,11 @@ export default function ContactsPage() {
         onOpenChange={setContactDialogOpen}
         editingContact={editingContact}
         segments={segments}
-        onSuccess={handleContactSuccess}
-      />
-
-      <SegmentForm
-        open={segmentDialogOpen}
-        onOpenChange={setSegmentDialogOpen}
-        editingSegment={editingSegment}
-        onSuccess={handleSegmentSuccess}
+        onSuccess={() => {
+          setContactDialogOpen(false);
+          setEditingContact(null);
+          toast.success(editingContact ? "Contact updated successfully" : "Contact created successfully");
+        }}
       />
 
       <ContactView
@@ -369,30 +303,45 @@ export default function ContactsPage() {
         contact={viewingContact}
       />
 
-      <ImportExportDialog
-        open={importDialogOpen}
-        onOpenChange={setImportDialogOpen}
-        mode="import"
-        onSuccess={handleContactSuccess}
+      <SegmentForm
+        open={segmentDialogOpen}
+        onOpenChange={setSegmentDialogOpen}
+        editingSegment={editingSegment}
+        onSuccess={() => {
+          setSegmentDialogOpen(false);
+          setEditingSegment(null);
+          toast.success(editingSegment ? "Segment updated successfully" : "Segment created successfully");
+        }}
       />
 
       <ImportExportDialog
-        open={exportDialogOpen}
-        onOpenChange={setExportDialogOpen}
-        mode="export"
-        onSuccess={handleContactSuccess}
+        open={importExportDialogOpen}
+        onOpenChange={setImportExportDialogOpen}
+        mode="import"
+        onSuccess={() => {
+          setImportExportDialogOpen(false);
+          toast.success("Import/Export completed successfully");
+        }}
       />
+
       <ContactSearchDialog
         open={searchDialogOpen}
         onOpenChange={setSearchDialogOpen}
-        onSearchResults={handleSearchResults}
+        onSearchResults={(contacts) => {
+          // For infinite scroll, we'll just close the dialog
+          // The search will be handled by the filters
+          setSearchDialogOpen(false);
+        }}
         segments={segments}
       />
+
       <SegmentManagementDialog
-        open={segmentManagementDialogOpen}
-        onOpenChange={setSegmentManagementDialogOpen}
-        segment={selectedSegment}
-        onSuccess={handleContactSuccess}
+        open={false}
+        onOpenChange={() => { }}
+        segment={null}
+        onSuccess={() => {
+          toast.success("Segment operation completed successfully");
+        }}
       />
     </div>
   );

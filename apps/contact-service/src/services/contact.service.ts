@@ -26,6 +26,9 @@ export interface ContactFilters {
   // Search options
   includeInactive?: boolean; // Include inactive contacts in search
   fuzzySearch?: boolean; // Enable fuzzy matching
+  // Sorting options
+  sortBy?: string; // Field to sort by (name, email, phone, createdAt, updatedAt)
+  sortOrder?: 'asc' | 'desc'; // Sort order
 }
 
 export interface ContactStats {
@@ -205,9 +208,7 @@ export class ContactService {
         },
         skip,
         take: limit,
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy: this.buildOrderBy(filters.sortBy, filters.sortOrder),
       }),
       prisma.contact.count({ where }),
     ]);
@@ -979,5 +980,26 @@ export class ContactService {
     ]);
 
     return [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+  }
+
+  // Build orderBy clause for Prisma queries
+  private buildOrderBy(sortBy?: string, sortOrder?: 'asc' | 'desc') {
+    const order = sortOrder || 'desc';
+
+    // Map frontend field names to database field names
+    const fieldMap: Record<string, string> = {
+      'name': 'name',
+      'email': 'email',
+      'phone': 'phone',
+      'status': 'status',
+      'createdAt': 'createdAt',
+      'updatedAt': 'updatedAt',
+    };
+
+    const field = sortBy && fieldMap[sortBy] ? fieldMap[sortBy] : 'createdAt';
+
+    return {
+      [field]: order,
+    };
   }
 }

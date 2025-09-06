@@ -120,7 +120,7 @@ export const ContactTable = memo(function ContactTable({
   if (contacts.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        No contacts found. Create your first contact to get started.
+        No contacts found.
       </div>
     );
   }
